@@ -17,21 +17,21 @@ let responseInterceptor: number;
 
 export const setupInterceptors = (logout: () => void) => {
     if (requestInterceptor !== undefined) {
-    api.interceptors.request.eject(requestInterceptor);
+        api.interceptors.request.eject(requestInterceptor);
     }
 
     if (responseInterceptor !== undefined) {
-    api.interceptors.response.eject(responseInterceptor);
+        api.interceptors.response.eject(responseInterceptor);
     }
 
     requestInterceptor = api.interceptors.request.use(async (config) => {
-    const token = await AsyncStorage.getItem(globals.AUTH_TOKEN_KEY);
+        const token = await AsyncStorage.getItem(globals.AUTH_TOKEN_KEY);
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
 
-    return config;
+        return config;
     });
 
     responseInterceptor = api.interceptors.response.use(
@@ -49,4 +49,4 @@ export const setupInterceptors = (logout: () => void) => {
     );
 };
 
-export default api;
+    export default api;
