@@ -1,5 +1,5 @@
 import { AppText } from "@/components/AppText";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyCard from "@/components/cards/PropertyCard";
 import { properties } from "@/lib/data";
 import React from "react";
 import { FlatList } from "react-native";
@@ -9,7 +9,7 @@ const eligibleProperties = () => {
   const eligibleProps = properties.filter((prop) => prop.status === "eligible");
   
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, borderWidth: 2, borderColor: "red" }}>
       <FlatList
         data={eligibleProps}
         renderItem={({ item: property }) => (

@@ -1,5 +1,5 @@
 import { AppText } from '@/components/AppText'
-import PropertyCard from '@/components/PropertyCard'
+import PropertyCard from '@/components/cards/PropertyCard'
 import { properties } from '@/lib/data'
 import React from 'react'
 import { FlatList } from 'react-native'

@@ -43,7 +43,7 @@ export default function PropertyCard({
     activeOpacity={0.8}
      style={{ width: '100%'}}
       onPress={onPress}
-      className="bg-white border border-gray-200 rounded-lg p-4 mb-4 w-full self-stretch "
+      className="bg-white border border-gray-200 rounded-lg p-4 mb-4 w-full"
     >
       {/* Header */}
       <View className="flex-row justify-between items-center mb-2">

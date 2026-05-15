@@ -1,13 +1,12 @@
 import { AppText } from '@/components/AppText'
-import PropertyCard from '@/components/PropertyCard'
+import PropertyCard from '@/components/cards/PropertyCard'
 import { properties } from '@/lib/data'
 import React from 'react'
-import { FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { FlatList, View } from 'react-native'
 
 const allProperties = () => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, borderWidth: 2, borderColor: "red" }}>
       <FlatList
         data={properties}
         renderItem={({ item: property }) => (
@@ -24,9 +23,9 @@ const allProperties = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={<AppText>No properties</AppText>}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20,  borderWidth: 2, borderColor: "red" }}
       />
-    </SafeAreaView>
+    </View>
   )
 }
 

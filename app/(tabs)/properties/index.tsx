@@ -1,9 +1,10 @@
-import SearchBar from "@/components/SearchBar"
-import { Pressable, View, Text } from "react-native"
-import React, { useState } from "react"
 import AllProperties from "@/app/(screens)/(property)/list/allProperties"
 import EligibleProperties from "@/app/(screens)/(property)/list/eligibleProperties"
 import PendingPropertyOffers from "@/app/(screens)/(property)/list/pendingPropertyOffers"
+import SearchBar from "@/components/SearchBar"
+import React from "react"
+import { Pressable, Text, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 type StatusType = "all" | "eligible" | "pending";
 
@@ -17,8 +18,8 @@ const Properties = () => {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <View className='my-5'>
+    <SafeAreaView className="flex-1 bg-gray-50" style={{ paddingHorizontal: 20 }}>
+      <View className='mb-5'>
         <SearchBar
           placeholder='Search property'
           value=""
@@ -27,8 +28,8 @@ const Properties = () => {
       </View>
 
       {/* Tabs */}
-      <View className="flex-1 justify-center items-center px-5 ">
-        <View  className="bg-gray-300 rounded-xl p-2 flex-row w-full">
+      <View className=" ">
+        <View  className="bg-gray-300 rounded-xl flex-row w-full">
           {tabs.map((tab, index) => {
             const active = status === tab.value;
 
@@ -63,13 +64,13 @@ const Properties = () => {
         </View>
 
         {/* Content */}
-        <View className="">
+        <View className="border-2" style={{borderWidth: 2, borderColor: "red"}}>
           {status === "all" && <AllProperties />}
           {status === "eligible" && <EligibleProperties />}
           {status === "pending" && <PendingPropertyOffers />}
         </View>
       </View>
-    </View>
+    </SafeAreaView>
 
   )
 }
