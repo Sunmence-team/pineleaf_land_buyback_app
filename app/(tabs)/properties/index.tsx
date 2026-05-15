@@ -18,7 +18,7 @@ const Properties = () => {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" style={{ paddingHorizontal: 20 }}>
+    <SafeAreaView className="flex-1 bg-secondary " style={{ paddingHorizontal: 20 }}>
       <View className='mb-5'>
         <SearchBar
           placeholder='Search property'
@@ -28,47 +28,43 @@ const Properties = () => {
       </View>
 
       {/* Tabs */}
-      <View className=" ">
-        <View  className="bg-gray-300 rounded-xl flex-row w-full">
-          {tabs.map((tab, index) => {
-            const active = status === tab.value;
+      <View className="rounded-xl flex-row w-full">
+        {tabs.map((tab, index) => {
+          const active = status === tab.value;
 
-            return (
-              <Pressable
-                key={index}
-                onPress={() => setStatus(tab.value)}
-                style={{
-                  backgroundColor: active ? "#154A22" : "transparent",
-                  marginTop: 20,
-                  marginLeft: 18,
-                  paddingVertical: 18,
-                  
-                }}
-                className="flex-1 py-5 rounded-lg mx-1 items-center justify-center"
-              
+          return (
+            <Pressable
+              key={index}
+              onPress={() => setStatus(tab.value)}
+              style={{
+                backgroundColor: active ? "#154A22" : "transparent",
+                paddingVertical: 18,
+                
+              }}
+              className="flex-1 py-5 rounded-lg mx-1 items-center justify-center"
+            
+            >
+              <Text
+              style={{
+                color: active ? 'white' : 'black',
+                fontSize: 16,
+                fontFamily: 'semibold',
+                textAlign: 'center'
+              }}
+                
               >
-                <Text
-                style={{
-                  color: active ? 'white' : 'black',
-                  fontSize: 16,
-                  fontFamily: 'semibold',
-                  textAlign: 'center'
-                }}
-                  
-                >
-                  {tab.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
 
-        {/* Content */}
-        <View className="border-2" style={{borderWidth: 2, borderColor: "red"}}>
-          {status === "all" && <AllProperties />}
-          {status === "eligible" && <EligibleProperties />}
-          {status === "pending" && <PendingPropertyOffers />}
-        </View>
+      {/* Content */}
+      <View className="flex-1">
+        {status === "all" && <AllProperties />}
+        {status === "eligible" && <EligibleProperties />}
+        {status === "pending" && <PendingPropertyOffers />}
       </View>
     </SafeAreaView>
 

@@ -10,7 +10,7 @@ interface Props {
 
 const SearchBar = ({ onPress, placeholder, value, onChangeText }: Props) => {
   return (
-    <View className='flex-row items-center bg-transparent border border-gray-300 rounded-lg px-4 py-3 mx-4'>
+    <View className='flex-row items-center bg-transparent border border-gray-300 rounded-lg px-4 py-3'>
      <Ionicons name='search-outline' size={22} color="#666" />
 
       <TextInput

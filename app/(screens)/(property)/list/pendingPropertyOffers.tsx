@@ -9,7 +9,7 @@ const pendingPropertyOffers = () => {
   const pendingProps = properties.filter((prop) => prop.status === 'offer_sent' || prop.status === 'pending')
   
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
       <FlatList
         data={pendingProps}
         renderItem={({ item: property }) => (
@@ -26,7 +26,7 @@ const pendingPropertyOffers = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={<AppText>No pending offers</AppText>}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20 }}
+        contentContainerStyle={{ padding: 20}}
       />
     </SafeAreaView>
   )

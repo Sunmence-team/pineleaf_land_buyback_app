@@ -26,4 +26,22 @@ export const properties = [
     price: "5M",
     totalPrice: "60M",
   },
+  {
+    id: 4,
+    title: "Greenland Estate",
+    status: "not_eligible",
+    date: "10 Jul 2026",
+    plots: 5,
+    price: "5M",
+    totalPrice: "60M",
+  },
+  {
+    id: 5,
+    title: "Greenland Estate",
+    status: "pending",
+    date: "10 Jul 2026",
+    plots: 5,
+    price: "5M",
+    totalPrice: "60M",
+  },
 ];

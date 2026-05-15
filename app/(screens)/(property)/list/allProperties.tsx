@@ -1,12 +1,14 @@
-import { AppText } from '@/components/AppText'
+import EmptyState from '@/components/cards/EmptyStateCard'
 import PropertyCard from '@/components/cards/PropertyCard'
 import { properties } from '@/lib/data'
 import React from 'react'
-import { FlatList, View } from 'react-native'
+import { FlatList, Text, View } from 'react-native'
 
-const allProperties = () => {
+const AllProperties = () => {
+
   return (
-    <View style={{ flex: 1, borderWidth: 2, borderColor: "red" }}>
+    <View style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
+
       <FlatList
         data={properties}
         renderItem={({ item: property }) => (
@@ -22,11 +24,17 @@ const allProperties = () => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<AppText>No properties</AppText>}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20,  borderWidth: 2, borderColor: "red" }}
+        ListEmptyComponent={
+          <EmptyState
+            icon="bag-handle-outline"
+            title="No properties yet"
+            description="Start by adding a property to track its details and manage buyback when eligible"
+          />
+        }
+        contentContainerStyle={{}}
       />
     </View>
   )
 }
 
-export default allProperties 
+export default AllProperties 

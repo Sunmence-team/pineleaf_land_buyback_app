@@ -9,7 +9,7 @@ const eligibleProperties = () => {
   const eligibleProps = properties.filter((prop) => prop.status === "eligible");
   
   return (
-    <SafeAreaView style={{ flex: 1, borderWidth: 2, borderColor: "red" }}>
+    <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
       <FlatList
         data={eligibleProps}
         renderItem={({ item: property }) => (
@@ -26,7 +26,7 @@ const eligibleProperties = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={<AppText>No eligible properties</AppText>}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20 }}
+        contentContainerStyle={{ }}
       />
     </SafeAreaView>
   );
