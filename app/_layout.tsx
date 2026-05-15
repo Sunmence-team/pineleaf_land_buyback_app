@@ -6,9 +6,16 @@ import "../global.css";
 import { StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { useFonts, Quicksand_300Light, Quicksand_400Regular, Quicksand_500Medium, Quicksand_600SemiBold, Quicksand_700Bold } from '@expo-google-fonts/quicksand';
-import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import {
+  Quicksand_300Light,
+  Quicksand_400Regular,
+  Quicksand_500Medium,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+  useFonts,
+} from "@expo-google-fonts/quicksand";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 // Prevent the splash screen from auto-hiding before we can check the onboarding status.
 SplashScreen.preventAutoHideAsync();
@@ -17,8 +24,8 @@ function RootLayoutNav() {
   useEffect(() => {
     async function setInitialRoute() {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.push("/(tabs)/alerts")
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        router.push("/(tabs)");
       } catch (e) {
         console.error(
           "Error reading onboarding status, defaulting to onboarding:",
@@ -43,11 +50,11 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
-    quickLight: Quicksand_300Light, 
-    quickRegular: Quicksand_400Regular, 
-    quickMedium: Quicksand_500Medium, 
-    quickSemiBold: Quicksand_600SemiBold, 
-    quickBold: Quicksand_700Bold
+    quickLight: Quicksand_300Light,
+    quickRegular: Quicksand_400Regular,
+    quickMedium: Quicksand_500Medium,
+    quickSemiBold: Quicksand_600SemiBold,
+    quickBold: Quicksand_700Bold,
   });
 
   useEffect(() => {
@@ -57,18 +64,18 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded && !error) {
-    return null; 
+    return null;
   }
 
   return (
     <SafeAreaProvider className="font-quickRegular">
-        <StatusBar
-          backgroundColor={"transparent"}
-          translucent={true}
-          animated={true}
-        />
-        <QueryClientProvider client={queryClient}></QueryClientProvider>
-        <RootLayoutNav />
+      <StatusBar
+        backgroundColor={"transparent"}
+        translucent={true}
+        animated={true}
+      />
+      <QueryClientProvider client={queryClient}></QueryClientProvider>
+      <RootLayoutNav />
     </SafeAreaProvider>
   );
 }

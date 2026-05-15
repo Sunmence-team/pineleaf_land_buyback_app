@@ -36,12 +36,12 @@ export default function TabLayout() {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
-          display: isAddPropertyActive ? "none" : "flex"
+          display: isAddPropertyActive ? "none" : "flex",
         },
         tabBarLabel: ({ focused, children }) => (
-          <Text 
-            style={{ 
-              fontFamily: focused ? "quickSemiBold" : "quickRegular", 
+          <Text
+            style={{
+              fontFamily: focused ? "quickSemiBold" : "quickRegular",
               fontSize: 12,
               color: focused ? "#154A22" : "#000000",
               opacity: focused ? 1 : 0.4,
@@ -105,16 +105,18 @@ export default function TabLayout() {
         options={{
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white font-quickMedium">Add Property</Text>
+            <Text className="text-2xl font-medium text-white font-quickMedium">
+              Add Property
+            </Text>
           ),
           headerLeft: () => (
-            <Pressable 
+            <Pressable
               onPress={() => router.back()}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Feather name="chevron-left" size={28}/>
+              <Feather name="chevron-left" size={28} />
             </Pressable>
           ),
           headerTitleAlign: "center",
@@ -125,7 +127,7 @@ export default function TabLayout() {
             height: "100%",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: Platform.OS === 'ios' ? 0 : -5,
+            marginTop: Platform.OS === "ios" ? 0 : -5,
           },
           tabBarIcon: ({ focused }) => (
             <View
