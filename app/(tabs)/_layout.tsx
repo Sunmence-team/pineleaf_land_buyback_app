@@ -36,12 +36,12 @@ export default function TabLayout() {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
-          display: isAddPropertyActive ? "none" : "flex"
+          display: isAddPropertyActive ? "none" : "flex",
         },
         tabBarLabel: ({ focused, children }) => (
-          <Text 
-            style={{ 
-              fontFamily: focused ? "quickSemiBold" : "quickRegular", 
+          <Text
+            style={{
+              fontFamily: focused ? "quickSemiBold" : "quickRegular",
               fontSize: 12,
               color: focused ? "#154A22" : "#000000",
               opacity: focused ? 1 : 0.4,
@@ -50,10 +50,10 @@ export default function TabLayout() {
             {children}
           </Text>
         ),
-        tabBarItemStyle: { 
-          justifyContent: 'center' 
+        tabBarItemStyle: {
+          justifyContent: "center",
         },
-        headerTitleAlign: "center"
+        headerTitleAlign: "center",
       }}
     >
       {/* Home */}
@@ -85,7 +85,13 @@ export default function TabLayout() {
           title: "Properties",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Properties</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Properties
+            </Text>
           ),
           headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
@@ -105,16 +111,22 @@ export default function TabLayout() {
         options={{
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white font-quickMedium">Add Property</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Add Property
+            </Text>
           ),
           headerLeft: () => (
-            <Pressable 
+            <Pressable
               onPress={() => router.back()}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Feather name="chevron-left" size={28}/>
+              <Feather name="chevron-left" size={28} />
             </Pressable>
           ),
           headerTitleAlign: "center",
@@ -125,7 +137,7 @@ export default function TabLayout() {
             height: "100%",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: Platform.OS === 'ios' ? 0 : -5,
+            marginTop: Platform.OS === "ios" ? 0 : -5,
           },
           tabBarIcon: ({ focused }) => (
             <View
@@ -156,7 +168,13 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white text-center">Alerts</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Alerts
+            </Text>
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
@@ -179,7 +197,13 @@ export default function TabLayout() {
           title: "Profile",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Profile</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Profile
+            </Text>
           ),
           headerTitleAlign: "center",
           headerLeft: () => null,

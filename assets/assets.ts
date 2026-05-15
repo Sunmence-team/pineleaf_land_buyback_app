@@ -1,3 +1,4 @@
 export const assets = {
-    logo: "../assets/images/logo.png",
+  logo: require("../assets/images/logo.png"),
+  profileImage: require("../assets/images/profileImage.jpg")
 };
