@@ -50,9 +50,10 @@ export default function TabLayout() {
             {children}
           </Text>
         ),
-        tabBarItemStyle: {
-          justifyContent: "center",
+        tabBarItemStyle: { 
+          justifyContent: 'center' 
         },
+        headerTitleAlign: "center"
       }}
     >
       {/* Home */}
@@ -157,7 +158,7 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Alerts</Text>
+            <Text className="text-2xl font-medium text-white text-center">Alerts</Text>
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
