@@ -24,8 +24,8 @@ function RootLayoutNav() {
   useEffect(() => {
     async function setInitialRoute() {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        router.push("/(tabs)");
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        router.push("/(tabs)/profile")
       } catch (e) {
         console.error(
           "Error reading onboarding status, defaulting to onboarding:",

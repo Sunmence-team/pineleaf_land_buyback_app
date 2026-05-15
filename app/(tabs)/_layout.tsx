@@ -50,10 +50,10 @@ export default function TabLayout() {
             {children}
           </Text>
         ),
-        tabBarItemStyle: { 
-          justifyContent: 'center' 
+        tabBarItemStyle: {
+          justifyContent: "center",
         },
-        headerTitleAlign: "center"
+        headerTitleAlign: "center",
       }}
     >
       {/* Home */}
@@ -85,7 +85,13 @@ export default function TabLayout() {
           title: "Properties",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Properties</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Properties
+            </Text>
           ),
           headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
@@ -158,7 +164,13 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white text-center">Alerts</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Alerts
+            </Text>
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
@@ -181,7 +193,13 @@ export default function TabLayout() {
           title: "Profile",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Profile</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Profile
+            </Text>
           ),
           headerTitleAlign: "center",
           headerLeft: () => null,
