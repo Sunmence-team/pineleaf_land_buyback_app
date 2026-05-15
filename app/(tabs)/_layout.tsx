@@ -111,11 +111,7 @@ export default function TabLayout() {
         options={{
           headerShown: true,
           headerTitle: () => (
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
+            <Text className="text-2xl font-medium text-white font-quickMedium">
               Add Property
             </Text>
           ),
