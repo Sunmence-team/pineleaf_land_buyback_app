@@ -25,7 +25,7 @@ function RootLayoutNav() {
     async function setInitialRoute() {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.push("/(screens)/profile/supportScreen")
+        router.push("/(tabs)")
       } catch (e) {
         console.error(
           "Error reading onboarding status, defaulting to onboarding:",
