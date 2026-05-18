@@ -1,25 +1,19 @@
-import { AppText } from '@/components/AppText';
-import { View, Text, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { assets } from "@/assets/assets";
+import { Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <SafeAreaView style={styles.container}>
-      <AppText>Home Page</AppText>
+    <SafeAreaView>
+      <View className="flex item-center justify-between p-10">
+        <View className="flex flex-col bg-tertiary w-20 h-20 rounded-full">
+          <Image
+            source={assets.avatar}
+            alt="profile-avatar"
+            className="w-full h-full object-contain"
+          />
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#F4F6F1',
-  },
-  title: {
-    fontSize: 28,
-    marginBottom: 10
-  },
-});
