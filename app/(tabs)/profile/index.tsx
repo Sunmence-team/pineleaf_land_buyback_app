@@ -1,9 +1,16 @@
 import { assets } from "@/assets/assets";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { router } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const ProfileCard = () => {
@@ -46,18 +53,86 @@ const ProfileScreen = () => {
           </View>
         </View>
 
+    
         <View style={styles.menuContainer}>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push("/profile/editScreen")}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 20 }}
           >
-            <View style={styles.menuLeft}>
-              <FontAwesome5 name="user" size={24} color="black" />
-              <Text style={styles.menuText}>Edit profile</Text>
-            </View>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/editScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <FontAwesome5 name="user" size={24} color="black" />
+                <Text style={styles.menuText}>Edit profile</Text>
+              </View>
 
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/bankDetailsScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <Feather name="credit-card" size={22} color="#111" />
+
+                <View>
+                  <Text style={styles.menuText}>Bank details</Text>
+                  <Text style={styles.subText}>434***</Text>
+                </View>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/passwordChangeScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <AntDesign name="lock" size={22} color="#111" />
+                <Text style={styles.menuText}>Security</Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/documentsPreparationScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Ionicons name="document-outline" size={22} color="#111" />
+                <Text style={styles.menuText}>Document</Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/supportScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <MaterialCommunityIcons name="headset" size={22} color="#111" />
+                <Text style={styles.menuText}>Support</Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </View>
     </SafeAreaView>
@@ -71,6 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F4F6F1",
   },
+
   secondContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -80,19 +156,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#111",
   },
 
   profileCard: {
@@ -141,7 +204,6 @@ const styles = StyleSheet.create({
 
   smallTitle: {
     fontSize: 20,
-    color: "",
     marginBottom: 8,
     fontFamily: " quickSemiBold",
   },
@@ -181,12 +243,14 @@ const styles = StyleSheet.create({
   },
 
   menuContainer: {
+    flex: 1,
     backgroundColor: "white",
     marginBottom: 20,
     borderRadius: 15,
     paddingTop: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
+    overflow: "hidden",
   },
 
   menuItem: {
@@ -213,5 +277,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "#777",
     fontSize: 14,
+  },
+
+  horizontalLine: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+    width: "90%",
+    marginLeft: 14,
   },
 });

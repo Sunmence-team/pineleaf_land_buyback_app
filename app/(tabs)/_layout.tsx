@@ -93,7 +93,6 @@ export default function TabLayout() {
               Properties
             </Text>
           ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="golf-outline"
@@ -129,7 +128,6 @@ export default function TabLayout() {
               <Feather name="chevron-left" size={28} />
             </Pressable>
           ),
-          headerTitleAlign: "center",
           tabBarShowLabel: false,
           tabBarLabel: () => null,
           tabBarIconStyle: {
@@ -179,7 +177,6 @@ export default function TabLayout() {
           // headerRight: () => (
           //   <ReferralLevelDropdown />
           // ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Feather
               name="alert-triangle"
@@ -205,7 +202,6 @@ export default function TabLayout() {
               Profile
             </Text>
           ),
-          headerTitleAlign: "center",
           headerLeft: () => null,
           tabBarIcon: ({ focused }) => (
             <MaterialIcons

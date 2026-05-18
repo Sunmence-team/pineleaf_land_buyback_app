@@ -1,6 +1,6 @@
 import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type NotificationType = {
@@ -60,7 +60,7 @@ const EmptyComponent = () => {
       <AppText style={styles.titleNote}>Your notifications live here</AppText>
 
       <AppText style={styles.textNote}>
-        You'll see updates about your properties and buyback progress here.
+        You will see updates about your properties and buyback progress here.
       </AppText>
     </View>
   );
@@ -69,7 +69,7 @@ const EmptyComponent = () => {
 const Alerts = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity>
           <Ionicons name="chevron-back" size={26} color="#000" />
         </TouchableOpacity>
@@ -77,7 +77,7 @@ const Alerts = () => {
         <AppText style={styles.headerTitle}>Alerts</AppText>
 
         <View style={{ width: 24 }} />
-      </View>
+      </View> */}
 
       <View style={styles.bigContainer}>
         <FlatList
@@ -103,7 +103,7 @@ export default Alerts;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "#F4F6F1",
   },
 
   header: {
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     marginHorizontal: 20,
-    marginTop: 25,
     marginBottom: 20,
     borderRadius: 35,
     paddingHorizontal: 16,
