@@ -50,8 +50,8 @@ export default function TabLayout() {
             {children}
           </Text>
         ),
-        tabBarItemStyle: { 
-          justifyContent: 'center' 
+        tabBarItemStyle: {
+          justifyContent: 'center'
         },
         headerTitleAlign: "center"
       }}
@@ -85,7 +85,7 @@ export default function TabLayout() {
           title: "Properties",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Properties</Text>
+            <Text className="text-2xl font-medium text-black">Properties</Text>
           ),
           headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
@@ -105,7 +105,7 @@ export default function TabLayout() {
         options={{
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white font-quickMedium">
+            <Text className="text-2xl font-medium text-black font-quickMedium">
               Add Property
             </Text>
           ),
@@ -158,7 +158,7 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white text-center">Alerts</Text>
+            <Text className="text-2xl font-medium text-black text-center">Alerts</Text>
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />

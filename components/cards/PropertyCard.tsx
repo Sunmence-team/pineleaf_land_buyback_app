@@ -1,17 +1,23 @@
+import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
 interface PropertyCardProps {
+  id: number;
   title: string;
   status: StatusType;
   date: string;
   plots: string | number;
   price: string | number;
   totalPrice: string | number;
+
+  propertyId: string;
+  offerId?: string;
+  onPress: () => void;
+
   children?: React.ReactNode;
-  onPress?: () => void;
 }
 
 const statusStyles = {
@@ -53,6 +59,7 @@ const getButtonText = (status: StatusType) => {
 };
 
 export default function PropertyCard({
+  id,
   title,
   status,
   date,
@@ -62,6 +69,20 @@ export default function PropertyCard({
   children,
   onPress,
 }: PropertyCardProps) {
+
+  const [openModal, setOpenModal] = React.useState(false)
+
+  const logic = (status: StatusType) => {
+    if (status === "eligible") {
+      setOpenModal(true);
+    }
+    else if (status === "not_eligible" || status === "pending" || status === "completed") {
+      router.push(`/view/${id}`);
+    }
+    else if (status === "offer_sent" ) {
+      router.push(`/offer/${id}`);
+    }
+  };
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -95,13 +116,13 @@ export default function PropertyCard({
       <View className="flex-row justify-between mb-2">
         <Text className="text-sm text-gray-600">₦{price}/plot </Text>
         <Text className="text-sm font-medium text-gray-800">
-          Total price ₦{price}
+          Total price ₦{totalPrice}
         </Text>
       </View>
 
       <TouchableOpacity
         className="bg-secondary border border-gray-300 rounded-lg py-3 mt-4 items-center"
-        onPress={onPress}
+        onPress={() => logic(status)}
       >
         <Text className="font-semibold">
           {getButtonText(status)}

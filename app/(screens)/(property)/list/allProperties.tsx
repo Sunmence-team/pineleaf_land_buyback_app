@@ -14,6 +14,7 @@ const AllProperties = () => {
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}
+            id={property.id}
             title={property.title}
             status={property.status}
             date={property.date}
