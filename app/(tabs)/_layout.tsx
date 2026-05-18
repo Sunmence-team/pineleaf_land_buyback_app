@@ -53,7 +53,8 @@ export default function TabLayout() {
         tabBarItemStyle: { 
           justifyContent: 'center' 
         },
-        headerTitleAlign: "center"
+        headerTitleAlign: "center",
+        headerShown:false
       }}
     >
       {/* Home */}
@@ -103,7 +104,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="addproperty/index"
         options={{
-          headerShown: true,
           headerTitle: () => (
             <Text className="text-2xl font-medium text-white font-quickMedium">
               Add Property
