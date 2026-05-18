@@ -1,6 +1,10 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { plotDetails, purchaseProperty } from "@/lib/data";
+import TrackCard from "@/components/cards/TrackCard";
+
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -14,7 +18,11 @@ interface PropertyCardProps {
   totalPrice: string | number;
 }
 
-const propertyDetails = ({ status }: { status: StatusType }) => {
+const PropertyDetails = ({ status }: { status: StatusType }) => {
+
+  const [image, setImage] = React.useState<string | null>(null);
+  const [uploading, setUploading] = React.useState(false);
+  const [uploaded, setUploaded] = React.useState(false);
 
   const statusStyles = {
     eligible: "bg-fadedGreen text-primary",
@@ -32,17 +40,54 @@ const propertyDetails = ({ status }: { status: StatusType }) => {
     pending: 'Pending'
   };
 
-  const plotDetails = [
-    {
-      label: "Price/Plot", value: "₦2.4m"
-    },
-    {
-      label: "Total Value", value: "₦8.4m"
-    },
-    {
-      label: "Plots", value: "3 Plots"
+  // PICK IMAGE
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+
+      uploadImage(result.assets[0]);
     }
-  ]
+  };
+
+  // UPLOAD IMAGE
+  const uploadImage = async (file: any) => {
+    setUploading(true);
+
+    const formData = new FormData();
+
+    formData.append("document", {
+      uri: file.uri,
+      name: "allocation.jpg",
+      type: "image/jpeg",
+    } as any);
+
+    try {
+      const res = await fetch("YOUR_API_URL", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const data = await res.json();
+
+      setUploaded(true);
+      console.log(data);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+
 
   return (
     <ScrollView className="flex-1 border border-gray-200 bg-white rounded-lg p-4 w-full">
@@ -79,14 +124,45 @@ const propertyDetails = ({ status }: { status: StatusType }) => {
         <Text>Request Buyback</Text>
       </TouchableOpacity>
 
-      <View className="mt-5 border border-gray-200 rounded-lg p-4">
-        <View className="flex justify-center border-b border-gray200">
-          <Text className="text-lg font-bold">Name</Text>
-          <Text>Otito</Text>
+      <View className="mt-5 border border-gray-300 rounded-lg p-4">
+        {
+          purchaseProperty.map((detail, index) => (
+            <View key={index} className="flex-row justify-between mb-3  border-b border-gray-100 pb-3">
+              <Text className="text-lg font-medium">{detail.label}</Text>
+              <Text className="text-gray-800">{detail.value}</Text>
+            </View>
+          ))}
+      </View>
+
+      <View className="mt-5 border border-gray-300 rounded-lg p-4">
+        <Text className="text-lg font-semibold ">Documents</Text>
+
+        <View className="bg-secondary/40 rounded-lg flex-row justify-between items-center p-4 mt-3">
+          <View className="rounded-full p-2 bg-secondary">
+            <Ionicons name="document-text-outline" size={24} color="#4B5563" />
+          </View>
+          <Text>Allocation letter</Text>
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="checkmark-circle" size={24} color="#154A22" />
+            <Text>{uploaded ? "Uploaded" : "No document selected"}</Text>
+          </View>
+
         </View>
+        <Pressable
+          onPress={pickImage}
+          className="border-2 border-dashed border-gray-300 bg-secondary rounded-lg p-4 h-16 items-center justify-center mt-5"
+        >
+          <Text>
+            {uploading ? "Uploading..." : "Upload more Document"}
+          </Text>
+        </Pressable>
+      </View>
+
+      <View>
+        <TrackCard />
       </View>
     </ScrollView>
   );
 };
 
-export default propertyDetails;
+export default PropertyDetails;

@@ -1,3 +1,12 @@
+
+type TimelineStatus = "completed" | "active" | "upcoming";
+
+interface TimelineItemProps {
+  title: string;
+  subtitle: string;
+  status: TimelineStatus;
+}
+
 export const properties = [
   {
     id: 1,
@@ -43,5 +52,81 @@ export const properties = [
     plots: 5,
     price: "5M",
     totalPrice: "60M",
+  },
+];
+
+export const plotDetails = [
+    {
+      label: "Price/Plot", value: "₦2.4m"
+    },
+    {
+      label: "Total Value", value: "₦8.4m"
+    },
+    {
+      label: "Plots", value: "3 Plots"
+    }
+  ]
+
+  export const purchaseProperty = [
+    {
+      label: "Name", value: "Otito"
+    },
+    {
+
+      label: "Purchase date", value: "07-06-2025"
+    },
+    {
+      label: "Purchse type", value: "Discount"
+    },
+    {
+      label: "Plot numbers", value: "76"
+    },
+  ]
+
+  export const timelineData: TimelineItemProps[] = [
+  {
+    title: "Property Added",
+    subtitle: "12 Apr 2025",
+    status: "completed",
+  },
+  {
+    title: "Eligibility Reached",
+    subtitle: "12 Apr 2025",
+    status: "completed",
+  },
+  {
+    title: "Buyback Requested",
+    subtitle: "Tap button above to begin",
+    status: "active",
+  },
+  {
+    title: "Offer Sent",
+    subtitle: "Upcoming",
+    status: "upcoming",
+  },
+  {
+    title: "Offer Accepted",
+    subtitle: "Upcoming",
+    status: "upcoming",
+  },
+  {
+    title: "Documents Submitted",
+    subtitle: "Upcoming",
+    status: "upcoming",
+  },
+  {
+    title: "Documents Verified",
+    subtitle: "Upcoming",
+    status: "upcoming",
+  },
+  {
+    title: "Payment Processing",
+    subtitle: "Upcoming",
+    status: "upcoming",
+  },
+  {
+    title: "Paid",
+    subtitle: "Upcoming",
+    status: "upcoming",
   },
 ];
