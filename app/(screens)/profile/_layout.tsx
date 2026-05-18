@@ -8,18 +8,32 @@ export default function ProfileLayout () {
     <Stack
       screenOptions={{
         headerLeft: () => (
-          <Pressable
-            onPress={() =>router.back()}
-          >
+          <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
       }}
     >
-      <Stack.Screen name="editScreen" options={{ title: "Profile" }}></Stack.Screen>
-      <Stack.Screen name="bankDetailsScreen"></Stack.Screen>
-      <Stack.Screen name="passwordChangeScreen"></Stack.Screen>
-      <Stack.Screen name="supportScreen"></Stack.Screen>
+      <Stack.Screen
+        name="editScreen"
+        options={{ title: "Profile" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="bankDetailsScreen"
+        options={{ title: "Bank details" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="passwordChangeScreen"
+        options={{ title: "Change password" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="supportScreen"
+        options={{ title: "Support" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="supporttabs"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
     </Stack>
   );
 }
