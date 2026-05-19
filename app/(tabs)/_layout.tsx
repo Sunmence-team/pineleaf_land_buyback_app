@@ -2,9 +2,9 @@ import { useBreakpoints } from "@/hooks/useBreakpoints";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router, Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import React from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 
 export default function TabLayout() {
   const { isSmaller } = useBreakpoints();
@@ -51,9 +51,13 @@ export default function TabLayout() {
           </Text>
         ),
         tabBarItemStyle: {
+<<<<<<< HEAD
           justifyContent: 'center'
+=======
+          justifyContent: "center",
+>>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
         },
-        headerTitleAlign: "center"
+        headerTitleAlign: "center",
       }}
     >
       {/* Home */}
@@ -76,6 +80,7 @@ export default function TabLayout() {
               opacity={focused ? 1 : 0.3}
             />
           ),
+          headerShown: false,
         }}
       />
       {/* Properties */}
@@ -83,11 +88,20 @@ export default function TabLayout() {
         name="properties/index"
         options={{
           title: "Properties",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
+<<<<<<< HEAD
             <Text className="text-2xl font-medium text-black">Properties</Text>
+=======
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Properties
+            </Text>
+>>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
           ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="golf-outline"
@@ -103,32 +117,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="addproperty/index"
         options={{
-          headerShown: true,
-          headerTitle: () => (
-            <Text className="text-2xl font-medium text-black font-quickMedium">
-              Add Property
-            </Text>
-          ),
-          headerLeft: () => (
-            <Pressable
-              onPress={() => router.back()}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.7 : 1,
-              })}
-            >
-              <Feather name="chevron-left" size={28} />
-            </Pressable>
-          ),
-          headerTitleAlign: "center",
+          headerTitle: () => null,
           tabBarShowLabel: false,
           tabBarLabel: () => null,
-          tabBarIconStyle: {
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: Platform.OS === "ios" ? 0 : -5,
-          },
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View
               style={{
@@ -156,14 +148,23 @@ export default function TabLayout() {
         name="alerts/index"
         options={{
           title: "Alerts",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
+<<<<<<< HEAD
             <Text className="text-2xl font-medium text-black text-center">Alerts</Text>
+=======
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Alerts
+            </Text>
+>>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
           // ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Feather
               name="alert-triangle"
@@ -179,11 +180,16 @@ export default function TabLayout() {
         name="profile/index"
         options={{
           title: "Profile",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Profile</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Profile
+            </Text>
           ),
-          headerTitleAlign: "center",
           headerLeft: () => null,
           tabBarIcon: ({ focused }) => (
             <MaterialIcons

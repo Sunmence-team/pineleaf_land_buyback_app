@@ -25,7 +25,7 @@ function RootLayoutNav() {
     async function setInitialRoute() {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.push("/(tabs)/properties")
+        router.push("/(tabs)")
       } catch (e) {
         console.error(
           "Error reading onboarding status, defaulting to onboarding:",
@@ -69,6 +69,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider className="font-quickRegular">
+      
       <StatusBar
         backgroundColor={"transparent"}
         translucent={true}

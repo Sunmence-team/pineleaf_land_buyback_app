@@ -10,7 +10,8 @@ module.exports = {
         secondary: "#F4F6F1",
         tertiary: "#B4E5BC",
         fadedGreen: '#E8EFEA',
-        offerText: '#025FD6'
+        offerText: '#025FD6',
+        neutral: "#E8EFEA",
       },
       fontFamily: {
         quickLight: ["quickLight"],
