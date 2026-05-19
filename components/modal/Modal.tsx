@@ -42,7 +42,7 @@ const Modal = ({
           <View style={styles.container}>
             {showClose && (
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <View className="flex-1 bg-gray-100 w-10 h-10 items-center justify-center rounded-full">
+                <View className="flex-1 bg-secondary w-10 h-10 items-center justify-center rounded-full">
                   {/* Simple close icon replacement */}
                  <Ionicons name="close-outline" size={22} />
                 </View>

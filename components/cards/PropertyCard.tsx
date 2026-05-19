@@ -1,6 +1,9 @@
 import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Modal from "../modal/Modal";
+import { Image } from "react-native";
+import { assets } from "@/assets/assets";
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -79,7 +82,7 @@ export default function PropertyCard({
     else if (status === "not_eligible" || status === "pending" || status === "completed") {
       router.push(`/view/${id}`);
     }
-    else if (status === "offer_sent" ) {
+    else if (status === "offer_sent") {
       router.push(`/offer/${id}`);
     }
   };
@@ -129,8 +132,20 @@ export default function PropertyCard({
         </Text>
       </TouchableOpacity>
 
+      <>
+        <Modal onClose={() => setOpenModal(false)} visible={openModal}>
+          <Image
+            source={assets.mark}
+            resizeMode="cover"
+            className="w-full h-[80px] rounded-t-[20px]  "
+          />
+
+        </Modal>
+      </>
+
       {/* Custom children (buttons, extra actions, etc.) */}
       {children && <View className="mt-2">{children}</View>}
     </TouchableOpacity>
+
   );
 }

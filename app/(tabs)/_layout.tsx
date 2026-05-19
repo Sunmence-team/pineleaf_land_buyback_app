@@ -51,11 +51,7 @@ export default function TabLayout() {
           </Text>
         ),
         tabBarItemStyle: {
-<<<<<<< HEAD
-          justifyContent: 'center'
-=======
           justifyContent: "center",
->>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
         },
         headerTitleAlign: "center",
       }}
@@ -90,9 +86,6 @@ export default function TabLayout() {
           title: "Properties",
           headerShown: false,
           headerTitle: () => (
-<<<<<<< HEAD
-            <Text className="text-2xl font-medium text-black">Properties</Text>
-=======
             <Text
               style={{
                 fontSize: 20,
@@ -100,7 +93,6 @@ export default function TabLayout() {
             >
               Properties
             </Text>
->>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
           ),
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -150,9 +142,6 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: false,
           headerTitle: () => (
-<<<<<<< HEAD
-            <Text className="text-2xl font-medium text-black text-center">Alerts</Text>
-=======
             <Text
               style={{
                 fontSize: 20,
@@ -160,7 +149,6 @@ export default function TabLayout() {
             >
               Alerts
             </Text>
->>>>>>> b4ffb0c449b2eff03b240ede29b5a1ddaae63a0e
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
