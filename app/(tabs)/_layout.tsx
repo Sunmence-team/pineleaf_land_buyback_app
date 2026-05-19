@@ -50,11 +50,10 @@ export default function TabLayout() {
             {children}
           </Text>
         ),
-        tabBarItemStyle: { 
-          justifyContent: 'center' 
+        tabBarItemStyle: {
+          justifyContent: "center",
         },
         headerTitleAlign: "center",
-        headerShown:false
       }}
     >
       {/* Home */}
@@ -86,9 +85,14 @@ export default function TabLayout() {
           title: "Properties",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Properties</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Properties
+            </Text>
           ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="golf-outline"
@@ -119,7 +123,6 @@ export default function TabLayout() {
               <Feather name="chevron-left" size={28} />
             </Pressable>
           ),
-          headerTitleAlign: "center",
           tabBarShowLabel: false,
           tabBarLabel: () => null,
           tabBarIconStyle: {
@@ -158,12 +161,17 @@ export default function TabLayout() {
           title: "Alerts",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white text-center">Alerts</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Alerts
+            </Text>
           ),
           // headerRight: () => (
           //   <ReferralLevelDropdown />
           // ),
-          headerTitleAlign: "left",
           tabBarIcon: ({ focused }) => (
             <Feather
               name="alert-triangle"
@@ -181,9 +189,14 @@ export default function TabLayout() {
           title: "Profile",
           headerShown: true,
           headerTitle: () => (
-            <Text className="text-2xl font-medium text-white">Profile</Text>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Profile
+            </Text>
           ),
-          headerTitleAlign: "center",
           headerLeft: () => null,
           tabBarIcon: ({ focused }) => (
             <MaterialIcons
