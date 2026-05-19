@@ -90,10 +90,10 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
 
 
   return (
-    <ScrollView className="flex-1 border border-gray-200 bg-white rounded-lg p-4 w-full">
+    <ScrollView className="flex-1 bg-white  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
       <View className="flex-row justify-between">
         <View className="mb-4">
-          <Text className="text-xl font-bold mb-2">Pineleaf Garden Estate</Text>
+          <Text className="text-xl font-medium mb-2">Pineleaf Garden Estate</Text>
           <Text>3 plots . Actual price. Jan 2022</Text>
         </View>
 
