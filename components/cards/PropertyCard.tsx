@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Modal from "../modal/Modal";
 import { Image } from "react-native";
 import { assets } from "@/assets/assets";
+import CustomModal from "../modal/CustomModal";
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -131,17 +132,6 @@ export default function PropertyCard({
           {getButtonText(status)}
         </Text>
       </TouchableOpacity>
-
-      <>
-        <Modal onClose={() => setOpenModal(false)} visible={openModal}>
-          <Image
-            source={assets.mark}
-            resizeMode="cover"
-            className="w-full h-[80px] rounded-t-[20px]  "
-          />
-
-        </Modal>
-      </>
 
       {/* Custom children (buttons, extra actions, etc.) */}
       {children && <View className="mt-2">{children}</View>}
