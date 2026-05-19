@@ -46,11 +46,10 @@ interface StepProgressProps {
 
 const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
   return (
-    <View className="flex-row items-center justify-between px-1 py-4">
+    <View className="flex-row items-center justify-between px- py-4 ">
       {steps.map((step, index) => (
-        <View key={step.label} className="flex-1 items-center">
+        <View key={step.label} className="flex-1 ">
           <View className="flex-row items-center w-full">
-            {/* Step Circle - Changes color based on status */}
             <View
               className={`h-10 w-10 rounded-full items-center justify-center border-2 ${
                 step.status === "done"
@@ -62,30 +61,20 @@ const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
             >
               {step.status === "done" ? (
                 <Ionicons name="checkmark" size={20} color="white" />
-              ) : (
-                <AppText
-                  className={`font-bold text-sm ${
-                    step.status === "current" ? "text-primary" : "text-gray-400"
-                  }`}
-                >
-                  {index + 1}
-                </AppText>
-              )}
+              ) :null}
             </View>
 
-            {/* Connecting Line - Green if previous step is done, gray if not */}
             {index !== steps.length - 1 && (
               <View
-                className={`flex-1 h-0.5 mx-2 ${
+                className={`flex-1 h-0.5 ${
                   step.status === "done" ? "bg-primary" : "bg-gray-300"
                 }`}
               />
             )}
           </View>
 
-          {/* Step Label - Darker text for current step */}
           <AppText
-            className={`mt-3 text-xs font-medium text-center ${
+            className={`mt-3 text-xs font-medium  ${
               step.status === "current" ? "text-gray-900" : "text-gray-500"
             }`}
           >
