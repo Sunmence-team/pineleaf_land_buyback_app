@@ -1,78 +1,77 @@
+import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const contactScreen = () => {
+const ContactScreen = () => {
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.secondContainer}>
-          <View style={styles.card}>
-            <Text style={styles.heading}>Need help?</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.secondContainer}>
+        <View style={styles.card}>
+          <AppText style={styles.heading}>Need help?</AppText>
 
-            <Text style={styles.description}>
-              If you have any questions about your buyback process or document
-              submission, our support team is here to help.
-            </Text>
+          <AppText style={styles.description}>
+            If you have any questions about your buyback process or document
+            submission, our support team is here to help.
+          </AppText>
 
-            <View style={styles.supportCard}>
-              <View style={styles.item}>
-                <View style={styles.iconContainer}>
-                  <Ionicons name="call-outline" size={26} color="#111" />
-                </View>
-
-                <View style={styles.textContainer}>
-                  <Text style={styles.title}>Call Support</Text>
-                  <Text style={styles.subText}>09083383883</Text>
-                </View>
+          <View style={styles.supportCard}>
+            <View style={styles.item}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="call-outline" size={26} color="#111" />
               </View>
 
-              <View style={styles.item}>
-                <View style={styles.iconContainer}>
-                  <Ionicons name="mail-outline" size={26} color="#111" />
-                </View>
+              <View style={styles.textContainer}>
+                <AppText style={styles.title}>Call Support</AppText>
 
-                <View style={styles.textContainer}>
-                  <Text style={styles.title}>Email Support</Text>
+                <AppText style={styles.subText}>09083383883</AppText>
+              </View>
+            </View>
 
-                  <Text style={styles.subText}>
-                    Send us your questions and we’ll respond as soon as
-                    possible.
-                  </Text>
-
-                  <Text style={styles.email}>
-                    pineleafestatebuyback@gmail.com
-                  </Text>
-                </View>
+            <View style={styles.item}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="mail-outline" size={26} color="#111" />
               </View>
 
-              <View style={styles.item}>
-                <View style={styles.iconContainer}>
-                  <Ionicons
-                    name="chatbubble-ellipses-outline"
-                    size={26}
-                    color="#111"
-                  />
-                </View>
+              <View style={styles.textContainer}>
+                <AppText style={styles.title}>Email Support</AppText>
 
-                <View style={styles.textContainer}>
-                  <Text style={styles.title}>Live Chat</Text>
+                <AppText style={styles.subText}>
+                  Send us your questions and we’ll respond as soon as possible.
+                </AppText>
 
-                  <Text style={styles.subText}>
-                    Get quick answers and real-time assistance.
-                  </Text>
-                </View>
+                <AppText style={styles.email}>
+                  pineleafestatebuyback@gmail.com
+                </AppText>
+              </View>
+            </View>
+
+            <View style={styles.item}>
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name="chatbubble-ellipses-outline"
+                  size={26}
+                  color="#111"
+                />
+              </View>
+
+              <View style={styles.textContainer}>
+                <AppText style={styles.title}>Live Chat</AppText>
+
+                <AppText style={styles.subText}>
+                  Get quick answers and real-time assistance.
+                </AppText>
               </View>
             </View>
           </View>
         </View>
-      </SafeAreaView>
-    </>
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default contactScreen;
+export default ContactScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -82,9 +81,9 @@ const styles = StyleSheet.create({
 
   secondContainer: {
     backgroundColor: "white",
-    marginHorizontal: 20,
-    borderRadius: 35,
-    padding: 18,
+    marginHorizontal: 16,
+    borderRadius: 30,
+    padding: 16,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -94,20 +93,27 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1,
     borderColor: "#E4E4E4",
-    padding: 14,
+    padding: 16,
   },
 
   heading: {
     fontSize: 28,
     color: "#111",
     marginBottom: 16,
+    fontFamily: "quickSemiBold",
   },
 
   description: {
-    fontSize: 18,
-    lineHeight: 25,
-    color: "#222",
-    marginBottom: 24,
+    marginBottom: 30,
+    fontSize: Platform.select({
+      ios: 20,
+      android: 16,
+    }),
+    color: "black",
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 23,
+    }),
   },
 
   supportCard: {
@@ -124,7 +130,7 @@ const styles = StyleSheet.create({
   },
 
   iconContainer: {
-    marginRight: 16,
+    marginRight: 14,
     marginTop: 4,
   },
 
@@ -133,20 +139,35 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 20,
     color: "#111",
     marginBottom: 8,
+    fontFamily: "quickSemiBold",
   },
 
   subText: {
-    fontSize: 18,
-    lineHeight: 18,
-    color: "#333",
+    fontSize: Platform.select({
+      ios: 19,
+      android: 15,
+    }),
+    color: "#555555",
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 20,
+    }),
   },
 
   email: {
-    fontSize: 18,
     color: "#111",
-    marginTop: 8,
+    marginTop: 10,
+    fontSize: Platform.select({
+      ios: 16,
+      android: 12,
+    }),
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 20,
+    }),
+    fontFamily: "quickSemiBold",
   },
 });

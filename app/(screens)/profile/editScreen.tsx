@@ -1,8 +1,9 @@
 import { ProfileCard } from "@/app/(tabs)/profile";
+import { AppText } from "@/components/AppText";
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
+  Platform,
   TextInput,
   TouchableOpacity,
   View,
@@ -20,7 +21,7 @@ const EditScreen = () => {
         <ProfileCard />
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>First name</Text>
+          <AppText style={styles.label}>First name</AppText>
           <TextInput
             placeholder="First name"
             placeholderTextColor="black"
@@ -31,7 +32,7 @@ const EditScreen = () => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Last name</Text>
+          <AppText style={styles.label}>Last name</AppText>
           <TextInput
             placeholder="Last name"
             placeholderTextColor="black"
@@ -43,7 +44,7 @@ const EditScreen = () => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email address</Text>
+          <AppText style={styles.label}>Email address</AppText>
           <TextInput
             placeholder="Email address"
             placeholderTextColor="black"
@@ -55,7 +56,7 @@ const EditScreen = () => {
         </View>
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Confirm changes</Text>
+          <AppText style={styles.buttonText}>Confirm changes</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -71,12 +72,17 @@ const styles = StyleSheet.create({
   },
 
   secondContainer: {
-    flex: 1,
+    height: Platform.select({
+      ios: "90%",
+      android: "98%",
+    }),
+    marginBottom: Platform.select({
+      android: "100%",
+    }),
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
     paddingHorizontal: 16,
-    paddingTop: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -103,7 +109,10 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: "#144520",
-    height: 60,
+    height: Platform.select({
+      ios: 60,
+      android: 53,
+    }),
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",

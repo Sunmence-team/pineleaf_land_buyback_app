@@ -1,6 +1,7 @@
 import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList, StyleSheet, View } from "react-native";
+import React from "react";
+import { FlatList, Platform, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type NotificationType = {
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
+    paddingTop: Platform.OS === "android" ? 30 : 0,
   },
 
   header: {
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     fontSize: 25,
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
   },
 
   bigContainer: {
@@ -153,21 +155,30 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 18,
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
     flex: 1,
     color: "#000",
+    fontSize: Platform.select({
+      ios: 18,
+      android: 14,
+    }),
   },
 
   time: {
-    fontSize: 15,
     color: "black",
-    marginRight: 140,
+    marginRight: Platform.select({
+      ios: 132,
+      android: 100,
+    }),
+    fontSize: Platform.select({
+      ios: 15,
+      android: 15,
+    }),
   },
 
   message: {
-    fontSize: 16,
-    color: "BLACK",
+    fontSize: 14,
+    color: "black",
     lineHeight: 22,
     marginTop: 2,
   },
@@ -190,7 +201,7 @@ const styles = StyleSheet.create({
 
   titleNote: {
     fontSize: 24,
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
     marginTop: 20,
     textAlign: "center",
   },
