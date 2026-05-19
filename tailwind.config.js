@@ -9,6 +9,7 @@ module.exports = {
         primary: "#154A22",
         secondary: "#F4F6F1",
         tertiary: "#B4E5BC",
+        neutral: "#E8EFEA",
       },
       fontFamily: {
         quickLight: ["quickLight"],
