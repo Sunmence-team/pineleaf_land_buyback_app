@@ -1,10 +1,10 @@
+import { AppText } from "@/components/AppText";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import React from "react";
-
-const documentsPreparationScreen = () => {
+const DocumentsPreparationScreen = () => {
   const documents = [
     {
       title: "Deed of assignment",
@@ -27,50 +27,50 @@ const documentsPreparationScreen = () => {
       description: "Any other site-specific or legal papers requested",
     },
   ];
+
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.secondContainer}>
-          <View style={styles.thirdContainer}>
-            <View>
-              <Text style={styles.headerText}>
-                Please provide the following documents at your selected office
-                to complete your buyback process.
-              </Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.secondContainer}>
+        <View style={styles.thirdContainer}>
+          <View>
+            <AppText style={styles.headerText}>
+              Please provide the following documents at your selected office to
+              complete your buyback process.
+            </AppText>
 
-              <View style={styles.innerCard}>
-                <Text style={styles.requiredText}>Required documents</Text>
+            <View style={styles.innerCard}>
+              <AppText style={styles.requiredText}>Required documents</AppText>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  {documents.map((item, index) => (
-                    <View key={index} style={styles.documentItem}>
-                      <View style={styles.row}>
-                        <MaterialIcons
-                          name="check-box-outline-blank"
-                          size={30}
-                          color="black"
-                        />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {documents.map((item, index) => (
+                  <View key={index} style={styles.documentItem}>
+                    <View style={styles.row}>
+                      <MaterialIcons
+                        name="check-box-outline-blank"
+                        size={30}
+                        color="black"
+                      />
 
-                        <View style={styles.textContainer}>
-                          <Text style={styles.title}>{item.title}</Text>
-                          <Text style={styles.description}>
-                            {item.description}
-                          </Text>
-                        </View>
+                      <View style={styles.textContainer}>
+                        <AppText style={styles.title}>{item.title}</AppText>
+
+                        <AppText style={styles.description}>
+                          {item.description}
+                        </AppText>
                       </View>
                     </View>
-                  ))}
-                </ScrollView>
-              </View>
+                  </View>
+                ))}
+              </ScrollView>
             </View>
           </View>
         </View>
-      </SafeAreaView>
-    </>
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default documentsPreparationScreen;
+export default DocumentsPreparationScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -96,9 +96,15 @@ const styles = StyleSheet.create({
   },
 
   headerText: {
-    fontSize: 20,
+    fontSize: Platform.select({
+      ios: 20,
+      android: 16,
+    }),
     color: "black",
-    lineHeight: 27,
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 23,
+    }),
   },
 
   innerCard: {
@@ -107,11 +113,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 18,
     marginTop: 25,
-    // backgroundColor: "#F4F6F1",
   },
 
   requiredText: {
-    fontSize: 24,
+    fontSize: Platform.select({
+      ios: 24,
+      android: 18,
+    }),
+    fontFamily: "quickSemiBold",
     color: "#111111",
     marginBottom: 20,
   },
@@ -131,15 +140,24 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
+    fontSize: Platform.select({
+      ios: 20,
+      android: 16,
+    }),
     color: "#111111",
-    marginBottom: 6,
-    fontFamily: " quickSemiBold",
+    marginBottom: 4,
+    fontFamily: "quickSemiBold",
   },
 
   description: {
-    fontSize: 18,
+    fontSize: Platform.select({
+      ios: 18,
+      android: 14,
+    }),
     color: "#555555",
-    lineHeight: 26,
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 20,
+    }),
   },
 });

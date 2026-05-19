@@ -1,13 +1,19 @@
 import { assets } from "@/assets/assets";
-import { AntDesign, Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { AppText } from "@/components/AppText";
 import { router } from "expo-router";
+import {
+  AntDesign,
+  Feather,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import React from "react";
 import {
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -18,8 +24,8 @@ export const ProfileCard = () => {
     <View style={styles.profileCard}>
       <Image source={assets.profileImage} style={styles.profileImage} />
 
-      <Text style={styles.name}>Otitio Nzekwisi</Text>
-      <Text style={styles.email}>otita@gmail.com</Text>
+      <AppText style={styles.name}>Otitio Nzekwisi</AppText>
+      <AppText style={styles.email}>otita@gmail.com</AppText>
     </View>
   );
 };
@@ -34,13 +40,16 @@ const ProfileScreen = () => {
           <View style={styles.smallHeader}>
             <View>
               <View style={styles.smallFlex}>
-                <Text style={styles.smallTitle}>Bank details missing</Text>
+                <AppText style={styles.smallTitle}>
+                  Bank details missing
+                </AppText>
+
                 <AntDesign name="plus" size={22} color="#000" />
               </View>
 
-              <Text style={styles.smallText}>
+              <AppText style={styles.smallText}>
                 Add your account details to receive buyback payment.
-              </Text>
+              </AppText>
             </View>
           </View>
 
@@ -49,11 +58,10 @@ const ProfileScreen = () => {
               <View style={styles.progressFill} />
             </View>
 
-            <Text style={styles.percent}>76%</Text>
+            <AppText style={styles.percent}>76%</AppText>
           </View>
         </View>
 
-    
         <View style={styles.menuContainer}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -64,8 +72,9 @@ const ProfileScreen = () => {
               onPress={() => router.push("/profile/editScreen")}
             >
               <View style={styles.menuLeft}>
-                <FontAwesome5 name="user" size={24} color="black" />
-                <Text style={styles.menuText}>Edit profile</Text>
+                <FontAwesome5 name="user" size={22} color="#111" />
+
+                <AppText style={styles.menuText}>Edit profile</AppText>
               </View>
 
               <Ionicons name="chevron-forward" size={20} color="black" />
@@ -81,8 +90,9 @@ const ProfileScreen = () => {
                 <Feather name="credit-card" size={22} color="#111" />
 
                 <View>
-                  <Text style={styles.menuText}>Bank details</Text>
-                  <Text style={styles.subText}>434***</Text>
+                  <AppText style={styles.menuText}>Bank details</AppText>
+
+                  <AppText style={styles.subText}>434***</AppText>
                 </View>
               </View>
 
@@ -97,7 +107,8 @@ const ProfileScreen = () => {
             >
               <View style={styles.menuLeft}>
                 <AntDesign name="lock" size={22} color="#111" />
-                <Text style={styles.menuText}>Security</Text>
+
+                <AppText style={styles.menuText}>Security</AppText>
               </View>
 
               <Ionicons name="chevron-forward" size={20} color="black" />
@@ -113,7 +124,8 @@ const ProfileScreen = () => {
             >
               <View style={styles.menuLeft}>
                 <Ionicons name="document-outline" size={22} color="#111" />
-                <Text style={styles.menuText}>Document</Text>
+
+                <AppText style={styles.menuText}>Document</AppText>
               </View>
 
               <Ionicons name="chevron-forward" size={20} color="black" />
@@ -127,7 +139,8 @@ const ProfileScreen = () => {
             >
               <View style={styles.menuLeft}>
                 <MaterialCommunityIcons name="headset" size={22} color="#111" />
-                <Text style={styles.menuText}>Support</Text>
+
+                <AppText style={styles.menuText}>Support</AppText>
               </View>
 
               <Ionicons name="chevron-forward" size={20} color="black" />
@@ -145,6 +158,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
+    paddingTop: Platform.OS === "android" ? 30 : 0,
   },
 
   secondContainer: {
@@ -174,7 +188,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 25,
     color: "black",
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
   },
 
   email: {
@@ -197,22 +211,21 @@ const styles = StyleSheet.create({
 
   smallFlex: {
     flexDirection: "row",
-    gap: 120,
+    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
   },
 
   smallTitle: {
-    fontSize: 20,
+    fontSize: 18,
     marginBottom: 8,
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
   },
 
   smallText: {
     fontSize: 16,
     color: "#45464D",
     lineHeight: 22,
-    width: "80%",
   },
 
   progressWrapper: {
