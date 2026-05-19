@@ -1,5 +1,8 @@
+import Screen1 from "@/components/addpropertiesscreens/screen1";
+import Screen2 from "@/components/addpropertiesscreens/screen2";
 import { AppText } from "@/components/AppText";
 import StepProgress from "@/components/StepProgress";
+import { FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -7,7 +10,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
- * Add Property Screen - Multi-Step Form Wizard
+ * Add Property Screen
  *
  * USAGE GUIDE:
  * ============
@@ -69,23 +72,18 @@ const AddProperty = () => {
   ];
 
   // TODO: Implement your step content rendering
-  // Add form inputs, state management, and logic for each step
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <View className="flex-1 items-center justify-center">
-            <AppText className="text-base text-gray-600">
-              Details Step - Implement here
-            </AppText>
+            <Screen1 />
           </View>
         );
       case 2:
         return (
           <View className="flex-1 items-center justify-center">
-            <AppText className="text-base text-gray-600">
-              Value Step - Implement here
-            </AppText>
+            <Screen2 />
           </View>
         );
       case 3:
@@ -110,47 +108,51 @@ const AddProperty = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* Header with close button and title */}
+    <SafeAreaView className="flex-col justify-between flex-1">
       <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="close" size={24} color="black" />
-        </TouchableOpacity>
+        {currentStep <= 1 ? (
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity>
+            <FontAwesome5
+              name="chevron-left"
+              size={20}
+              color="black"
+              onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
+            />
+          </TouchableOpacity>
+        )}
         <AppText className="text-base font-semibold">Add Property</AppText>
         <View className="w-6" />
       </View>
 
-      {/* Step Progress Indicator - Shows current progress through 4 steps */}
       <View className="px-5">
         <StepProgress steps={steps} />
       </View>
 
-      {/* Main Content Area - Scrollable step content */}
       <ScrollView
         className="flex-1 px-5"
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}
       >
-        <AppText className="mb-6 text-xl font-bold">
-          {["Details", "Value", "Documents", "Reviews"][currentStep - 1]}
-        </AppText>
         {renderStepContent()}
       </ScrollView>
 
-      {/* Navigation Buttons - Back and Next/Submit buttons */}
-      <View className="absolute bottom-0 left-0 right-0 border-t border-gray-200 bg-white px-5 py-4">
+      <View className="absolute bottom-0 left-0 right-0 bg-neutral/50 px-5 py-4">
         <View className="flex-row items-center justify-between gap-3">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
             className="flex-1 rounded-3xl border border-gray-200 bg-white px-5 py-4"
           >
             <AppText className="text-center text-sm text-gray-600">
               Back
             </AppText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => setCurrentStep((prev) => Math.min(prev + 1, 4))}
-            className="flex-1 rounded-3xl bg-primary px-5 py-4"
+            className="flex-1 rounded-xl bg-primary px-5 py-4"
           >
             <AppText className="text-center text-sm font-semibold text-white">
               {currentStep === 4 ? "Submit" : "Next"}
