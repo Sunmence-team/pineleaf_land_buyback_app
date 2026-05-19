@@ -2,9 +2,9 @@ import { useBreakpoints } from "@/hooks/useBreakpoints";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router, Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import React from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 
 export default function TabLayout() {
   const { isSmaller } = useBreakpoints();
@@ -76,6 +76,7 @@ export default function TabLayout() {
               opacity={focused ? 1 : 0.3}
             />
           ),
+          headerShown: false,
         }}
       />
       {/* Properties */}
@@ -83,7 +84,7 @@ export default function TabLayout() {
         name="properties/index"
         options={{
           title: "Properties",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
             <Text
               style={{
@@ -108,30 +109,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="addproperty/index"
         options={{
-          headerTitle: () => (
-            <Text className="text-2xl font-medium text-white font-quickMedium">
-              Add Property
-            </Text>
-          ),
-          headerLeft: () => (
-            <Pressable
-              onPress={() => router.back()}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.7 : 1,
-              })}
-            >
-              <Feather name="chevron-left" size={28} />
-            </Pressable>
-          ),
+          headerTitle: () => null,
           tabBarShowLabel: false,
           tabBarLabel: () => null,
-          tabBarIconStyle: {
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: Platform.OS === "ios" ? 0 : -5,
-          },
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <View
               style={{
@@ -159,7 +140,7 @@ export default function TabLayout() {
         name="alerts/index"
         options={{
           title: "Alerts",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
             <Text
               style={{
@@ -187,7 +168,7 @@ export default function TabLayout() {
         name="profile/index"
         options={{
           title: "Profile",
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
             <Text
               style={{

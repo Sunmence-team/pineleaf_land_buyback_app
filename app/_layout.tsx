@@ -69,6 +69,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider className="font-quickRegular">
+      
       <StatusBar
         backgroundColor={"transparent"}
         translucent={true}
