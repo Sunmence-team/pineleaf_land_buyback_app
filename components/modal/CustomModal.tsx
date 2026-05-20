@@ -1,5 +1,6 @@
 // components/OfferModal.tsx
 
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
     Image,
@@ -7,7 +8,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Modal from "./Modal";
 
 interface OfferModalProps {
@@ -53,26 +53,15 @@ const OfferModal = ({
             <View className="flex-1 px-5 pt-20">
 
                 {/* Icon */}
-                <View className="items-center mt-4 mb-4">
-
                     <View
-                        style={{
-                            backgroundColor: `${iconColor}20`,
-                        }}
-                        className="w-20 h-20 rounded-full items-center justify-center"
+                        className="w-90 h-90 rounded-full items-center justify-center"
                     >
-                        <View
-                            className="w-14 h-14 rounded-full items-center justify-center"
-                        >
-                            <Image
-                                source={image}
-                                style={{ width: 60, height: 60 }}
-                                resizeMode="contain"
-                            />
-                        </View>
+                        <Image
+                            source={image}
+                            style={{ width: 140, height: 140 }}
+                            resizeMode="contain"
+                        />
                     </View>
-
-                </View>
 
                 {/* Title */}
                 <Text className="text-2xl font-semibold text-center mb-2">

@@ -139,7 +139,7 @@ const Offer = ({ status }: { status: StatusType }) => {
         buttonColor={
           modalType === "accept"
             ? "#14532D"
-            : "#DC2626"
+            : "#14532D"
         }
 
         image={

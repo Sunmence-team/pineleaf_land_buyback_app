@@ -4,4 +4,5 @@ export const assets = {
   avatar: require("../assets/images/avatar.png"),
   mark: require("../assets/images/mark.gif"),
   reject: require("../assets/images/reject.gif"),
+  microphone: require("../assets/images/microphone.gif"),
 };
