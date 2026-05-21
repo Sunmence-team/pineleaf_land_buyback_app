@@ -1,7 +1,6 @@
 import { AppText } from "@/components/AppText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useFormik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
   Modal,
@@ -11,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as Yup from "yup";
 
 export interface Screen1Values {
   propertyName: string;
@@ -24,24 +22,12 @@ export interface Screen1Values {
 interface Screen1Props {
   values: Screen1Values;
   onChange: (field: keyof Screen1Values, value: string) => void;
+  onBlur: (field: keyof Screen1Values) => void;
+  errors?: Partial<Record<keyof Screen1Values, string>>;
+  touched?: Partial<Record<keyof Screen1Values, boolean>>;
 }
 
 const purchaseTypes = ["Regular", "Discount", "Promo"];
-
-const validationSchema = Yup.object().shape({
-  propertyName: Yup.string()
-    .trim()
-    .min(2, "Type at least 2 characters")
-    .required("Property name is required"),
-  purchaseDate: Yup.string().trim().required("Purchasing date is required"),
-  purchaseType: Yup.string().trim().required("Purchasing type is required"),
-  numberOfPlots: Yup.number()
-    .typeError("Enter a valid number")
-    .integer("Use a whole number")
-    .positive("At least 1 plot")
-    .required("Number of plots is required"),
-  plotNumbers: Yup.string().trim().required("Plot number is required"),
-});
 
 const formatDate = (date: Date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -63,27 +49,23 @@ const parseDate = (value: string) => {
  * 1. Import Screen1 into the Add Property parent screen.
  * 2. Pass current form values and a change handler:
  *    <Screen1 values={formValues} onChange={handleFieldChange} />
- * 3. This component uses useFormik and Yup for validation.
- * 4. It keeps parent state synced via onChange while rendering inline errors.
+ * 3. The parent Formik instance owns validation and passes inline errors down.
  */
-const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
+const Screen1: React.FC<Screen1Props> = ({
+  values,
+  onChange,
+  onBlur,
+  errors,
+  touched,
+}) => {
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const formik = useFormik<Screen1Values>({
-    enableReinitialize: true,
-    initialValues: values,
-    validationSchema,
-    onSubmit: () => undefined,
-  });
-
   const updateField = (field: keyof Screen1Values, value: string) => {
-    formik.setFieldValue(field, value);
     onChange(field, value);
   };
 
   const handleChange = (field: keyof Screen1Values) => (value: string) => {
-    formik.handleChange(field)(value);
     onChange(field, value);
   };
 
@@ -97,6 +79,7 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
     if (!selectedDate) return;
     const formatted = formatDate(selectedDate);
     updateField("purchaseDate", formatted);
+    onBlur("purchaseDate");
   };
 
   return (
@@ -106,16 +89,16 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
           Property name
         </AppText>
         <TextInput
-          value={formik.values.propertyName}
-          onChangeText={formik.handleChange("propertyName")}
-          onBlur={formik.handleBlur("propertyName")}
+          value={values.propertyName}
+          onChangeText={handleChange("propertyName")}
+          onBlur={() => onBlur("propertyName")}
           placeholder="Pineleaf garden"
           placeholderTextColor="#9CA3AF"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
-        {formik.touched.propertyName && formik.errors.propertyName ? (
+        {touched?.propertyName && errors?.propertyName ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.propertyName}
+            {errors.propertyName}
           </AppText>
         ) : null}
       </View>
@@ -131,18 +114,18 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
         >
           <AppText
             className={`text-base ${
-              formik.values.purchaseDate ? "text-black" : "text-gray-400"
+              values.purchaseDate ? "text-black" : "text-gray-400"
             }`}
           >
-            {formik.values.purchaseDate || "DD-MM-YYYY"}
+            {values.purchaseDate || "DD-MM-YYYY"}
           </AppText>
           <View className="">
             <Ionicons name="calendar-outline" size={20} color="#111827" />
           </View>
         </TouchableOpacity>
-        {formik.touched.purchaseDate && formik.errors.purchaseDate ? (
+        {touched?.purchaseDate && errors?.purchaseDate ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.purchaseDate}
+            {errors.purchaseDate}
           </AppText>
         ) : null}
       </View>
@@ -158,16 +141,16 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
         >
           <AppText
             className={`text-base ${
-              formik.values.purchaseType ? "text-black" : "text-gray-400"
+              values.purchaseType ? "text-black" : "text-gray-400"
             }`}
           >
-            {formik.values.purchaseType || "Select purchase type"}
+            {values.purchaseType || "Select purchase type"}
           </AppText>
           <Ionicons name="chevron-down-outline" size={20} color="#111827" />
         </TouchableOpacity>
-        {formik.touched.purchaseType && formik.errors.purchaseType ? (
+        {touched?.purchaseType && errors?.purchaseType ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.purchaseType}
+            {errors.purchaseType}
           </AppText>
         ) : null}
       </View>
@@ -177,19 +160,19 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
           Number of plots
         </AppText>
         <TextInput
-          value={formik.values.numberOfPlots}
+          value={values.numberOfPlots}
           onChangeText={(text) =>
             handleChange("numberOfPlots")(text.replace(/[^0-9]/g, ""))
           }
-          onBlur={formik.handleBlur("numberOfPlots")}
+          onBlur={() => onBlur("numberOfPlots")}
           placeholder="3"
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
-        {formik.touched.numberOfPlots && formik.errors.numberOfPlots ? (
+        {touched?.numberOfPlots && errors?.numberOfPlots ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.numberOfPlots}
+            {errors.numberOfPlots}
           </AppText>
         ) : null}
       </View>
@@ -199,16 +182,16 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
           Plot number(s)
         </AppText>
         <TextInput
-          value={formik.values.plotNumbers}
-          onChangeText={formik.handleChange("plotNumbers")}
-          onBlur={formik.handleBlur("plotNumbers")}
+          value={values.plotNumbers}
+          onChangeText={handleChange("plotNumbers")}
+          onBlur={() => onBlur("plotNumbers")}
           placeholder="e.g. A2 102"
           placeholderTextColor="#9CA3AF"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
-        {formik.touched.plotNumbers && formik.errors.plotNumbers ? (
+        {touched?.plotNumbers && errors?.plotNumbers ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.plotNumbers}
+            {errors.plotNumbers}
           </AppText>
         ) : null}
       </View>
@@ -234,6 +217,7 @@ const Screen1: React.FC<Screen1Props> = ({ values, onChange }) => {
                 key={option}
                 onPress={() => {
                   updateField("purchaseType", option);
+                  onBlur("purchaseType");
                   setShowTypeModal(false);
                 }}
                 className="rounded-xl bg-gray-50 px-4 py-4 mb-3"

@@ -16,9 +16,16 @@ export interface DocumentItem {
 interface Screen3Props {
   documents: DocumentItem[];
   onUpload: (key: string, fileName: string) => void;
+  error?: string;
+  touched?: boolean;
 }
 
-const Screen3: React.FC<Screen3Props> = ({ documents, onUpload }) => {
+const Screen3: React.FC<Screen3Props> = ({
+  documents,
+  onUpload,
+  error,
+  touched,
+}) => {
   const handleSelectFile = async (key: string) => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "*/*",
@@ -66,7 +73,7 @@ const Screen3: React.FC<Screen3Props> = ({ documents, onUpload }) => {
                     <Feather name="upload" size={18} color="#064E3B" />
                   </View>
                 ) : (
-                  <View className="bg-emerald-100 p-3 rounded-full">
+                  <View className="bg-primary/10 p-3 rounded-full">
                     <Feather name="check" size={18} color="#065F46" />
                   </View>
                 )}
@@ -81,6 +88,9 @@ const Screen3: React.FC<Screen3Props> = ({ documents, onUpload }) => {
             </View>
           </Pressable>
         ))}
+        {touched && error ? (
+          <AppText className="text-xs text-red-600">{error}</AppText>
+        ) : null}
       </View>
     </View>
   );
