@@ -1,5 +1,6 @@
 import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
+
 import React from "react";
 import { Image, Modal, TouchableOpacity, View } from "react-native";
 
@@ -25,6 +26,7 @@ interface Screen4Props {
   setShowSubmitModal: (value: React.SetStateAction<boolean>) => void;
   hasSubmit: boolean;
   setHasSubmit: (value: React.SetStateAction<boolean>) => void;
+  onBackHome: () => void;
 }
 
 const formatNaira = (value: string) => {
@@ -46,35 +48,36 @@ const Screen4: React.FC<Screen4Props> = ({
   setShowSubmitModal,
   hasSubmit,
   setHasSubmit,
+  onBackHome,
 }) => {
   const totalValue = formatNaira(
     calculateTotal(values.pricePerPlot, values.numberOfPlots),
   );
 
   return hasSubmit ? (
-    <View className="flex flex-col items-center justify-center h-full">
-      <View className="flex flex-col gap-5">
-        <View className="w-20 h-20 rounded-full bg-[#EAF8EE] items-center justify-center">
-          <Image source={assets.successGif} alt="success-gif"></Image>
+    <View className="flex-1 items-center justify-between py-10 px-5">
+      <View className="w-full rounded-[32px] border border-emerald-100 bg-white p-6 shadow-sm">
+        <View className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#EAF8EE]">
+          <Image source={assets.successGif} alt="success-gif" />
         </View>
 
-        <View className="items-center px-3 ">
+        <View className="mb-5 items-center px-2">
           <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
             Pineleaf Garden Estate has been registered. We will notify you when
             it becomes eligible for buyback.
           </AppText>
         </View>
 
-        <View className="bg-[#FDECEC] px-4 py-2 rounded-xl">
-          <AppText className="text-[#DC2626] text-[14px] font-medium">
+        <View className="mx-auto rounded-2xl bg-[#FDECEC] px-5 py-3">
+          <AppText className="text-[#DC2626] text-[14px] font-semibold">
             Not Eligible
           </AppText>
         </View>
       </View>
 
       <TouchableOpacity
-        className="bg-primary rounded-2xl py-4 items-center"
-        onPress={() => navigation.navigate("Home")}
+        className="mt-8 h-14 w-full items-center justify-center rounded-3xl bg-primary"
+        onPress={onBackHome}
       >
         <AppText className="text-white text-[16px] font-semibold">
           Back to home
@@ -186,7 +189,10 @@ const Screen4: React.FC<Screen4Props> = ({
             </AppText>
             <View className="flex flex-col gap-4">
               <TouchableOpacity
-                onPress={() => setHasSubmit(true)}
+                onPress={() => {
+                  setHasSubmit(true);
+                  setShowSubmitModal(false);
+                }}
                 className="bg-primary rounded-xl py-4 items-center"
               >
                 <AppText className="text-white text-lg font-semibold">

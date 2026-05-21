@@ -116,6 +116,12 @@ const AddProperty = () => {
     );
   };
 
+  const handleBackHome = () => {
+    setHasSubmit(false);
+    router.dismissAll?.();
+    router.replace("/");
+  };
+
   const steps: { label: string; status: "done" | "current" | "todo" }[] = [
     {
       label: "Details",
@@ -154,6 +160,7 @@ const AddProperty = () => {
             setShowSubmitModal={setShowSubmitModal}
             hasSubmit={hasSubmit}
             setHasSubmit={setHasSubmit}
+            onBackHome={() => console.log("home")}
           />
         );
       default:
@@ -165,7 +172,10 @@ const AddProperty = () => {
     <SafeAreaView className="flex-col justify-between flex-1">
       <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
         {currentStep <= 1 ? (
-          <TouchableOpacity className=" w-[10%]" onPress={() => router.back()}>
+          <TouchableOpacity
+            className=" w-[10%]"
+            onPress={() => router.push("/")}
+          >
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
         ) : (
@@ -175,7 +185,7 @@ const AddProperty = () => {
               size={20}
               color="black"
               onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
-            />{" "}
+            />
           </TouchableOpacity>
         )}
         <AppText className="text-base font-semibold">Add Property</AppText>

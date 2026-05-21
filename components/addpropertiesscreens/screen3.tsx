@@ -59,17 +59,25 @@ const Screen3: React.FC<Screen3Props> = ({ documents, onUpload }) => {
               </View>
             </View>
 
-            <View className="mt-4 rounded-xl border border-dashed border-gray-400 bg-primary/5 px-4 py-5 flex items-center flex-row gap-2">
-              {doc.status === "empty" && (
-                <View className="bg-primary/5 p-3 rounded-full">
-                  <Feather name="download" size={16} color="black" />{" "}
+            <View className="mt-4 rounded-xl border border-dashed border-gray-200 bg-slate-50 px-4 py-3">
+              <View className="flex-row items-center gap-3">
+                {doc.status === "empty" ? (
+                  <View className="bg-primary/10 p-3 rounded-full">
+                    <Feather name="upload" size={18} color="#064E3B" />
+                  </View>
+                ) : (
+                  <View className="bg-emerald-100 p-3 rounded-full">
+                    <Feather name="check" size={18} color="#065F46" />
+                  </View>
+                )}
+                <View className="flex-1">
+                  <AppText className="text-sm font-semibold text-gray-900">
+                    {doc.status === "uploaded"
+                      ? (doc.fileName ?? "Uploaded document")
+                      : "Upload /Drag & drop here "}
+                  </AppText>
                 </View>
-              )}
-              <AppText className="text-sm">
-                {doc.status === "uploaded"
-                  ? `Uploaded: ${doc.fileName ?? "Document file"}`
-                  : "Upload / Drag & drop here"}
-              </AppText>
+              </View>
             </View>
           </Pressable>
         ))}
