@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import React from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'; 
 import { properties } from '@/lib/data';
 import CustomModal from '@/components/modal/CustomModal';
@@ -45,6 +45,15 @@ const Offer = ({ status }: { status: StatusType }) => {
     setModalType("decline");
     setOpenModal(true);
   };
+
+  const handleProceed = () => {
+    setOpenModal(false)
+
+    setTimeout(() => {
+      router.push('/document/DocumentSubmission')
+
+    }, 500)
+  }
 
   const assets = {
   mark: require("../../../../assets/images/mark.gif"),
@@ -116,7 +125,7 @@ const Offer = ({ status }: { status: StatusType }) => {
         visible={openModal}
         type={modalType}
         onClose={() => setOpenModal(false)}
-        onProceed={() => setOpenModal(false)}
+        onProceed={handleProceed}
 
         title={
           modalType === "accept"
