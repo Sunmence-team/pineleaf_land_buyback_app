@@ -1,10 +1,10 @@
+import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   LayoutAnimation,
   Platform,
   StyleSheet,
-  Text,
   TouchableOpacity,
   UIManager,
   View,
@@ -71,7 +71,7 @@ const FaqScreen = () => {
                 onPress={() => toggleFAQ(item.id)}
               >
                 <View style={styles.questionRow}>
-                  <Text style={styles.question}>{item.question}</Text>
+                  <AppText style={styles.question}>{item.question}</AppText>
 
                   <Ionicons
                     name={isOpen ? "chevron-up" : "chevron-forward"}
@@ -80,7 +80,9 @@ const FaqScreen = () => {
                   />
                 </View>
 
-                {isOpen && <Text style={styles.answer}>{item.answer}</Text>}
+                {isOpen && (
+                  <AppText style={styles.answer}>{item.answer}</AppText>
+                )}
               </TouchableOpacity>
             );
           })}
@@ -96,7 +98,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
-    justifyContent: "center",
   },
 
   secondContainer: {
@@ -127,17 +128,30 @@ const styles = StyleSheet.create({
   },
 
   question: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: "#111",
+    fontSize: Platform.select({
+      ios: 20,
+      android: 15,
+    }),
+    color: "black",
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 23,
+    }),
     flex: 1,
     paddingRight: 10,
+    fontFamily: "quickSemiBold",
   },
 
   answer: {
     marginTop: 15,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: Platform.select({
+      ios: 20,
+      android: 16,
+    }),
     color: "black",
+    lineHeight: Platform.select({
+      ios: 27,
+      android: 23,
+    }),
   },
 });

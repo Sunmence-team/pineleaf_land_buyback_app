@@ -9,6 +9,8 @@ module.exports = {
         primary: "#154A22",
         secondary: "#F4F6F1",
         tertiary: "#B4E5BC",
+        fadedGreen: '#E8EFEA',
+        offerText: '#025FD6',
         neutral: "#E8EFEA",
       },
       fontFamily: {
@@ -19,6 +21,17 @@ module.exports = {
         quickBold: ["quickBold"],
       },
     },
+    container:{
+      center: true,
+      padding: '2rem',
+      screens: {
+        sm: "600px",
+        md: "728px",
+        lg: "984px",
+        xl: "1240px",
+        '2xl': "1496px",
+      },
+    }
   },
   plugins: [],
 };

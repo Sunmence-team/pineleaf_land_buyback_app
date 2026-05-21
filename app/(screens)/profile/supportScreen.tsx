@@ -1,3 +1,4 @@
+import { AppText } from "@/components/AppText";
 import {
   Feather,
   Foundation,
@@ -5,103 +6,108 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const supportScreen = () => {
+const SupportScreen = () => {
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.secondContainer}>
-          <View style={styles.menuContainer}>
-            <View>
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => router.push("/profile/supporttabs/faqScreen")}
-              >
-                <View style={styles.menuLeft}>
-                  <Feather name="message-circle" size={24} color="black" />
-                  <Text style={styles.menuText}>FAQ</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.secondContainer}>
+        <View style={styles.menuContainer}>
+          <View>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/supporttabs/faqScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <Feather name="message-circle" size={24} color="black" />
+
+                <AppText style={styles.menuText}>FAQ</AppText>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/buyBackExplanationScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Foundation name="clipboard-notes" size={22} color="#111" />
+
+                <View>
+                  <AppText style={styles.menuText}>Buyback</AppText>
                 </View>
+              </View>
 
-                <Ionicons name="chevron-forward" size={20} color="black" />
-              </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-              <View style={styles.horizontalLine} />
+            <View style={styles.horizontalLine} />
 
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() =>
-                  router.push("/profile/supporttabs/buyBackExplanationScreen")
-                }
-              >
-                <View style={styles.menuLeft}>
-                  <Foundation name="clipboard-notes" size={22} color="#111" />
-                  <View>
-                    <Text style={styles.menuText}>Buyback</Text>
-                  </View>
-                </View>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/documentsPreparationScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Ionicons name="document-outline" size={22} color="#111" />
 
-                <Ionicons name="chevron-forward" size={20} color="black" />
-              </TouchableOpacity>
+                <AppText style={styles.menuText}>Document</AppText>
+              </View>
 
-              <View style={styles.horizontalLine} />
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() =>
-                  router.push("/profile/supporttabs/documentsPreparationScreen")
-                }
-              >
-                <View style={styles.menuLeft}>
-                  <Ionicons name="document-outline" size={22} color="#111" />
-                  <Text style={styles.menuText}>Document</Text>
-                </View>
+            <View style={styles.horizontalLine} />
 
-                <Ionicons name="chevron-forward" size={20} color="black" />
-              </TouchableOpacity>
-              <View style={styles.horizontalLine} />
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() =>
-                  router.push("/profile/supporttabs/timelineExpectationsScreen")
-                }
-              >
-                <View style={styles.menuLeft}>
-                  <Ionicons name="time-outline" size={22} color="#111" />
-                  <Text style={styles.menuText}>Timeline expectation</Text>
-                </View>
-                
-                <Ionicons name="chevron-forward" size={20} color="black" />
-              </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/timelineExpectationsScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Ionicons name="time-outline" size={22} color="#111" />
 
-              <View style={styles.horizontalLine} />
+                <AppText style={styles.menuText}>Timeline expectation</AppText>
+              </View>
 
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() =>
-                  router.push("/profile/supporttabs/contactScreen")
-                }
-              >
-                <View style={styles.menuLeft}>
-                  <MaterialIcons name="contact-page" size={22} color="#111" />
-                  <Text style={styles.menuText}>Contact</Text>
-                </View>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-                <Ionicons name="chevron-forward" size={20} color="black" />
-              </TouchableOpacity>
-            </View>
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/supporttabs/contactScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <MaterialIcons name="contact-page" size={22} color="#111" />
+
+                <AppText style={styles.menuText}>Contact</AppText>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Save changes</Text>
-          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </>
+
+        <TouchableOpacity style={styles.button}>
+          <AppText style={styles.buttonText}>Save changes</AppText>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default supportScreen;
+export default SupportScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,7 +116,10 @@ const styles = StyleSheet.create({
   },
 
   secondContainer: {
-    height: "72%",
+    height: Platform.select({
+      ios: "70%",
+      android: "75%",
+    }),
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
@@ -142,7 +151,7 @@ const styles = StyleSheet.create({
   smallTitle: {
     fontSize: 20,
     marginBottom: 8,
-    fontFamily: " quickSemiBold",
+    fontFamily: "quickSemiBold",
   },
 
   smallText: {
@@ -223,8 +232,12 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    height: Platform.select({
+      ios: 60,
+      android: 53,
+    }),
+    textAlign: "center",
     backgroundColor: "#144520",
-    height: 60,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",

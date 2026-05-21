@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
+  Platform,
   TextInput,
   TouchableOpacity,
   View,
+  
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { AppText } from "@/components/AppText";
 
 const ChangePasswordScreen = () => {
   const [oldPassword, setOldPassword] = useState("");
@@ -22,7 +24,7 @@ const ChangePasswordScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.secondContainer}>
         <View style={styles.thirdContainer}>
-          <Text style={styles.label}>Old password</Text>
+          <AppText style={styles.label}>Old password</AppText>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -45,7 +47,7 @@ const ChangePasswordScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.label}>New password</Text>
+          <AppText style={styles.label}>New password</AppText>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -68,7 +70,7 @@ const ChangePasswordScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.label}>Re-type password</Text>
+          <AppText style={styles.label}>Re-type password</AppText>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -92,7 +94,7 @@ const ChangePasswordScreen = () => {
           </View>
 
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Save changes</Text>
+            <AppText style={styles.buttonText}>Save changes</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -109,7 +111,10 @@ const styles = StyleSheet.create({
   },
 
   secondContainer: {
-    height: "70%",
+    height: Platform.select({
+      ios: "68%",
+      android: "75%",
+    }),
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
@@ -127,6 +132,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 12,
     color: "black",
+    fontFamily: "quickSemiBold",
   },
 
   inputContainer: {
@@ -151,7 +157,10 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: "#144520",
-    height: 60,
+    height: Platform.select({
+      ios: 60,
+      android: 53,
+    }),
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",

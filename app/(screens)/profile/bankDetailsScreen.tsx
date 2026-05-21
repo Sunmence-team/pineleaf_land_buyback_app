@@ -1,8 +1,9 @@
 // import { SelectDropdownUtility } from "@components/dropdown/SelectDropdownUtility";
+import { AppText } from "@/components/AppText";
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
+  Platform,
   TextInput,
   TouchableOpacity,
   View,
@@ -17,7 +18,7 @@ const EditScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.secondContainer}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Account name</Text>
+          <AppText style={styles.label}>Account name</AppText>
           <TextInput
             placeholder="Account name"
             placeholderTextColor="black"
@@ -28,7 +29,7 @@ const EditScreen = () => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Account number</Text>
+          <AppText style={styles.label}>Account number</AppText>
           <TextInput
             placeholder="Account number"
             placeholderTextColor="black"
@@ -40,7 +41,7 @@ const EditScreen = () => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Account Type</Text>
+          <AppText style={styles.label}>Account Type</AppText>
             <TextInput
             placeholder="Account number"
             placeholderTextColor="black"
@@ -61,7 +62,7 @@ const EditScreen = () => {
         </View>
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Submit</Text>
+          <AppText style={styles.buttonText}>Submit</AppText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -77,7 +78,10 @@ const styles = StyleSheet.create({
   },
 
   secondContainer: {
-    height: "65%",
+    height: Platform.select({
+      ios: "65%",
+      android: "70%",
+    }),
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
@@ -95,6 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 12,
     color: "black",
+    fontFamily: "quickSemiBold",
   },
 
   input: {
@@ -109,7 +114,10 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: "#144520",
-    height: 60,
+    height: Platform.select({
+      ios: 60,
+      android: 53,
+    }),
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
@@ -119,6 +127,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 20,
-   
   },
 });
