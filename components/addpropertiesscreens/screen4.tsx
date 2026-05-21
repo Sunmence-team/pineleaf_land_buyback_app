@@ -214,4 +214,3 @@ const Screen4: React.FC<Screen4Props> = ({
 };
 
 export default Screen4;
-
