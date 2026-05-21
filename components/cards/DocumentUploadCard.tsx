@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { View } from "react-native";
-import { AppText } from "./AppText";
+import { AppText } from "../AppText";
 
 interface DocumentUploadCardProps {
   title: string;

@@ -3,4 +3,7 @@ export const assets = {
   profileImage: require("../assets/images/profileImage.jpg"),
   avatar: require("../assets/images/avatar.png"),
   mark: require("../assets/images/mark.gif"),
+  onboarding1: require("../assets/images/onboarding1.png"),
+  onboarding2: require("../assets/images/onboarding2.png"),
+  onboarding3: require("../assets/images/onboarding3.png"),
 };

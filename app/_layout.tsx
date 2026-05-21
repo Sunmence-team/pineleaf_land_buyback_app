@@ -25,7 +25,7 @@ function RootLayoutNav() {
     async function setInitialRoute() {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.push("/(tabs)")
+        router.replace("/(onboarding)/stepOne")
       } catch (e) {
         console.error(
           "Error reading onboarding status, defaulting to onboarding:",
@@ -43,6 +43,7 @@ function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
@@ -69,14 +70,14 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider className="font-quickRegular">
-      
       <StatusBar
         backgroundColor={"transparent"}
         translucent={true}
         animated={true}
       />
-      <QueryClientProvider client={queryClient}></QueryClientProvider>
-      <RootLayoutNav />
+      <QueryClientProvider client={queryClient}>
+        <RootLayoutNav />
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
