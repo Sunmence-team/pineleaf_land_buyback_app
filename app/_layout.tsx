@@ -3,7 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
 
-import { StatusBar } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { queryClient } from "@/lib/queryClient";
@@ -16,6 +16,8 @@ import {
   useFonts,
 } from "@expo-google-fonts/quicksand";
 import { QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 // Prevent the splash screen from auto-hiding before we can check the onboarding status.
 SplashScreen.preventAutoHideAsync();

@@ -2,7 +2,7 @@ import EmptyState from '@/components/cards/EmptyStateCard'
 import PropertyCard from '@/components/cards/PropertyCard'
 import { properties } from '@/lib/data'
 import React from 'react'
-import { FlatList, Text, View } from 'react-native'
+import { FlatList, View } from 'react-native'
 
 const AllProperties = () => {
 
