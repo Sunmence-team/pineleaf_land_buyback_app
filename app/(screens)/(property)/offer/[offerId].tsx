@@ -1,11 +1,16 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Pressable } from 'react-native'
 import React from 'react'
-import { useLocalSearchParams } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons';import { properties } from '@/lib/data';
+import { router, useLocalSearchParams } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'; 
+import { properties } from '@/lib/data';
+import CustomModal from '@/components/modal/CustomModal';
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
 const Offer = ({ status }: { status: StatusType }) => {
+
+  const [openModal, setOpenModal] = React.useState(false);
+  const [modalType, setModalType] = React.useState<"accept" | "decline">("accept");
 
   const statusStyles = {
     eligible: "bg-fadedGreen text-primary",
@@ -30,6 +35,30 @@ const Offer = ({ status }: { status: StatusType }) => {
   if (!offer) {
     return <Text>Offer not found</Text>;
   }
+
+  const handleAcceptOffer = () => {
+    setModalType("accept");
+    setOpenModal(true);
+  }
+
+  const handleDeclineOffer = () => {
+    setModalType("decline");
+    setOpenModal(true);
+  };
+
+  const handleProceed = () => {
+    setOpenModal(false)
+
+    setTimeout(() => {
+      router.push('/document/DocumentSubmission')
+
+    }, 500)
+  }
+
+  const assets = {
+  mark: require("../../../../assets/images/mark.gif"),
+  reject: require("../../../../assets/images/reject.gif"),
+  };
 
   return (
     <ScrollView className='"flex-1 bg-white  border border-gray-200 rounded-lg p-4 mb-4 w-full '>
@@ -58,7 +87,6 @@ const Offer = ({ status }: { status: StatusType }) => {
             <Text className='text-medium'>{offer.price}</Text>
           </View>
         </View>
-
         <View className='flex-row justify-between'>
           <View>
             <Text className='text-lg'>Purchse Date</Text>
@@ -81,6 +109,68 @@ const Offer = ({ status }: { status: StatusType }) => {
         <Ionicons name='alert-circle-outline' size={24} color='#000000' className='my-4' />
         <Text className='w-80 '>This is a fixed company offer. No negotiation is approved on this amount.</Text>
       </View>
+
+      <Pressable className=' bg-primary rounded-lg py-6 mt-7 items-center'
+        onPress={() => handleAcceptOffer(offer.id)}
+      >
+        <Text className='font-semibold text-white'>Accept Offer</Text>
+      </Pressable>
+      <Pressable className=' py-6 mt-7 items-center'
+        onPress={() => handleDeclineOffer(offer.id)}
+      >
+        <Text className='font-semibold'>Decline Offer</Text>
+      </Pressable>
+
+      <CustomModal
+        visible={openModal}
+        type={modalType}
+        onClose={() => setOpenModal(false)}
+        onProceed={handleProceed}
+
+        title={
+          modalType === "accept"
+            ? "Offer Accepted"
+            : "Offer Declined"
+        }
+
+        description={
+          modalType === "accept"
+            ? "Your next step is to submit physical documents."
+            : "You have declined the offfer for pinelea phase 2."
+        }
+
+        buttonText={
+          modalType === "accept"
+            ? "Proceed to Document"
+            : "Return to Property"
+        }
+
+        buttonColor={
+          modalType === "accept"
+            ? "#14532D"
+            : "#14532D"
+        }
+
+        image={
+          modalType === "accept"
+            ? assets.mark
+            : assets.reject
+        }
+
+        // iconColor={
+        //   modalType === "accept"
+        //     ? "#14532D"
+        //     : "#DC2626"
+        // }
+
+        showGuide={modalType === "accept"}
+
+        footerText={
+          modalType === "accept"
+            ? "Takes 3-4 business day"
+            : "Request again"
+        }
+      />
     </ScrollView>
   )
 }
