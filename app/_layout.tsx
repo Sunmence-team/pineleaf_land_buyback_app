@@ -1,4 +1,4 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
@@ -21,25 +21,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  useEffect(() => {
-    async function setInitialRoute() {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.replace("/(onboarding)/stepOne")
-      } catch (e) {
-        console.error(
-          "Error reading onboarding status, defaulting to onboarding:",
-          e,
-        );
-      } finally {
-        // After we decide the route, we can hide the splash screen.
-        SplashScreen.hideAsync();
-      }
-    }
-
-    setInitialRoute();
-  }, []);
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />

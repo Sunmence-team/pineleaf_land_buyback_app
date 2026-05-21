@@ -55,13 +55,16 @@ const Screen4: React.FC<Screen4Props> = ({
   );
 
   return hasSubmit ? (
-    <View className="flex-1 items-center justify-between py-10 px-5">
-      <View className="w-full rounded-[32px] border border-emerald-100 bg-white p-6 shadow-sm">
-        <View className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#EAF8EE]">
+    <View
+      key="submitted"
+      className="flex-1 items-center justify-between py-20 px-5"
+    >
+      <View className="w-full flex flex-col gap-8">
+        <View className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#EAF8EE]">
           <Image source={assets.successGif} alt="success-gif" />
         </View>
 
-        <View className="mb-5 items-center px-2">
+        <View className="items-center px-2">
           <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
             Pineleaf Garden Estate has been registered. We will notify you when
             it becomes eligible for buyback.
@@ -76,7 +79,7 @@ const Screen4: React.FC<Screen4Props> = ({
       </View>
 
       <TouchableOpacity
-        className="mt-8 h-14 w-full items-center justify-center rounded-3xl bg-primary"
+        className="mt-20 h-14 w-full items-center justify-center rounded-xl bg-primary"
         onPress={onBackHome}
       >
         <AppText className="text-white text-[16px] font-semibold">
@@ -85,7 +88,7 @@ const Screen4: React.FC<Screen4Props> = ({
       </TouchableOpacity>
     </View>
   ) : (
-    <View className="flex flex-col gap-4">
+    <View key="review" className="flex flex-col gap-4">
       <View className="rounded-xl bg-white p-5 flex flex-col gap-3">
         <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
           <AppText className="text-sm text-gray-500">Name</AppText>
