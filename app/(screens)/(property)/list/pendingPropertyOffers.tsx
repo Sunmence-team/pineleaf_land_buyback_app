@@ -26,7 +26,7 @@ const pendingPropertyOffers = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={<AppText>No pending offers</AppText>}
-        contentContainerStyle={{ padding: 20}}
+        contentContainerStyle={{}}
       />
     </SafeAreaView>
   )

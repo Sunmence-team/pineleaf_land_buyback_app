@@ -56,7 +56,7 @@ const getButtonText = (status: StatusType) => {
       return "View Details";
 
     case "pending":
-      return "Track Request"
+      return "Request under review"
 
     default:
       return "View";
@@ -76,186 +76,191 @@ export default function PropertyCard({
 }: PropertyCardProps) {
 
   const [openModal, setOpenModal] = React.useState(false)
+const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
 
   const logic = (status: StatusType) => {
     if (status === "eligible") {
       setOpenModal(true);
     }
-    else if (status === "not_eligible" || status === "pending" || status === "completed") {
+    else if (status === "not_eligible" || status === "completed") {
       router.push(`/view/${id}`);
     }
     else if (status === "offer_sent") {
       router.push(`/offer/${id}`);
     }
+
+    return (null)
   };
 
   const handleToast = () => {
     setOpenModal(false);
 
-  setTimeout(() => {
-    Toast.show({
-      type: "success",
-      text1: "Request Submitted",
-      text2: "Your Buyback request for pine leaf phase 2 is being processed.",
-    });
-  }, 500); // delay in ms
-};
-    
+    setTimeout(() => {
+       setCurrentStatus("pending"); 
+
+      Toast.show({
+        type: "success",
+        text1: "Request Submitted",
+        text2: "Your Buyback request for pine leaf phase 2 is being processed.",
+      });
+    }, 500); // delay in ms
+  };
+
   return (
-      <>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={{ width: '100%' }}
-          onPress={onPress}
-          className="bg-[#E8EFEA1A] border border-gray-200 rounded-lg p-4 mb-4 w-full"
-        >
-          {/* Header */}
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-base font-semibold text-gray-800">
-              {title}
-            </Text>
+    <>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={{ width: '100%' }}
+        onPress={onPress}
+        className="bg-[#E8EFEA1A] border border-gray-200 rounded-lg p-4 mb-4 w-full"
+      >
+        {/* Header */}
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-base font-semibold text-gray-800">
+            {title}
+          </Text>
 
-            <View
-              className={`px-3 py-1 rounded-lg ${statusStyles[status]}`}
-            >
-              <Text className="text-xs font-medium">
-                {statusLabel[status]}
-              </Text>
-            </View>
-          </View>
-
-          {/* Details */}
-          <View className="flex-row justify-between mb-2">
-            <Text className="text-sm text-gray-600">Purchase: {date}</Text>
-            <Text className="text-sm font-medium text-gray-800">
-              {plots} plots
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between mb-2">
-            <Text className="text-sm text-gray-600">₦{price}/plot </Text>
-            <Text className="text-sm font-medium text-gray-800">
-              Total price ₦{totalPrice}
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            className="bg-secondary border border-gray-300 rounded-lg py-3 mt-4 items-center"
-            onPress={() => logic(status)}
+          <View
+            className={`px-3 py-1 rounded-lg ${statusStyles[currentStatus]}`}
           >
-            <Text className="font-semibold">
-              {getButtonText(status)}
+            <Text className="text-xs font-medium">
+              {statusLabel[currentStatus]}
             </Text>
-          </TouchableOpacity>
+          </View>
+        </View>
 
-          {/* Custom children (buttons, extra actions, etc.) */}
-          {children && <View className="mt-2">{children}</View>}
+        {/* Details */}
+        <View className="flex-row justify-between mb-2">
+          <Text className="text-sm text-gray-600">Purchase: {date}</Text>
+          <Text className="text-sm font-medium text-gray-800">
+            {plots} plots
+          </Text>
+        </View>
+
+        <View className="flex-row justify-between mb-2">
+          <Text className="text-sm text-gray-600">₦{price}/plot </Text>
+          <Text className="text-sm font-medium text-gray-800">
+            Total price ₦{totalPrice}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          className="bg-secondary border border-gray-300 rounded-lg py-3 mt-4 items-center"
+          onPress={() => logic(currentStatus)}
+        >
+          <Text className="font-semibold">
+            {getButtonText(currentStatus)}
+          </Text>
         </TouchableOpacity>
 
-        <Modal onClose={() => setOpenModal(false)} visible={openModal} showClose={true}>
-          <View className="flex-1 items-center px-5 pt-15">
-            <Image
-              source={assets.microphone}
-              style={{ width: 140, height: 140 }}
-              resizeMode="contain"
-            />
-            <Text className="font-medium w-2/3 mb-10 text-center">Are you sure you want to request for
-              buyback.
-            </Text>
-            <>
-              {/* Step 1 */}
-              <View className="flex-row gap-3 mb-5">
-                <Ionicons
-                  name="sparkles-outline"
-                  size={20}
-                  color="black"
-                />
+        {/* Custom children (buttons, extra actions, etc.) */}
+        {children && <View className="mt-2">{children}</View>}
+      </TouchableOpacity>
 
-                <View className="flex-1">
-                  <Text className="font-semibold mb-1">
-                    Company Review Process
-                  </Text>
+      <Modal onClose={() => setOpenModal(false)} visible={openModal} showClose={true}>
+        <View className="flex-1 items-center px-5 pt-15">
+          <Image
+            source={assets.microphone}
+            style={{ width: 140, height: 140 }}
+            resizeMode="contain"
+          />
+          <Text className="font-medium w-2/3 mb-10 text-center">Are you sure you want to request for
+            buyback.
+          </Text>
+          <>
+            {/* Step 1 */}
+            <View className="flex-row gap-3 mb-5">
+              <Ionicons
+                name="sparkles-outline"
+                size={20}
+                color="black"
+              />
 
-                  <Text className="text-gray-600 text-sm">
-                    By confirming you are requesting a formal review of your property by our cooperate aquisition team .
-                  </Text>
-                </View>
+              <View className="flex-1">
+                <Text className="font-semibold mb-1">
+                  Company Review Process
+                </Text>
+
+                <Text className="text-gray-600 text-sm">
+                  By confirming you are requesting a formal review of your property by our cooperate aquisition team .
+                </Text>
+              </View>
+            </View>
+
+            {/* Step 2 */}
+            <View className="flex-row gap-3 mb-5">
+              <Ionicons
+                name="locate-outline"
+                size={20}
+                color="black"
+              />
+
+              <View className="flex-1">
+                <Text className="font-semibold mb-1">
+                  Fixed Valuation Offer
+                </Text>
+
+                <Text className="text-gray-600 text-sm">
+                  An approved review result in a non-negotiable fixed prce offer based on current market metrics.
+                </Text>
+              </View>
+            </View>
+
+            {/* Step 3 */}
+            <View className="flex-row gap-3 mb-10">
+              <Ionicons
+                name="card-outline"
+                size={20}
+                color="black"
+              />
+
+              <View className="flex-1">
+                <Text className="font-semibold mb-1">
+                  Not Immediate Payment
+                </Text>
+
+                <Text className="text-gray-600 text-sm">
+                  This is the initail stage of a transaction. Payment is not immediate.
+                </Text>
+              </View>
+            </View>
+
+            {/* Step 4 */}
+            <View className="flex-row gap-3 mb-10">
+              <Ionicons
+                name="card-outline"
+                size={20}
+                color="black"
+              />
+
+              <View className="flex-1">
+                <Text className="font-semibold mb-1">
+                  Documentation Requirements
+                </Text>
+
+                <Text className="text-gray-600 text-sm">
+                  Further financial and structural document may be required to finalize the valuation.
+                </Text>
               </View>
 
-              {/* Step 2 */}
-              <View className="flex-row gap-3 mb-5">
-                <Ionicons
-                  name="locate-outline"
-                  size={20}
-                  color="black"
-                />
+            </View>
+          </>
 
-                <View className="flex-1">
-                  <Text className="font-semibold mb-1">
-                    Fixed Valuation Offer
-                  </Text>
+          <TouchableOpacity
+            onPress={handleToast}
+            activeOpacity={0.8}
+            className="bg-primary items-center py-5 rounded-lg mb-5 w-full">
+            <Text className="text-white font-semibold"> Confirm Request</Text>
+          </TouchableOpacity>
 
-                  <Text className="text-gray-600 text-sm">
-                    An approved review result in a non-negotiable fixed prce offer based on current market metrics.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Step 3 */}
-              <View className="flex-row gap-3 mb-10">
-                <Ionicons
-                  name="card-outline"
-                  size={20}
-                  color="black"
-                />
-
-                <View className="flex-1">
-                  <Text className="font-semibold mb-1">
-                    Not Immediate Payment
-                  </Text>
-
-                  <Text className="text-gray-600 text-sm">
-                    This is the initail stage of a transaction. Payment is not immediate.
-                  </Text>
-                </View>
-              </View>
-
-              {/* Step 4 */}
-              <View className="flex-row gap-3 mb-10">
-                <Ionicons
-                  name="card-outline"
-                  size={20}
-                  color="black"
-                />
-
-                <View className="flex-1">
-                  <Text className="font-semibold mb-1">
-                    Documentation Requirements
-                  </Text>
-
-                  <Text className="text-gray-600 text-sm">
-                    Further financial and structural document may be required to finalize the valuation.
-                  </Text>
-                </View>
-
-              </View>
-            </>
-
-            <TouchableOpacity
-              onPress={handleToast}
-              activeOpacity={0.8}
-              className="bg-primary items-center py-5 rounded-lg mb-5 w-full">
-              <Text className="text-white font-semibold"> Confirm Request</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.8}>
-              <Text className="text-gray-600 font-semibold">Cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity activeOpacity={0.8}>
+            <Text className="text-gray-600 font-semibold">Cancel</Text>
+          </TouchableOpacity>
+        </View>
 
 
-        </Modal>
-      </>
+      </Modal>
+    </>
 
-    );
-  }
+  );
+}
