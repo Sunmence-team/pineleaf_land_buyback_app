@@ -1,8 +1,11 @@
 import Screen1 from "@/components/addpropertiesscreens/screen1";
 import Screen2 from "@/components/addpropertiesscreens/screen2";
+import Screen3, {
+  DocumentItem,
+} from "@/components/addpropertiesscreens/screen3";
+import Screen4 from "@/components/addpropertiesscreens/screen4";
 import { AppText } from "@/components/AppText";
 import StepProgress from "@/components/StepProgress";
-import { FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -47,11 +50,78 @@ import { SafeAreaView } from "react-native-safe-area-context";
  * - SafeAreaView, ScrollView, View, TouchableOpacity: React Native base components
  */
 
+interface AddPropertyFormValues {
+  propertyName: string;
+  purchaseDate: string;
+  purchaseType: string;
+  numberOfPlots: string;
+  plotNumbers: string;
+  pricePerPlot: string;
+}
+
+const defaultFormValues: AddPropertyFormValues = {
+  propertyName: "",
+  purchaseDate: "",
+  purchaseType: "",
+  numberOfPlots: "",
+  plotNumbers: "",
+  pricePerPlot: "",
+};
+
+const defaultDocuments: DocumentItem[] = [
+  { key: "allocationLetter", label: "Allocation letter", status: "empty" },
+  { key: "deedOfAssignment", label: "Deed of assignment", status: "empty" },
+  { key: "companyReceipt", label: "Company receipt", status: "empty" },
+  {
+    key: "electronicReceipt",
+    label: "Electronic receipt (if applicable)",
+    status: "empty",
+    optional: true,
+  },
+  {
+    key: "otherDocument",
+    label: "Other document (Optional)",
+    status: "empty",
+    optional: true,
+  },
+];
+
 const AddProperty = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [formValues, setFormValues] =
+    useState<AddPropertyFormValues>(defaultFormValues);
+  const [documents, setDocuments] = useState<DocumentItem[]>(defaultDocuments);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [hasSubmit, setHasSubmit] = useState(false);
 
-  // TODO: Build your step status array for the progress indicator
+  const handleFieldChange = <K extends keyof AddPropertyFormValues>(
+    field: K,
+    value: string,
+  ) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleDocumentUpload = (key: string, fileName: string) => {
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.key === key
+          ? {
+              ...doc,
+              status: "uploaded",
+              fileName,
+            }
+          : doc,
+      ),
+    );
+  };
+
+  const handleBackHome = () => {
+    setHasSubmit(false);
+    router.dismissAll?.();
+    router.replace("/");
+  };
+
   const steps: { label: string; status: "done" | "current" | "todo" }[] = [
     {
       label: "Details",
@@ -67,40 +137,31 @@ const AddProperty = () => {
     },
     {
       label: "Reviews",
-      status: currentStep === 4 ? "current" : "todo",
+      status: hasSubmit ? "done" : currentStep === 4 ? "current" : "todo",
     },
   ];
 
-  // TODO: Implement your step content rendering
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <View className="flex-1 items-center justify-center">
-            <Screen1 />
-          </View>
-        );
+        return <Screen1 values={formValues} onChange={handleFieldChange} />;
       case 2:
-        return (
-          <View className="flex-1 items-center justify-center">
-            <Screen2 />
-          </View>
-        );
+        return <Screen2 values={formValues} onChange={handleFieldChange} />;
       case 3:
         return (
-          <View className="flex-1 items-center justify-center">
-            <AppText className="text-base text-gray-600">
-              Documents Step - Implement here
-            </AppText>
-          </View>
+          <Screen3 documents={documents} onUpload={handleDocumentUpload} />
         );
       case 4:
         return (
-          <View className="flex-1 items-center justify-center">
-            <AppText className="text-base text-gray-600">
-              Review Step - Implement here
-            </AppText>
-          </View>
+          <Screen4
+            values={formValues}
+            documents={documents}
+            showSubmitModal={showSubmitModal}
+            setShowSubmitModal={setShowSubmitModal}
+            hasSubmit={hasSubmit}
+            setHasSubmit={setHasSubmit}
+            onBackHome={() => console.log("home")}
+          />
         );
       default:
         return null;
@@ -111,13 +172,16 @@ const AddProperty = () => {
     <SafeAreaView className="flex-col justify-between flex-1">
       <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
         {currentStep <= 1 ? (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity
+            className=" w-[10%]"
+            onPress={() => router.push("/")}
+          >
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity>
-            <FontAwesome5
-              name="chevron-left"
+          <TouchableOpacity className=" w-[10%]">
+            <Ionicons
+              name="chevron-back-outline"
               size={20}
               color="black"
               onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
@@ -128,12 +192,12 @@ const AddProperty = () => {
         <View className="w-6" />
       </View>
 
-      <View className="px-5">
+      <View className="px-5 w-full">
         <StepProgress steps={steps} />
       </View>
 
       <ScrollView
-        className="flex-1 px-5"
+        className="flex-1 px-5 mt-3"
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}
       >
@@ -150,14 +214,22 @@ const AddProperty = () => {
               Back
             </AppText>
           </TouchableOpacity> */}
-          <TouchableOpacity
-            onPress={() => setCurrentStep((prev) => Math.min(prev + 1, 4))}
-            className="flex-1 rounded-xl bg-primary px-5 py-4"
-          >
-            <AppText className="text-center text-sm font-semibold text-white">
-              {currentStep === 4 ? "Submit" : "Next"}
-            </AppText>
-          </TouchableOpacity>
+          {!hasSubmit && (
+            <TouchableOpacity
+              onPress={() => {
+                if (currentStep === 4) {
+                  setShowSubmitModal(true);
+                  return;
+                }
+                setCurrentStep((prev) => Math.min(prev + 1, 4));
+              }}
+              className="flex-1 rounded-xl bg-primary px-5 py-4"
+            >
+              <AppText className="text-center text-lg font-semibold text-white">
+                {currentStep === 4 ? "Submit" : "Next"}
+              </AppText>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </SafeAreaView>

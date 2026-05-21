@@ -6,7 +6,6 @@ import { OverviewCardProps } from "@/lib/interfaces";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import { navigate } from "expo-router/build/global-state/routing";
 import { useState } from "react";
 import {
   FlatList,
@@ -66,9 +65,7 @@ export default function Index() {
               </View>
             </View>
             <View className="flex flex-row items-center">
-              <TouchableOpacity
-                onPress={() => navigate({ pathname: "/(tabs)/properties" })}
-              >
+              <TouchableOpacity onPress={() => router.push("/addproperty")}>
                 <Ionicons
                   name="notifications-outline"
                   size={24}

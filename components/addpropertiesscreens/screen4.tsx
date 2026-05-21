@@ -1,0 +1,216 @@
+import { assets } from "@/assets/assets";
+import { AppText } from "@/components/AppText";
+
+import React from "react";
+import { Image, Modal, TouchableOpacity, View } from "react-native";
+
+export interface DocumentItem {
+  key: string;
+  label: string;
+  optional?: boolean;
+  status: "empty" | "uploaded";
+  fileName?: string;
+}
+
+interface Screen4Props {
+  values: {
+    propertyName: string;
+    purchaseDate: string;
+    purchaseType: string;
+    numberOfPlots: string;
+    plotNumbers: string;
+    pricePerPlot: string;
+  };
+  documents: DocumentItem[];
+  showSubmitModal: boolean;
+  setShowSubmitModal: (value: React.SetStateAction<boolean>) => void;
+  hasSubmit: boolean;
+  setHasSubmit: (value: React.SetStateAction<boolean>) => void;
+  onBackHome: () => void;
+}
+
+const formatNaira = (value: string) => {
+  const digits = value.replace(/[^0-9]/g, "");
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "0";
+};
+
+const calculateTotal = (pricePerPlot: string, numberOfPlots: string) => {
+  const price = Number(pricePerPlot.replace(/[^0-9]/g, ""));
+  const plots = Number(numberOfPlots.replace(/[^0-9]/g, ""));
+  if (!price || !plots) return "0";
+  return String(price * plots);
+};
+
+const Screen4: React.FC<Screen4Props> = ({
+  values,
+  documents,
+  showSubmitModal,
+  setShowSubmitModal,
+  hasSubmit,
+  setHasSubmit,
+  onBackHome,
+}) => {
+  const totalValue = formatNaira(
+    calculateTotal(values.pricePerPlot, values.numberOfPlots),
+  );
+
+  return hasSubmit ? (
+    <View className="flex-1 items-center justify-between py-10 px-5">
+      <View className="w-full rounded-[32px] border border-emerald-100 bg-white p-6 shadow-sm">
+        <View className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#EAF8EE]">
+          <Image source={assets.successGif} alt="success-gif" />
+        </View>
+
+        <View className="mb-5 items-center px-2">
+          <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
+            Pineleaf Garden Estate has been registered. We will notify you when
+            it becomes eligible for buyback.
+          </AppText>
+        </View>
+
+        <View className="mx-auto rounded-2xl bg-[#FDECEC] px-5 py-3">
+          <AppText className="text-[#DC2626] text-[14px] font-semibold">
+            Not Eligible
+          </AppText>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        className="mt-8 h-14 w-full items-center justify-center rounded-3xl bg-primary"
+        onPress={onBackHome}
+      >
+        <AppText className="text-white text-[16px] font-semibold">
+          Back to home
+        </AppText>
+      </TouchableOpacity>
+    </View>
+  ) : (
+    <View className="flex flex-col gap-4">
+      <View className="rounded-xl bg-white p-5 flex flex-col gap-3">
+        <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
+          <AppText className="text-sm text-gray-500">Name</AppText>
+          <AppText className="text-sm text-gray-900">
+            {values.propertyName || "-"}
+          </AppText>
+        </View>
+        <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
+          <AppText className="text-sm text-gray-500">Purchase date</AppText>
+          <AppText className="text-sm text-gray-900">
+            {values.purchaseDate || "-"}
+          </AppText>
+        </View>
+        <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
+          <AppText className="text-sm text-gray-500">Purchase type</AppText>
+          <AppText className="text-sm text-gray-900">
+            {values.purchaseType || "-"}
+          </AppText>
+        </View>
+        <View className="flex-row justify-between">
+          <AppText className="text-sm text-gray-500">Plot numbers</AppText>
+          <AppText className="text-sm text-gray-900">
+            {values.plotNumbers || "-"}
+          </AppText>
+        </View>
+      </View>
+
+      <View className="rounded-xl bg-white p-5 flex flex-col gap-4">
+        <AppText className="text-sm font-semibold text-gray-900">
+          Purchase value
+        </AppText>
+        <View className="flex flex-col gap-3">
+          <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
+            <AppText className="text-sm text-gray-500">Price per plot</AppText>
+            <AppText className="text-sm font-semibold text-gray-900">
+              ₦{formatNaira(values.pricePerPlot)}
+            </AppText>
+          </View>
+          <View className="flex-row justify-between">
+            <AppText className="text-sm text-gray-500">Total value</AppText>
+            <AppText className="text-sm font-semibold text-gray-900">
+              ₦{totalValue}
+            </AppText>
+          </View>
+        </View>
+      </View>
+
+      <View className="rounded-xl bg-white p-5 flex flex-col gap-4">
+        <View className="flex-row items-center justify-between">
+          <AppText className="text-sm font-semibold text-gray-900">
+            Documents
+          </AppText>
+        </View>
+        <View className="flex flex-col gap-3">
+          {documents.map((doc) => (
+            <View
+              key={doc.key}
+              className="flex-row items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4"
+            >
+              <View>
+                <AppText className="text-sm font-medium text-gray-900">
+                  {doc.label}
+                </AppText>
+                <AppText className="text-xs text-gray-500">
+                  {doc.status === "uploaded"
+                    ? doc.fileName || "Uploaded"
+                    : doc.optional
+                      ? "Optional"
+                      : "Missing"}
+                </AppText>
+              </View>
+              <View
+                className={`rounded-ull px-3 py-1 ${
+                  doc.status === "uploaded" ? "bg-primary/10" : "bg-gray-100"
+                }`}
+              >
+                <AppText
+                  className={`text-xs font-semibold ${
+                    doc.status === "uploaded" ? "text-primary" : "text-gray-500"
+                  }`}
+                >
+                  {doc.status === "uploaded" ? "Uploaded" : "Pending"}
+                </AppText>
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <Modal visible={showSubmitModal} transparent animationType="slide">
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white w-full rounded-t-3xl p-6 flex flex-col gap-3">
+            <AppText className="text-xl font-semibold text-black">
+              Confirm submission
+            </AppText>
+
+            <AppText className="text-sm leading-8 text-black">
+              Once submitted, your property will appear in your dashboard with a
+              “Not yet eligible” status. You’ll be notified when it becomes
+              eligible for buyback.
+            </AppText>
+            <View className="flex flex-col gap-4">
+              <TouchableOpacity
+                onPress={() => {
+                  setHasSubmit(true);
+                  setShowSubmitModal(false);
+                }}
+                className="bg-primary rounded-xl py-4 items-center"
+              >
+                <AppText className="text-white text-lg font-semibold">
+                  Yes, Submit
+                </AppText>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => setShowSubmitModal(false)}>
+                <AppText className="text-center text-lg font-medium text-black">
+                  Back to edit
+                </AppText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+export default Screen4;
