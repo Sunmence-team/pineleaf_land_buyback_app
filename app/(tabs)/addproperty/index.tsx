@@ -8,9 +8,11 @@ import { AppText } from "@/components/AppText";
 import StepProgress from "@/components/StepProgress";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
+import { useFormik } from "formik";
 import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Yup from "yup";
 
 /**
  * Add Property Screen
@@ -57,16 +59,8 @@ interface AddPropertyFormValues {
   numberOfPlots: string;
   plotNumbers: string;
   pricePerPlot: string;
+  documents: DocumentItem[];
 }
-
-const defaultFormValues: AddPropertyFormValues = {
-  propertyName: "",
-  purchaseDate: "",
-  purchaseType: "",
-  numberOfPlots: "",
-  plotNumbers: "",
-  pricePerPlot: "",
-};
 
 const defaultDocuments: DocumentItem[] = [
   { key: "allocationLetter", label: "Allocation letter", status: "empty" },
@@ -86,40 +80,152 @@ const defaultDocuments: DocumentItem[] = [
   },
 ];
 
+const defaultFormValues: AddPropertyFormValues = {
+  propertyName: "",
+  purchaseDate: "",
+  purchaseType: "",
+  numberOfPlots: "",
+  plotNumbers: "",
+  pricePerPlot: "",
+  documents: defaultDocuments,
+};
+
+const documentSchema = Yup.object({
+  status: Yup.string().oneOf(["empty", "uploaded"]).required(),
+  optional: Yup.boolean(),
+}).test(
+  "required-document-uploaded",
+  "Upload all required documents before continuing",
+  (doc) => Boolean(doc?.optional || doc?.status === "uploaded"),
+);
+
+const validationSchema = Yup.object({
+  propertyName: Yup.string()
+    .trim()
+    .min(2, "Type at least 2 characters")
+    .required("Property name is required"),
+  purchaseDate: Yup.string().trim().required("Purchasing date is required"),
+  purchaseType: Yup.string().trim().required("Purchasing type is required"),
+  numberOfPlots: Yup.number()
+    .typeError("Enter a valid number")
+    .integer("Use a whole number")
+    .positive("At least 1 plot")
+    .required("Number of plots is required"),
+  plotNumbers: Yup.string().trim().required("Plot number is required"),
+  pricePerPlot: Yup.number()
+    .typeError("Enter a valid amount")
+    .positive("Amount must be greater than 0")
+    .required("Price per plot is required"),
+  documents: Yup.array().of(documentSchema),
+});
+
+const stepValidationSchemas: Record<number, Yup.AnyObjectSchema> = {
+  1: validationSchema.pick([
+    "propertyName",
+    "purchaseDate",
+    "purchaseType",
+    "numberOfPlots",
+    "plotNumbers",
+  ]),
+  2: validationSchema.pick(["numberOfPlots", "pricePerPlot"]),
+  3: validationSchema.pick(["documents"]),
+  4: validationSchema,
+};
+
+const stepFields: Record<number, (keyof AddPropertyFormValues)[]> = {
+  1: [
+    "propertyName",
+    "purchaseDate",
+    "purchaseType",
+    "numberOfPlots",
+    "plotNumbers",
+  ],
+  2: ["numberOfPlots", "pricePerPlot"],
+  3: ["documents"],
+  4: [],
+};
+
 const AddProperty = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formValues, setFormValues] =
-    useState<AddPropertyFormValues>(defaultFormValues);
-  const [documents, setDocuments] = useState<DocumentItem[]>(defaultDocuments);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [hasSubmit, setHasSubmit] = useState(false);
 
+  const formik = useFormik<AddPropertyFormValues>({
+    initialValues: defaultFormValues,
+    validationSchema,
+    validateOnBlur: true,
+    validateOnChange: true,
+    onSubmit: () => {
+      setShowSubmitModal(true);
+    },
+  });
+
   const handleFieldChange = <K extends keyof AddPropertyFormValues>(
     field: K,
-    value: string,
+    value: AddPropertyFormValues[K],
   ) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
+    formik.setFieldValue(field, value);
+  };
+
+  const handleFieldBlur = (field: keyof AddPropertyFormValues) => {
+    formik.setFieldTouched(field, true);
   };
 
   const handleDocumentUpload = (key: string, fileName: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.key === key
-          ? {
-              ...doc,
-              status: "uploaded",
-              fileName,
-            }
-          : doc,
-      ),
+    const nextDocuments = formik.values.documents.map((doc) =>
+      doc.key === key
+        ? {
+            ...doc,
+            status: "uploaded",
+            fileName,
+          }
+        : doc,
     );
+    formik.setFieldTouched("documents", true);
+    formik.setFieldValue("documents", nextDocuments);
+  };
+
+  const resetAddPropertyFlow = () => {
+    formik.resetForm();
+    setCurrentStep(1);
+    setShowSubmitModal(false);
+    setHasSubmit(false);
   };
 
   const handleBackHome = () => {
-    setHasSubmit(false);
-    router.dismissAll?.();
-    router.replace("/");
+    resetAddPropertyFlow();
+    router.replace("/(tabs)");
+  };
+
+  const handleClose = () => {
+    resetAddPropertyFlow();
+    router.replace("/(tabs)");
+  };
+
+  const touchCurrentStep = () => {
+    const nextTouched = stepFields[currentStep].reduce(
+      (acc, field) => ({ ...acc, [field]: true }),
+      {},
+    );
+    formik.setTouched({ ...formik.touched, ...nextTouched }, true);
+  };
+
+  const isCurrentStepValid = stepValidationSchemas[currentStep].isValidSync(
+    formik.values,
+  );
+
+  const handleNext = async () => {
+    touchCurrentStep();
+
+    if (!isCurrentStepValid) return;
+
+    if (currentStep === 4) {
+      await formik.submitForm();
+      return;
+    }
+
+    setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
   const steps: { label: string; status: "done" | "current" | "todo" }[] = [
@@ -144,23 +250,50 @@ const AddProperty = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <Screen1 values={formValues} onChange={handleFieldChange} />;
+        return (
+          <Screen1
+            values={formik.values}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            errors={formik.errors}
+            touched={formik.touched}
+          />
+        );
       case 2:
-        return <Screen2 values={formValues} onChange={handleFieldChange} />;
+        return (
+          <Screen2
+            values={formik.values}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            errors={formik.errors}
+            touched={formik.touched}
+          />
+        );
       case 3:
         return (
-          <Screen3 documents={documents} onUpload={handleDocumentUpload} />
+          <Screen3
+            documents={formik.values.documents}
+            onUpload={handleDocumentUpload}
+            error={
+              !formik.errors.documents
+                ? undefined
+                : typeof formik.errors.documents === "string"
+                  ? formik.errors.documents
+                  : "Upload all required documents before continuing"
+            }
+            touched={Boolean(formik.touched.documents)}
+          />
         );
       case 4:
         return (
           <Screen4
-            values={formValues}
-            documents={documents}
+            values={formik.values}
+            documents={formik.values.documents}
             showSubmitModal={showSubmitModal}
             setShowSubmitModal={setShowSubmitModal}
             hasSubmit={hasSubmit}
             setHasSubmit={setHasSubmit}
-            onBackHome={() => console.log("home")}
+            onBackHome={handleBackHome}
           />
         );
       default:
@@ -171,11 +304,8 @@ const AddProperty = () => {
   return (
     <SafeAreaView className="flex-col justify-between flex-1">
       <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
-        {currentStep <= 1 ? (
-          <TouchableOpacity
-            className=" w-[10%]"
-            onPress={() => router.push("/")}
-          >
+        {currentStep <= 1 || hasSubmit ? (
+          <TouchableOpacity className=" w-[10%]" onPress={handleClose}>
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
         ) : (
@@ -184,7 +314,12 @@ const AddProperty = () => {
               name="chevron-back-outline"
               size={20}
               color="black"
-              onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
+              onPress={() => {
+                setCurrentStep((prev) => Math.max(prev - 1, 1));
+                if (hasSubmit) {
+                  setHasSubmit(false);
+                }
+              }}
             />
           </TouchableOpacity>
         )}
@@ -216,14 +351,11 @@ const AddProperty = () => {
           </TouchableOpacity> */}
           {!hasSubmit && (
             <TouchableOpacity
-              onPress={() => {
-                if (currentStep === 4) {
-                  setShowSubmitModal(true);
-                  return;
-                }
-                setCurrentStep((prev) => Math.min(prev + 1, 4));
-              }}
-              className="flex-1 rounded-xl bg-primary px-5 py-4"
+              onPress={handleNext}
+              disabled={!isCurrentStepValid}
+              className={`flex-1 rounded-xl px-5 py-4 ${
+                isCurrentStepValid ? "bg-primary" : "bg-gray-300"
+              }`}
             >
               <AppText className="text-center text-lg font-semibold text-white">
                 {currentStep === 4 ? "Submit" : "Next"}

@@ -1,4 +1,4 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
@@ -23,38 +23,6 @@ import { Ionicons } from "@expo/vector-icons";
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  useEffect(() => {
-    async function setInitialRoute() {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        router.replace("/(onboarding)/stepOne")
-      } catch (e) {
-        console.error(
-          "Error reading onboarding status, defaulting to onboarding:",
-          e,
-        );
-      } finally {
-        // After we decide the route, we can hide the splash screen.
-        SplashScreen.hideAsync();
-      }
-    }
-
-    setInitialRoute();
-  }, []);
-
-  const toastConfig = {
-    success: ({ text1, text2 }: any) => (
-      <View className='flex-row items-center gap-2 bg-primary p-4 rounded-lg w-[90%]'>
-        <Ionicons name="checkmark-circle" size={24} color="white" />
-        <View>
-          <Text className="text-white font-bold">{text1}</Text>
-          <Text className="text-white">{text2}</Text>
-        </View>
-      </View>
-    ),
-  };
-
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />

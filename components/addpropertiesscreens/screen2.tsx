@@ -1,8 +1,6 @@
 import { AppText } from "@/components/AppText";
-import { useFormik } from "formik";
 import React from "react";
 import { TextInput, View } from "react-native";
-import * as Yup from "yup";
 
 export interface Screen2Values {
   pricePerPlot: string;
@@ -12,19 +10,10 @@ export interface Screen2Values {
 interface Screen2Props {
   values: Screen2Values;
   onChange: (field: keyof Screen2Values, value: string) => void;
+  onBlur: (field: keyof Screen2Values) => void;
+  errors?: Partial<Record<keyof Screen2Values, string>>;
+  touched?: Partial<Record<keyof Screen2Values, boolean>>;
 }
-
-const validationSchema = Yup.object().shape({
-  pricePerPlot: Yup.number()
-    .typeError("Enter a valid amount")
-    .positive("Amount must be greater than 0")
-    .required("Price per plot is required"),
-  numberOfPlots: Yup.number()
-    .typeError("Enter a valid number")
-    .integer("Use a whole number")
-    .positive("At least 1 plot")
-    .required("Number of plots is required"),
-});
 
 const formatNaira = (value: string) => {
   const digits = value.replace(/[^0-9]/g, "");
@@ -45,24 +34,22 @@ const calculateTotal = (pricePerPlot: string, numberOfPlots: string) => {
  * 1. Import Screen2 into the Add Property parent screen.
  * 2. Pass current price and plot values plus a change handler:
  *    <Screen2 values={formValues} onChange={handleFieldChange} />
- * 3. The component validates the price and plot count with Yup.
+ * 3. The parent Formik instance owns validation and passes inline errors down.
  * 4. Total value is calculated from pricePerPlot * numberOfPlots.
  */
-const Screen2: React.FC<Screen2Props> = ({ values, onChange }) => {
-  const formik = useFormik<Screen2Values>({
-    enableReinitialize: true,
-    initialValues: values,
-    validationSchema,
-    onSubmit: () => undefined,
-  });
-
+const Screen2: React.FC<Screen2Props> = ({
+  values,
+  onChange,
+  onBlur,
+  errors,
+  touched,
+}) => {
   const handleChange = (field: keyof Screen2Values) => (value: string) => {
-    formik.handleChange(field)(value);
     onChange(field, value);
   };
 
   const totalValue = formatNaira(
-    calculateTotal(formik.values.pricePerPlot, formik.values.numberOfPlots),
+    calculateTotal(values.pricePerPlot, values.numberOfPlots),
   );
 
   return (
@@ -75,21 +62,21 @@ const Screen2: React.FC<Screen2Props> = ({ values, onChange }) => {
         </View>
         <View className="">
           <TextInput
-            value={formatNaira(formik.values.pricePerPlot)}
+            value={formatNaira(values.pricePerPlot)}
             onChangeText={(text) => {
               const digits = text.replace(/[^0-9]/g, "");
               handleChange("pricePerPlot")(digits);
             }}
-            onBlur={formik.handleBlur("pricePerPlot")}
+            onBlur={() => onBlur("pricePerPlot")}
             placeholder="30,000,000"
             placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
             className="rounded-xl border border-gray-200 bg-white px-4 py-4 pr-12 text-base text-black font-quickRegular"
           />
         </View>
-        {formik.touched.pricePerPlot && formik.errors.pricePerPlot ? (
+        {touched?.pricePerPlot && errors?.pricePerPlot ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.pricePerPlot}
+            {errors.pricePerPlot}
           </AppText>
         ) : null}
       </View>
@@ -99,20 +86,20 @@ const Screen2: React.FC<Screen2Props> = ({ values, onChange }) => {
           Number of plots
         </AppText>
         <TextInput
-          value={formik.values.numberOfPlots}
+          value={values.numberOfPlots}
           onChangeText={(text) => {
             const digits = text.replace(/[^0-9]/g, "");
             handleChange("numberOfPlots")(digits);
           }}
-          onBlur={formik.handleBlur("numberOfPlots")}
+          onBlur={() => onBlur("numberOfPlots")}
           placeholder="3"
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="rounded-xl border border-gray-200 bg-white px-4 py-4 text-base text-black font-quickRegular"
         />
-        {formik.touched.numberOfPlots && formik.errors.numberOfPlots ? (
+        {touched?.numberOfPlots && errors?.numberOfPlots ? (
           <AppText className="text-xs text-red-600">
-            {formik.errors.numberOfPlots}
+            {errors.numberOfPlots}
           </AppText>
         ) : null}
       </View>
