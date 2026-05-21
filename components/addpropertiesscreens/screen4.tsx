@@ -66,8 +66,8 @@ const Screen4: React.FC<Screen4Props> = ({
 
         <View className="items-center px-2">
           <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
-            Pineleaf Garden Estate has been registered. We will notify you when
-            it becomes eligible for buyback.
+            {values.propertyName || "Property"} has been registered. We will
+            notify you when it becomes eligible for buyback.
           </AppText>
         </View>
 
