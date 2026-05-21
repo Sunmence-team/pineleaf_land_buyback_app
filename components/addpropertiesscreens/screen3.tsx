@@ -1,4 +1,5 @@
 import { AppText } from "@/components/AppText";
+import { Feather } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as DocumentPicker from "expo-document-picker";
 import React from "react";
@@ -38,55 +39,37 @@ const Screen3: React.FC<Screen3Props> = ({ documents, onUpload }) => {
         </AppText>
       </View>
 
-      <View className="space-y-4">
+      <View className="flex flex-col gap-4 bg-white rounded-xl p-4">
         {documents.map((doc) => (
           <Pressable
             key={doc.key}
             onPress={() => handleSelectFile(doc.key)}
-            className="rounded-3xl border border-dashed border-gray-300 bg-white p-4"
+            className="rounded-xl border border-gray-300 bg-white p-4"
           >
             <View className="flex-row items-center justify-between gap-3">
               <View className="flex-row items-center gap-3">
-                <View className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50">
-                  <Ionicons
-                    name="document-text-outline"
-                    size={20}
-                    color="#047857"
-                  />
+                <View className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/5">
+                  <Ionicons name="document-text-outline" size={20} />
                 </View>
                 <View className="flex-1">
-                  <AppText className="text-base font-semibold text-gray-900">
+                  <AppText className="text-base font-semibold">
                     {doc.label}
                   </AppText>
-                  <AppText className="text-xs text-gray-500">
-                    {doc.optional ? "Optional" : "Required"}
-                  </AppText>
                 </View>
-              </View>
-              <View className="rounded-full bg-gray-100 px-3 py-1">
-                <AppText
-                  className={`text-xs font-semibold ${
-                    doc.status === "uploaded"
-                      ? "text-emerald-700"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {doc.status === "uploaded" ? "Uploaded" : "Upload"}
-                </AppText>
               </View>
             </View>
 
-            <View className="mt-4 rounded-3xl border border-dashed border-gray-200 bg-slate-50 px-4 py-5">
-              <AppText className="text-sm text-gray-500">
+            <View className="mt-4 rounded-xl border border-dashed border-gray-400 bg-primary/5 px-4 py-5 flex items-center flex-row gap-2">
+              {doc.status === "empty" && (
+                <View className="bg-primary/5 p-3 rounded-full">
+                  <Feather name="download" size={16} color="black" />{" "}
+                </View>
+              )}
+              <AppText className="text-sm">
                 {doc.status === "uploaded"
                   ? `Uploaded: ${doc.fileName ?? "Document file"}`
                   : "Upload / Drag & drop here"}
               </AppText>
-              {doc.status === "empty" ? (
-                <AppText className="mt-2 text-xs text-gray-400">
-                  Tap to select a file
-                </AppText>
-              ) : null}
             </View>
           </Pressable>
         ))}

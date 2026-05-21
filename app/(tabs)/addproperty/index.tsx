@@ -6,7 +6,6 @@ import Screen3, {
 import Screen4 from "@/components/addpropertiesscreens/screen4";
 import { AppText } from "@/components/AppText";
 import StepProgress from "@/components/StepProgress";
-import { FontAwesome5 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -93,6 +92,8 @@ const AddProperty = () => {
   const [formValues, setFormValues] =
     useState<AddPropertyFormValues>(defaultFormValues);
   const [documents, setDocuments] = useState<DocumentItem[]>(defaultDocuments);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [hasSubmit, setHasSubmit] = useState(false);
 
   const handleFieldChange = <K extends keyof AddPropertyFormValues>(
     field: K,
@@ -130,7 +131,7 @@ const AddProperty = () => {
     },
     {
       label: "Reviews",
-      status: currentStep === 4 ? "current" : "todo",
+      status: hasSubmit ? "done" : currentStep === 4 ? "current" : "todo",
     },
   ];
 
@@ -145,7 +146,16 @@ const AddProperty = () => {
           <Screen3 documents={documents} onUpload={handleDocumentUpload} />
         );
       case 4:
-        return <Screen4 values={formValues} documents={documents} />;
+        return (
+          <Screen4
+            values={formValues}
+            documents={documents}
+            showSubmitModal={showSubmitModal}
+            setShowSubmitModal={setShowSubmitModal}
+            hasSubmit={hasSubmit}
+            setHasSubmit={setHasSubmit}
+          />
+        );
       default:
         return null;
     }
@@ -155,17 +165,17 @@ const AddProperty = () => {
     <SafeAreaView className="flex-col justify-between flex-1">
       <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
         {currentStep <= 1 ? (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity className=" w-[10%]" onPress={() => router.back()}>
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity>
-            <FontAwesome5
-              name="chevron-left"
+          <TouchableOpacity className=" w-[10%]">
+            <Ionicons
+              name="chevron-back-outline"
               size={20}
               color="black"
               onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
-            />
+            />{" "}
           </TouchableOpacity>
         )}
         <AppText className="text-base font-semibold">Add Property</AppText>
@@ -180,7 +190,6 @@ const AddProperty = () => {
         className="flex-1 px-5 mt-3"
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}
-      
       >
         {renderStepContent()}
       </ScrollView>
@@ -195,14 +204,22 @@ const AddProperty = () => {
               Back
             </AppText>
           </TouchableOpacity> */}
-          <TouchableOpacity
-            onPress={() => setCurrentStep((prev) => Math.min(prev + 1, 4))}
-            className="flex-1 rounded-xl bg-primary px-5 py-4"
-          >
-            <AppText className="text-center text-lg font-semibold text-white">
-              {currentStep === 4 ? "Submit" : "Next"}
-            </AppText>
-          </TouchableOpacity>
+          {!hasSubmit && (
+            <TouchableOpacity
+              onPress={() => {
+                if (currentStep === 4) {
+                  setShowSubmitModal(true);
+                  return;
+                }
+                setCurrentStep((prev) => Math.min(prev + 1, 4));
+              }}
+              className="flex-1 rounded-xl bg-primary px-5 py-4"
+            >
+              <AppText className="text-center text-lg font-semibold text-white">
+                {currentStep === 4 ? "Submit" : "Next"}
+              </AppText>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </SafeAreaView>

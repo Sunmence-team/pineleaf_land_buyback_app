@@ -124,7 +124,7 @@ const Screen2: React.FC<Screen2Props> = ({ values, onChange }) => {
         <View className="mt-3 flex-row items-center gap-2">
           <AppText className="text-2xl text-gray-900">₦</AppText>
           <AppText className="text-2xl  text-gray-900">
-            {totalValue || ""}
+            {totalValue || "0"}
           </AppText>
         </View>
       </View>
