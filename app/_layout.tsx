@@ -3,7 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
 
-import { StatusBar } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { queryClient } from "@/lib/queryClient";
@@ -16,6 +16,8 @@ import {
   useFonts,
 } from "@expo-google-fonts/quicksand";
 import { QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 // Prevent the splash screen from auto-hiding before we can check the onboarding status.
 SplashScreen.preventAutoHideAsync();
@@ -40,11 +42,30 @@ function RootLayoutNav() {
     setInitialRoute();
   }, []);
 
+  const toastConfig = {
+    success: ({ text1, text2 }: any) => (
+      <View className='flex-row items-center gap-2 bg-primary p-4 rounded-lg w-[90%]'>
+        <Ionicons name="checkmark-circle" size={24} color="white" />
+        <View>
+          <Text className="text-white font-bold">{text1}</Text>
+          <Text className="text-white">{text2}</Text>
+        </View>
+      </View>
+    ),
+  };
+
+
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+
+
+      <Toast config={toastConfig} bottomOffset={50} />
+    </>
+
   );
 }
 
@@ -69,7 +90,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider className="font-quickRegular">
-      
+
       <StatusBar
         backgroundColor={"transparent"}
         translucent={true}
