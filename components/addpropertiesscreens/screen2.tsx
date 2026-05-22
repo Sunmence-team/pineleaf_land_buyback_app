@@ -86,6 +86,7 @@ const Screen2: React.FC<Screen2Props> = ({
           Number of plots
         </AppText>
         <TextInput
+          editable={false}
           value={values.numberOfPlots}
           onChangeText={(text) => {
             const digits = text.replace(/[^0-9]/g, "");
@@ -95,7 +96,7 @@ const Screen2: React.FC<Screen2Props> = ({
           placeholder="3"
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
-          className="rounded-xl border border-gray-200 bg-white px-4 py-4 text-base text-black font-quickRegular"
+          className="rounded-xl border border-gray-200 bg-white px-4 py-4 text-base text-black font-quickRegular opacity-[0.6]"
         />
         {touched?.numberOfPlots && errors?.numberOfPlots ? (
           <AppText className="text-xs text-red-600">
