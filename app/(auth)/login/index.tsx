@@ -43,15 +43,10 @@ const Index = () => {
 
       try {
         const response = await api.post("/auth/login", values);
-        console.log(response.data);
         showSuccessToast(response.data.message || "Login successfully");
-        const token = response.data.token;
-        const role = response.data.role;
-
-        const response2 = await api.get("/auth/me");
-        signIn(response2.data.data, token, role);
-
-        router.replace("/(tabs)");
+        const {data} = response.data;
+        signIn(data.user, data.token, data.user.role);
+        router.push("/(tabs)");
       } catch (err: any) {
         let errMessage = err.response?.data?.message || err.message;
 
@@ -185,3 +180,7 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+

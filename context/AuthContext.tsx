@@ -16,13 +16,15 @@ const CURRENT_ROLE_KEY = "current_role";
 
 type User = {
   id: string;
-  fullName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   current_role: string;
   created_at: string;
-  account_name?: string | null;
-  account_number?: string | null;
+  bank_account_name?: string | null;
+  bank_account_number?: string | null;
   bank_name?: string | null;
+  bank_code?: string | null;
   pin?: string | null;
   my_referral_code: string;
 };
@@ -151,13 +153,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signIn = useCallback(
     async (responseData: User, authToken: string, role: string) => {
       try {
-        const userData = handleUserResponse(responseData);
-        if (!userData) throw new Error("Could not parse user data");
 
         await AsyncStorage.setItem(AUTH_TOKEN_KEY, authToken);
         await AsyncStorage.setItem(CURRENT_ROLE_KEY, role);
         setToken(authToken);
-        setUser(userData);
+        setUser(responseData);
         setRole(role);
       } catch (e) {
         console.error("Failed to sign in", e);
