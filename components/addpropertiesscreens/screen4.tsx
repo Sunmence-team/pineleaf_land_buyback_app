@@ -54,6 +54,8 @@ const Screen4: React.FC<Screen4Props> = ({
     calculateTotal(values.pricePerPlot, values.numberOfPlots),
   );
 
+  console.log(values)
+
   return hasSubmit ? (
     <View
       key="submitted"
