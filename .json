@@ -1,0 +1,26 @@
+{
+  "data": {
+    "token": "45|5SmjVJ5Yf8p8uM24abPaCInGsGB1yBd8lYKoxPgD4d912861",
+    "user": {
+      "bank_account_name": null,
+      "bank_account_number": null,
+      "bank_code": null,
+      "bank_name": null,
+      "can_chat": false,
+      "created_at": "2026-05-22T03:10:30.000000Z",
+      "document_reminder_notifications_enabled": true,
+      "eligibility_notifications_enabled": true,
+      "email": "youngdev0010@gmail.com",
+      "email_verified_at": "2026-05-22T03:14:05.000000Z",
+      "first_name": "Zenith",
+      "id": 5,
+      "is_profile_complete": false,
+      "last_name": "Dev",
+      "phone": "09090908899",
+      "push_notifications_enabled": true,
+      "role": "user",
+      "updated_at": "2026-05-22T03:14:05.000000Z"
+    }
+  },
+  "message": "Login successful."
+}
