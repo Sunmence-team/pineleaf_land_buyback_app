@@ -18,7 +18,6 @@ interface PropertyCardProps {
   price: string | number;
   totalPrice: string | number;
 
-  propertyId: string;
   offerId?: string;
   onPress: () => void;
 

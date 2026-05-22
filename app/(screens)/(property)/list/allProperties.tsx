@@ -1,16 +1,15 @@
 import EmptyState from '@/components/cards/EmptyStateCard'
 import PropertyCard from '@/components/cards/PropertyCard'
-import { properties } from '@/lib/data'
 import React from 'react'
 import { FlatList, View } from 'react-native'
 
-const AllProperties = () => {
+const AllProperties = ({ data }: any) => {
 
   return (
     <View style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
 
       <FlatList
-        data={properties}
+        data={data}
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}
