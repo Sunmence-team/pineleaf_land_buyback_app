@@ -9,17 +9,19 @@ interface OnboardingStructureProps {
   title1: string;
   title2: string;
   subText: string;
-  index: number;
+  position: number;
   imageUrl: ImageSourcePropType;
   nextPageURL: string;
+  resizeType?: string;
 }
 
 export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
   title1,
   title2,
   subText,
-  index,
-  imageUrl
+  position,
+  imageUrl,
+  resizeType
 }) => {
 
   const onboardingNavigations = [
@@ -31,20 +33,24 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
     },
     {
       path: "/(onboarding)/stepThree"
+    },
+    {
+      path: "/(auth)/login/"
     }
   ]
 
   const handleAction = () => {
-    router.push(onboardingNavigations[index-1])
+    console.log("onboardingNavigations[position]", onboardingNavigations[position])
+    router.push(onboardingNavigations[position]?.path)
   }
   const handleSkip = () => {
-    router.push("/(auth)/")
+    router.push("/(auth)/login/index")
   }
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
         source={imageUrl}
-        resizeMode="contain"
+        resizeMode={resizeType ? resizeType : "cover"}
         style={{ flex: 1 }}
       >
         <LinearGradient
@@ -65,19 +71,18 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
                 marginBottom: 20,
               }}
             >
-              {onboardingNavigations.map(({ path }, i) => {
+              {onboardingNavigations.slice(0, 3).map(({ path }, i) => {
                 const pageNumber = i + 1;
                 
                 return (
-                  <Link
-                    href={path}
+                  <View
                     style={[
                       styles.pageTabs, 
-                      pageNumber === index && styles.pageTabsActive
+                      pageNumber === position && styles.pageTabsActive
                     ]}
                     key={i}
                   >
-                  </Link>
+                  </View>
                 );
               })}
             </View>
@@ -99,10 +104,10 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
             </AppText>
             <AppText style={{ fontSize: 16, marginTop: 10 }}>{subText}</AppText>
           </View>
-          <View className="flex-col gap-6">
+          <View className="flex-col gap-4">
             <ActionButton name="Next" action={handleAction} />
-            {index <= 2 && (
-              <ActionButton name="Skip" hasBG={false} optStyle={{ marginTop: 10 }} action={handleSkip} />
+            {position <= 2 && (
+              <ActionButton name="Skip" hasBG={false} action={handleSkip} />
             )}
           </View>
         </LinearGradient>
