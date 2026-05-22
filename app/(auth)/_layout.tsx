@@ -13,12 +13,16 @@ export default function AuthLayout() {
           </Pressable>
         ),
         headerTitle: "",
-        headerBackground: () => null,
+        headerShadowVisible: false,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
       }}
     >
-      <Stack.Screen name="login" />
+      <Stack.Screen name="login/index" />
       <Stack.Screen name="register" />
-      <Stack.Screen name="forgotten_password" />
+      <Stack.Screen name="forgotten_password/index" />
+      <Stack.Screen name="verify_email/index" />
     </Stack>
   );
 }

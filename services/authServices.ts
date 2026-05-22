@@ -1,28 +1,25 @@
+import api from "@/helpers/axios";
+
 /**
- * example usage in destination comp
- *
- * useQuery({
- *   queryKey: ["keyIdentifier"],
- *   queryFn: funcCall,
- *  })
+ * Auth services for registration, login, and verification.
  */
 
-export const loginService = async () => {
-  const res = await api.get("/auth/login");
+export const loginService = async (data: any) => {
+  const res = await api.post("/auth/login", data);
   return res.data;
 };
 
-export const sendEmailVerificationCodeService = async () => {
-  const res = await api.get("/auth/register/resend");
+export const registerService = async (data: any) => {
+  const res = await api.post("/auth/register", data);
   return res.data;
 };
 
-export const verificationEmailService = async () => {
-  const res = await api.get("/auth/register/verify");
+export const sendEmailVerificationCodeService = async (data: { email: string }) => {
+  const res = await api.post("/auth/register/resend", data);
   return res.data;
 };
 
-export const registerService = async () => {
-  const res = await api.get("/auth/register");
+export const verificationEmailService = async (data: { email: string, code: string }) => {
+  const res = await api.post("/auth/register/verify", data);
   return res.data;
 };
