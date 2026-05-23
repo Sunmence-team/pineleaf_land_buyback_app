@@ -18,6 +18,9 @@ import {
 } from "@expo-google-fonts/quicksand";
 import { QueryClientProvider } from "@tanstack/react-query";
 
+import Toast from "react-native-toast-message";
+import { toastConfig, showInfoToast } from "@/helpers/toast";
+
 // Prevent the splash screen from auto-hiding before we can check the onboarding status.
 SplashScreen.preventAutoHideAsync();
 
@@ -62,17 +65,18 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <SafeAreaProvider className="font-quickRegular">
-        <StatusBar
-          backgroundColor={"transparent"}
-          translucent={true}
-          animated={true}
-        />
-        <QueryClientProvider client={queryClient}>
-          <RootLayoutNav />
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SafeAreaProvider className="font-quickRegular">
+          <StatusBar
+            backgroundColor={"transparent"}
+            translucent={true}
+            animated={true}
+          />
+            <RootLayoutNav />
+          <Toast config={toastConfig} />
+        </SafeAreaProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

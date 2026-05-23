@@ -1,8 +1,8 @@
 import { AppText } from "@/components/AppText";
 import { sendEmailVerificationCodeService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,11 +11,11 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import ActionButton from "@/components/buttons/ActionButton"
 import { useMutation } from "@tanstack/react-query";
 
 const VerifyEmailIndex = () => {
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const [email, setEmail] = useState("")
 
   const mutation = useMutation({
     mutationFn: sendEmailVerificationCodeService,
@@ -38,7 +38,7 @@ const VerifyEmailIndex = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <View className="flex-1 bg-white px-6">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -60,29 +60,29 @@ const VerifyEmailIndex = () => {
                   Email Address
                 </AppText>
                 <TextInput
-                  className="border border-gray-200 bg-gray-50 rounded-[20px] px-4 py-3 text-gray-500 h-[52px]"
+                  className="border border-primary/30 focus:border-primary bg-[#F9FAF7] px-4 text-black h-[50px]"
+                  style={{
+                    borderRadius: 10,
+                  }}
                   value={email}
-                  editable={false}
-                  placeholder="example@mail.com"
+                  onChangeText={(text) => setEmail(text)}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
                 />
               </View>
             </View>
           </View>
 
           <View className="flex flex-col gap-4 py-8">
-            <Pressable
-              className={`h-14 w-full items-center justify-center rounded-2xl bg-primary ${mutation.isPending ? "opacity-50" : ""}`}
-              onPress={handleNext}
+            <ActionButton
+              action={handleNext}
               disabled={mutation.isPending}
-            >
-              <AppText className="text-white text-base font-semibold">
-                {mutation.isPending ? "Sending code..." : "Next"}
-              </AppText>
-            </Pressable>
+              name={mutation.isPending ? "Sending code..." : "Next"}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
