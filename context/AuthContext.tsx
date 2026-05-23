@@ -1,4 +1,4 @@
-import api from "@/helpers/axios";
+import api, { setupInterceptors } from "@/helpers/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import isEqual from "lodash/isEqual";
 import React, {
@@ -10,7 +10,9 @@ import React, {
   useState,
 } from "react";
 
-const AUTH_TOKEN_KEY = "authToken";
+import { globals } from "@/lib/constants";
+
+const AUTH_TOKEN_KEY = globals.AUTH_TOKEN_KEY;
 const ONBOARDING_STATUS_KEY = "@hasCompletedOnboarding";
 const CURRENT_ROLE_KEY = "current_role";
 
@@ -101,6 +103,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    setupInterceptors(signOut);
+  }, [signOut]);
+
+  useEffect(() => {
     const bootstrapAsync = async () => {
       try {
         const [storedToken, onboardingValue, storedRole] = await Promise.all([
@@ -109,7 +115,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           AsyncStorage.getItem(CURRENT_ROLE_KEY),
         ]);
 
-        // console.log("Loaded onboarding status:", onboardingValue);
         setOnboardingStatus(
           onboardingValue === "true" ? "complete" : "incomplete",
         );
@@ -129,15 +134,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (e: any) {
         console.error("Failed to load initial app state:", e);
-        if (e.response && e.response.status === 401) {
+        if (e.response && (e.response.status === 401 || e.response.status === 404)) {
           await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+          setToken(null);
         }
       } finally {
         setIsLoading(false);
       }
     };
     bootstrapAsync();
-  }, []);
+  }, [signOut]);
 
   const completeOnboarding = useCallback(async () => {
     try {

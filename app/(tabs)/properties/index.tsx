@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 
 type StatusType = "all" | "eligible" | "pending";
 
-interface propertiesProps{
+interface propertiesProps {
   id: number;
   title: string;
   status: string;
@@ -19,7 +19,7 @@ interface propertiesProps{
   totalPrice: string | number;
 }
 
-interface propertyResponse{
+interface propertyResponse {
   data: propertiesProps[];
   total: number
   totalPages: number;
@@ -35,8 +35,8 @@ const Properties = () => {
   ];
 
   const fetchProperties = async (): Promise<propertyResponse[]> => {
-    const response = await api.get('/users/properties')
-    return (response.data?.data)
+    const response = await api.get('/user/properties');
+    return response.data.data.data
 
   }
 
@@ -45,21 +45,29 @@ const Properties = () => {
     queryFn: fetchProperties
   })
 
-  if(isLoading){
-    return <p>Loading Properties...</p>
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Loading Properties...</Text>
+      </View>
+    )
   }
 
-  if(error){
-    return <p>Failed to fetch properties</p>
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Failed to fetch properties</Text>
+      </View>
+    )
   }
 
-  const properties = data?.data || []
+  const properties = data || []
 
-  const eligibleProperties = properties.filter(
+  const eligibleProperties = properties?.filter(
     (item: any) => item.status === 'eligible'
   )
 
-  const pendingProperties = properties.filter(
+  const pendingProperties = properties?.filter(
     (item: any) => item.status === 'pending'
   )
 

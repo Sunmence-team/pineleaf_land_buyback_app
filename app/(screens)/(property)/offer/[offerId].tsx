@@ -1,9 +1,10 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
-import React from 'react'
-import { router, useLocalSearchParams } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'; 
-import { properties } from '@/lib/data';
 import CustomModal from '@/components/modal/CustomModal';
+import api from '@/helpers/axios';
+import { Ionicons } from '@expo/vector-icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { router, useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -30,10 +31,44 @@ const Offer = ({ status }: { status: StatusType }) => {
 
   const { offerId } = useLocalSearchParams();
 
-  const offer = properties.find((item) => item.id === Number(offerId));
+  const fetchPropertyDetails = async () => {
+    const response = await api.get(`/user/properties/${offerId}`)
+    return response.data.data
+  }
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["propertyDetails", offerId],
+    queryFn: fetchPropertyDetails,
+    enabled: !!offerId
+  })
+
+  const declineOfferMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post(`/user/properties/${offerId}/offer/decline`);
+      return response.data;
+    },
+    onSuccess: () => {
+      setOpenModal(false);
+      router.push('/(tabs)/properties');
+    },
+    onError: (err) => {
+      console.error('Decline offer failed:', err);
+    }
+  });
+
+  // Use API data if available, otherwise fall back to local data
+  const offer = data?.data || []
 
   if (!offer) {
     return <Text>Offer not found</Text>;
+  }
+
+  if (isLoading) {
+    return <Text>Loading offer details...</Text>;
+  }
+
+  if (error) {
+    return <Text>Error loading offer: {error.message}</Text>;
   }
 
   const handleAcceptOffer = () => {
@@ -47,17 +82,21 @@ const Offer = ({ status }: { status: StatusType }) => {
   };
 
   const handleProceed = () => {
+    if (modalType === "decline") {
+      declineOfferMutation.mutate();
+      return;
+    }
+
     setOpenModal(false)
 
     setTimeout(() => {
       router.push('/document/DocumentSubmission')
-
     }, 500)
   }
 
   const assets = {
-  mark: require("../../../../assets/images/mark.gif"),
-  reject: require("../../../../assets/images/reject.gif"),
+    mark: require("../../../../assets/images/mark.gif"),
+    reject: require("../../../../assets/images/reject.gif"),
   };
 
   return (
@@ -69,10 +108,10 @@ const Offer = ({ status }: { status: StatusType }) => {
           </View>
 
           <View
-            className={`px-3 py-1 rounded-lg ${statusStyles[status]}`}
+            className={`px-3 py-1 rounded-lg ${statusStyles[offer?.offer_status as StatusType]}`}
           >
             <Text className="text-xs font-medium">
-              {statusLabel[status]}
+              {statusLabel[offer?.offer_status as StatusType]}
             </Text>
           </View>
         </View>
@@ -80,29 +119,29 @@ const Offer = ({ status }: { status: StatusType }) => {
         <View className='flex-row justify-between mb-4'>
           <View>
             <Text className='text-lg'>Plot</Text>
-            <Text className='text-medium'>{offer.plots}</Text>
+            <Text className='text-medium'>{offer?.number_of_plots}</Text>
           </View>
           <View>
             <Text className='text-lg'>Purchased value</Text>
-            <Text className='text-medium'>{offer.price}</Text>
+            <Text className='text-medium'>{offer?.price_per_plots}</Text>
           </View>
         </View>
         <View className='flex-row justify-between'>
           <View>
-            <Text className='text-lg'>Purchse Date</Text>
-            <Text className='text-medium'>{offer.date}</Text>
+            <Text className='text-lg'>Purchase Date</Text>
+            <Text className='text-medium'>{offer?.purchase_date}</Text>
           </View>
           <View>
             <Text className='text-lg'>Plot numbers</Text>
-            <Text className='text-medium'>PL-204 to 206</Text>
+            <Text className='text-medium'>{offer?.plot_numbers}</Text>
           </View>
         </View>
       </View>
 
       <View className='rounded-lg bg-secondary p-4 h-40 mt-5 items-center justify-center'>
         <Text className='text-lg mb-4 '>Company Buyback Offer</Text>
-        <Text className='text-4xl font-medium text-primary mb-4'>₦8,625,000</Text>
-        <Text className='text-sm text-gray-600 font-mediumd'>+₦2,875,000 above your purchase price</Text>
+        <Text className='text-4xl font-medium text-primary mb-4'>₦{Number(offer?.total_value).toLocaleString()}</Text>
+        <Text className='text-sm text-gray-600 font-mediumd'>+₦{offer?.offer_amount} above your purchase price</Text>
       </View>
 
       <View className='flex-row items-center gap-2 mt-4'>
@@ -111,12 +150,12 @@ const Offer = ({ status }: { status: StatusType }) => {
       </View>
 
       <Pressable className=' bg-primary rounded-lg py-6 mt-7 items-center'
-        onPress={() => handleAcceptOffer(offer.id)}
+        onPress={() => handleAcceptOffer()}
       >
         <Text className='font-semibold text-white'>Accept Offer</Text>
       </Pressable>
       <Pressable className=' py-6 mt-7 items-center'
-        onPress={() => handleDeclineOffer(offer.id)}
+        onPress={() => handleDeclineOffer()}
       >
         <Text className='font-semibold'>Decline Offer</Text>
       </Pressable>

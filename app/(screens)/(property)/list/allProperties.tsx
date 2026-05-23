@@ -3,13 +3,13 @@ import PropertyCard from '@/components/cards/PropertyCard'
 import React from 'react'
 import { FlatList, View } from 'react-native'
 
-const AllProperties = ({ data }: any) => {
+const AllProperties = ({ properties }: any) => {
 
   return (
     <View style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
 
       <FlatList
-        data={data}
+        data={properties}
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}

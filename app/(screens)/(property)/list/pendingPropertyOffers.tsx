@@ -4,11 +4,11 @@ import React from 'react'
 import { FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const pendingPropertyOffers = ({ data }: any) => {
+const pendingPropertyOffers = ({ pendingProperties }: any) => {
   return (
     <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
       <FlatList
-        data={data}
+        data={pendingProperties}
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}

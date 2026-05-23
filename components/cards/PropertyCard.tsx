@@ -6,12 +6,14 @@ import Modal from "../modal/Modal";
 import { assets } from "@/assets/assets";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "@/helpers/axios";
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
 interface PropertyCardProps {
   id: number;
-  title: string;
+  name: string;
   status: StatusType;
   date: string;
   plots: string | number;
@@ -64,7 +66,7 @@ const getButtonText = (status: StatusType) => {
 
 export default function PropertyCard({
   id,
-  title,
+  name,
   status,
   date,
   plots,
@@ -75,7 +77,7 @@ export default function PropertyCard({
 }: PropertyCardProps) {
 
   const [openModal, setOpenModal] = React.useState(false)
-const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
+  const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
 
   const logic = (status: StatusType) => {
     if (status === "eligible") {
@@ -84,26 +86,50 @@ const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
     else if (status === "not_eligible" || status === "completed") {
       router.push(`/view/${id}`);
     }
-    else if (status === "offer_sent") {
+    else if (status === "offer_sent" || status === "pending") {
       router.push(`/offer/${id}`);
     }
 
-    return (null)
+    return
   };
 
-  const handleToast = () => {
-    setOpenModal(false);
+  const requestBuyback = async ({ id }: { id: number, name: string }) => {
+    const response = await api.put(`/user/properties/${id}/request`)
+    return response.data
 
-    setTimeout(() => {
-       setCurrentStatus("pending"); 
+  }
+
+  const queryClient = useQueryClient()
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: requestBuyback,
+
+    onSuccess: (data, variables) => {
+      setOpenModal(false);
+
+      queryClient.invalidateQueries({ queryKey: ['properties'] })
+
+      setCurrentStatus("pending");
 
       Toast.show({
         type: "success",
         text1: "Request Submitted",
-        text2: "Your Buyback request for pine leaf phase 2 is being processed.",
+        text2: `${variables.name}Your buyback request is being processed`,
       });
-    }, 500); // delay in ms
-  };
+    },
+
+    onError: () => {
+      Toast.show({
+        type: "error",
+        text1: "Request Failed",
+        text2: "Something went wrong.",
+      });
+    },
+  })
+
+  const handleRequest = () => {
+    mutate({ id, name });
+  }
 
   return (
     <>
@@ -116,7 +142,7 @@ const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
         {/* Header */}
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-base font-semibold text-gray-800">
-            {title}
+            {name}
           </Text>
 
           <View
@@ -246,7 +272,8 @@ const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
           </>
 
           <TouchableOpacity
-            onPress={handleToast}
+            onPress={handleRequest}
+            disabled={isPending}
             activeOpacity={0.8}
             className="bg-primary items-center py-5 rounded-lg mb-5 w-full">
             <Text className="text-white font-semibold"> Confirm Request</Text>

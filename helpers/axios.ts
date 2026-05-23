@@ -1,10 +1,17 @@
+import Constants from "expo-constants";
 import { globals } from "@/lib/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "axios";
 
+const apiBaseUrl =
+  process.env.EXPO_PUBLIC_API_URL ||
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL ||
+  Constants.manifest?.extra?.EXPO_PUBLIC_API_URL ||
+  "https://buyback.pineleafesates.com.ng/api";
+
 // api constructor
 const api = create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },

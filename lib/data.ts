@@ -130,11 +130,3 @@
 //     status: "upcoming",
 //   },
 // ];
-interface propertiesProps{
-  id: number;
-  title: string;
-  status: string;
-  plot: number;
-  price: string | number;
-  totalPrice: string | number;
-}

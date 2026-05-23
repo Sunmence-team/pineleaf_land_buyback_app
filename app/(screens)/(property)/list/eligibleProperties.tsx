@@ -4,11 +4,11 @@ import React from "react";
 import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const eligibleProperties = ({ data }: any) => {
+const eligibleProperties = ({ eligibleProperties }: any) => {
   return (
     <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
       <FlatList
-        data={data}
+        data={eligibleProperties}
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}
@@ -23,7 +23,7 @@ const eligibleProperties = ({ data }: any) => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<AppText>No eligible properties</AppText>}
+        ListEmptyComponent={<AppText className="flex-1 items-center justify-center">No eligible properties</AppText>}
         contentContainerStyle={{ }}
       />
     </SafeAreaView>
