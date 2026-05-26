@@ -1,4 +1,4 @@
-import api from "@/helpers/axios";
+import api, { setupInterceptors } from "@/helpers/axios";
 import { globals } from "@/lib/constants";
 import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +11,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
+
+const AUTH_TOKEN_KEY = globals.AUTH_TOKEN_KEY;
+const ONBOARDING_STATUS_KEY = "@hasCompletedOnboarding";
+const CURRENT_ROLE_KEY = "current_role";
 
 type User = {
   id: string;
@@ -55,6 +59,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    setupInterceptors(signOut);
+  }, [signOut]);
+
+  useEffect(() => {
     const bootstrapAsync = async () => {
       try {
         const [storedToken, onboardingValue, storedRole] = await Promise.all([
@@ -70,12 +78,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
       } catch (e) {
         console.error("Failed to load initial app state:", e);
+        if (e.response && (e.response.status === 401 || e.response.status === 404)) {
+          await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+          setToken(null);
+        }
       } finally {
         setIsBootstrapLoading(false);
       }
     };
     bootstrapAsync();
-  }, []);
+  }, [signOut]);
 
   const { data: userResponse, isLoading: isUserLoading, refetch } = useQuery({
     queryKey: ["user"],
