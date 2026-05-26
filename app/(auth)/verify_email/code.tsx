@@ -3,7 +3,7 @@ import { verificationEmailService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 import { router, useLocalSearchParams } from "expo-router";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,9 +12,9 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
+import ActionButton from "@/components/buttons/ActionButton";
 
 const CodeSchema = Yup.object().shape({
   code: Yup.string()
@@ -24,6 +24,7 @@ const CodeSchema = Yup.object().shape({
 
 const VerifyEmailCode = () => {
   const { email } = useLocalSearchParams<{ email: string }>();
+  const inputRef = useRef<TextInput>(null);
 
   const mutation = useMutation({
     mutationFn: verificationEmailService,
@@ -48,14 +49,16 @@ const VerifyEmailCode = () => {
     },
   });
 
+  const codeArray = formik.values.code.split("");
+
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <View className="flex-1 bg-white px-6">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="flex flex-col gap-8 pt-6">
+          <View className="flex flex-col gap-8 pt-2">
             <View className="flex flex-col gap-3">
               <AppText className="text-2xl font-quickBold text-black">
                 Verification Code
@@ -70,16 +73,40 @@ const VerifyEmailCode = () => {
                 <AppText className="text-sm font-semibold text-black">
                   Code
                 </AppText>
+                
+                {/* Visual PIN boxes */}
+                <Pressable 
+                  onPress={() => inputRef.current?.focus()}
+                  className="flex-row justify-between gap-4 w-full mt-2"
+                >
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <View 
+                      key={index}
+                      className={`w-[52px] h-[52px] border rounded-xl items-center justify-center bg-[#F9FAF7] ${
+                        formik.values.code.length === index 
+                          ? "border-primary border-2" 
+                          : "border-primary/30"
+                      }`}
+                    >
+                      <AppText className="text-xl font-quickBold text-black">
+                        {codeArray[index] || ""}
+                      </AppText>
+                    </View>
+                  ))}
+                </Pressable>
+
+                {/* Hidden TextInput */}
                 <TextInput
-                  className="border border-primary bg-[#F9FAF7] rounded-[20px] px-4 py-3 text-black h-[52px] text-center text-xl tracking-[10px]"
+                  ref={inputRef}
+                  style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
                   value={formik.values.code}
                   onChangeText={formik.handleChange("code")}
                   onBlur={formik.handleBlur("code")}
                   keyboardType="number-pad"
                   maxLength={6}
-                  placeholder="000000"
-                  placeholderTextColor="#6B7280"
+                  autoFocus={true}
                 />
+
                 {formik.touched.code && formik.errors.code && (
                   <AppText className="text-xs text-red-600 mt-1">
                     {formik.errors.code}
@@ -90,23 +117,22 @@ const VerifyEmailCode = () => {
           </View>
 
           <View className="flex flex-col gap-4 py-8">
-            <Pressable
-              className={`h-14 w-full items-center justify-center rounded-2xl bg-primary ${mutation.isPending ? "opacity-50" : ""}`}
-              onPress={() => formik.handleSubmit()}
+            <ActionButton
+              name={mutation.isPending ? "Verifying..." : "Verify Code"}
+              action={() => formik.handleSubmit()}
               disabled={mutation.isPending}
-            >
-              <AppText className="text-white text-base font-semibold">
-                {mutation.isPending ? "Verifying..." : "Verify Code"}
-              </AppText>
-            </Pressable>
+            />
             
-            <Pressable onPress={() => router.back()} disabled={mutation.isPending}>
-               <AppText className="text-center text-primary font-semibold">Back</AppText>
-            </Pressable>
+            <ActionButton 
+              name="Back"
+              hasBG={false}
+              action={() => router.back()}
+              disabled={mutation.isPending}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 

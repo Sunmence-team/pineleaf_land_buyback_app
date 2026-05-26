@@ -5,8 +5,8 @@ export const showSuccessToast = (message: string) => {
   Toast.show({
     type: "success",
     text1: message,
-    position: "bottom",
-    bottomOffset: 40,
+    position: "top",
+    topOffset: 50,
     visibilityTime: 3000,
   });
 };
@@ -15,8 +15,8 @@ export const showErrorToast = (message: string) => {
   Toast.show({
     type: "error",
     text1: message,
-    position: "bottom",
-    bottomOffset: 40,
+    position: "top",
+    topOffset: 50,
   });
 };
 
@@ -24,8 +24,8 @@ export const showInfoToast = (message: string) => {
   Toast.show({
     type: "info",
     text1: message,
-    position: "bottom",
-    bottomOffset: 40,
+    position: "top",
+    topOffset: 50,
   });
 };
 
@@ -38,6 +38,7 @@ export const toastConfig: ToastConfig = {
         paddingVertical: 10,
         borderRadius: 10,
         maxWidth: "90%",
+        justifyContent: "center",
         gap: 6,
         flexDirection: "row",
         alignSelf: "center",
@@ -72,11 +73,12 @@ export const toastConfig: ToastConfig = {
   error: ({ text1 }: BaseToastProps) => (
     <View
       style={{
-        backgroundColor: "#FF0800",
+        backgroundColor: "#d60700d5",
         paddingHorizontal: 12,
         paddingVertical: 10,
         borderRadius: 10,
         maxWidth: "90%",
+        justifyContent: "center",
         gap: 6,
         flexDirection: "row",
         alignSelf: "center",
@@ -120,9 +122,10 @@ export const toastConfig: ToastConfig = {
         flexDirection: "row",
         alignSelf: "center",
         alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <Image
+      {/* <Image
         source={require("@/assets/images/logo.png")}
         style={{
           width: 25,
@@ -132,7 +135,7 @@ export const toastConfig: ToastConfig = {
           borderRadius: 6,
         }}
         resizeMode="contain"
-      />
+      /> */}
       <Text
         style={{
           color: "#fff",
