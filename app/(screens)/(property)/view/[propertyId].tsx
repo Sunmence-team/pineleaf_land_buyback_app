@@ -20,7 +20,7 @@ interface PropertyCardProps {
   totalPrice: string | number;
 }
 
-const PropertyDetails = ({ status }: { status: StatusType }) => {
+const PropertyDetails = ({ status }: { status: StatusType }): React.FC<PropertyCardProps> => {
 
   const { propertyId } = useLocalSearchParams();
   const id = Number(propertyId);
@@ -65,7 +65,7 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
     const res = await api.post(`/user/properties/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    return res.data;
+    return res.data.data;
   }, {
     onSuccess: (resp: any) => {
       setUploaded(true);
@@ -156,7 +156,7 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
       <View className="flex-row justify-between">
         <View className="mb-4">
           <Text className="text-xl font-medium mb-2">{property.name}</Text>
-          <Text>{property.number_of_plots} . {property.purchase_type} . {property.purchase_date}</Text>
+          <Text>{property.number_of_plots} • {property.purchase_type} • {property.purchase_date}</Text>
         </View>
 
         <View

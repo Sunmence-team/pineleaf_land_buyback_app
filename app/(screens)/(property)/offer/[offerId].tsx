@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -44,12 +45,17 @@ const Offer = ({ status }: { status: StatusType }) => {
 
   const declineOfferMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.post(`/user/properties/${offerId}/offer/decline`);
+      const response = await api.put(`/user/properties/${offerId}/offer/decline`);
       return response.data;
     },
     onSuccess: () => {
       setOpenModal(false);
       router.push('/(tabs)/properties');
+
+      Toast.show({
+        type: "success",
+        text1: "Offer Declined Successfully",
+      });
     },
     onError: (err) => {
       console.error('Decline offer failed:', err);
