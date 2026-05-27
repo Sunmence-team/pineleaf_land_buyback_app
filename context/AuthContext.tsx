@@ -1,4 +1,3 @@
-import api from "@/helpers/axios";
 import { globals } from "@/lib/constants";
 import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -77,7 +76,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     bootstrapAsync();
   }, []);
 
-  const { data: userResponse, isLoading: isUserLoading, refetch } = useQuery({
+  const {
+    data: userResponse,
+    isLoading: isUserLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["user"],
     queryFn: getUserService,
     enabled: !!token,
@@ -85,7 +88,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log("userResponse", userResponse)
   const user = userResponse;
 
   const signIn = useCallback(
