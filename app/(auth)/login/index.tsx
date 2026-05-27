@@ -29,7 +29,7 @@ const LoginFormSchema = Yup.object().shape({
 
 const Index = () => {
   const [visibilityOne, setVisibilityOne] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, completeOnboarding } = useAuth();
 
   const mutation = useMutation({
     mutationFn: loginService,
@@ -47,6 +47,9 @@ const Index = () => {
     onError: (err: any) => {
       let errMessage = err.response?.data?.message || err.message;
       showErrorToast(errMessage || "Error occurred while logging in.");
+    },
+    onSettled: () => {
+      completeOnboarding();
     },
   });
 
@@ -140,9 +143,9 @@ const Index = () => {
 
                 <Link
                   href={"/(auth)/forgotten_password"}
-                  className="text-primary text-sm font-medium"
+                  className="text-primary text-base font-medium"
                 >
-                  Forgot password
+                  Forgot password?
                 </Link>
               </View>
             </View>

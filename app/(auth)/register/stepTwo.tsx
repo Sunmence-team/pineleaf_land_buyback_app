@@ -1,11 +1,14 @@
 import { AppText } from "@/components/AppText";
+import ActionButton from "@/components/buttons/ActionButton";
+import { useAuth } from "@/context/AuthContext";
 import { useRegister } from "@/context/RegisterContext";
-import { registerService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { registerService } from "@/services/authServices";
 import { Ionicons } from "@expo/vector-icons";
+import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useFormik } from "formik";
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -15,8 +18,6 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
-import ActionButton from "@/components/buttons/ActionButton";
-import { useMutation } from "@tanstack/react-query";
 
 const StepTwoSchema = Yup.object().shape({
   password: Yup.string()
@@ -31,6 +32,7 @@ const StepTwoSchema = Yup.object().shape({
 
 const RegisterStepTwo = () => {
   const { registerData, updateRegisterData } = useRegister();
+  const { completeOnboarding } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -54,6 +56,9 @@ const RegisterStepTwo = () => {
         error.response?.data?.message ||
           "Registration failed. Please try again.",
       );
+    },
+    onSettled: () => {
+      completeOnboarding();
     },
   });
 
@@ -173,7 +178,11 @@ const RegisterStepTwo = () => {
                     className={`flex-row items-center gap-2 ${req.met ? "opacity-100" : "opacity-30"}`}
                   >
                     <Ionicons
-                      name={req.met ? "checkmark-circle" : "checkmark-circle-outline"}
+                      name={
+                        req.met
+                          ? "checkmark-circle"
+                          : "checkmark-circle-outline"
+                      }
                       size={16}
                       color={req.met ? "#154A22" : "#6B7280"}
                     />
@@ -192,7 +201,7 @@ const RegisterStepTwo = () => {
               action={() => formik.handleSubmit()}
               disabled={mutation.isPending}
             />
-            <ActionButton 
+            <ActionButton
               name={"Back"}
               hasBG={false}
               action={() => router.back()}

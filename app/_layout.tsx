@@ -137,6 +137,26 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { showErrorToast, toastConfig } from "@/helpers/toast";
 import { router } from "expo-router";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://a265f8577f4b5e8f790abf7a01d3115d@o4511461391532032.ingest.de.sentry.io/4511461394874448',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 // Keep splash screen visible until we are explicitly ready to hide it
 SplashScreen.preventAutoHideAsync();
@@ -204,7 +224,7 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
   );
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded, error] = useFonts({
     quickLight: Quicksand_300Light,
     quickRegular: Quicksand_400Regular,
@@ -234,4 +254,4 @@ export default function RootLayout() {
       </AuthProvider>
     </QueryClientProvider>
   );
-}
+});
