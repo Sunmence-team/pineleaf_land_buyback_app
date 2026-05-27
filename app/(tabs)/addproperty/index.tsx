@@ -323,7 +323,7 @@ const AddProperty = () => {
             />
           </TouchableOpacity>
         )}
-        <AppText className="text-base font-semibold">Add Property</AppText>
+        <AppText className="text-xl font-quickSemiBold">Add Property</AppText>
         <View className="w-6" />
       </View>
 
@@ -339,7 +339,7 @@ const AddProperty = () => {
         {renderStepContent()}
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-neutral/50 px-5 py-4">
+      <View className="absolute bottom-8 left-0 right-0 bg-neutral/50 px-5 py-4">
         <View className="flex-row items-center justify-between gap-3">
           {/* <TouchableOpacity
             onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}

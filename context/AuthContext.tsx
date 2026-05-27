@@ -1,3 +1,4 @@
+import { setupInterceptors } from "@/helpers/axios";
 import { globals } from "@/lib/constants";
 import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,61 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const bootstrapAsync = async () => {
-      try {
-        const [storedToken, onboardingValue, storedRole] = await Promise.all([
-          AsyncStorage.getItem(globals.AUTH_TOKEN_KEY),
-          AsyncStorage.getItem(globals.ONBOARDING_STATUS_KEY),
-          AsyncStorage.getItem(globals.CURRENT_ROLE_KEY),
-        ]);
-
-        setToken(storedToken);
-        setRole(storedRole);
-        setOnboardingStatus(
-          onboardingValue === "true" ? "complete" : "incomplete",
-        );
-      } catch (e) {
-        console.error("Failed to load initial app state:", e);
-      } finally {
-        setIsBootstrapLoading(false);
-      }
-    };
-    bootstrapAsync();
-  }, []);
-
-  const {
-    data: userResponse,
-    isLoading: isUserLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUserService,
-    enabled: !!token,
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const user = userResponse;
-
-  const signIn = useCallback(
-    async (userData: User, authToken: string, userRole: string) => {
-      try {
-        await Promise.all([
-          AsyncStorage.setItem(globals.AUTH_TOKEN_KEY, authToken),
-          AsyncStorage.setItem(globals.CURRENT_ROLE_KEY, userRole),
-        ]);
-        setToken(authToken);
-        setRole(userRole);
-        queryClient.setQueryData(["user"], userData);
-      } catch (e) {
-        console.error("Failed to sign in", e);
-        throw new Error("Login failed");
-      }
-    },
-    [queryClient],
-  );
-
   const signOut = useCallback(async () => {
     try {
       if (token) {
@@ -126,6 +72,74 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       queryClient.clear();
     }
   }, [token, queryClient]);
+
+  useEffect(() => {
+    setupInterceptors(signOut);
+  }, [signOut]);
+
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      try {
+        const [storedToken, onboardingValue, storedRole] = await Promise.all([
+          AsyncStorage.getItem(globals.AUTH_TOKEN_KEY),
+          AsyncStorage.getItem(globals.ONBOARDING_STATUS_KEY),
+          AsyncStorage.getItem(globals.CURRENT_ROLE_KEY),
+        ]);
+
+        setToken(storedToken);
+        setRole(storedRole);
+        setOnboardingStatus(
+          onboardingValue === "true" ? "complete" : "incomplete",
+        );
+      } catch (e: any) {
+        console.error("Failed to load initial app state:", e);
+        if (
+          e?.response &&
+          (e.response.status === 401 || e.response.status === 404)
+        ) {
+          await AsyncStorage.removeItem(globals.AUTH_TOKEN_KEY);
+          setToken(null);
+        }
+      } finally {
+        setIsBootstrapLoading(false);
+      }
+    };
+    bootstrapAsync();
+  }, [signOut]);
+
+  const {
+    data: userResponse,
+    isLoading: isUserLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: getUserService,
+    enabled: !!token,
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  console.log("userResponse", userResponse);
+  const user = userResponse?.data;
+  console.log("userResponse.data", userResponse?.data);
+
+  const signIn = useCallback(
+    async (userData: User, authToken: string, userRole: string) => {
+      try {
+        await Promise.all([
+          AsyncStorage.setItem(globals.AUTH_TOKEN_KEY, authToken),
+          AsyncStorage.setItem(globals.CURRENT_ROLE_KEY, userRole),
+        ]);
+        setToken(authToken);
+        setRole(userRole);
+        queryClient.setQueryData(["user"], userData);
+      } catch (e) {
+        console.error("Failed to sign in", e);
+        throw new Error("Login failed");
+      }
+    },
+    [queryClient],
+  );
 
   const refreshUser = useCallback(async () => {
     await refetch();

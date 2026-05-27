@@ -1,21 +1,19 @@
 import { AppText } from "@/components/AppText";
 import PropertyCard from "@/components/cards/PropertyCard";
-import { properties } from "@/lib/data";
 import React from "react";
 import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const eligibleProperties = () => {
-  const eligibleProps = properties.filter((prop) => prop.status === "eligible");
-  
+const eligibleProperties = ({ eligibleProperties }: any) => {
   return (
     <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
       <FlatList
-        data={eligibleProps}
+        data={eligibleProperties}
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}
-            title={property.title}
+            id={property.id}
+            name={property.title}
             status={property.status}
             date={property.date}
             plots={property.plots}
@@ -25,7 +23,7 @@ const eligibleProperties = () => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<AppText>No eligible properties</AppText>}
+        ListEmptyComponent={<AppText className="flex-1 items-center justify-center">No eligible properties</AppText>}
         contentContainerStyle={{ }}
       />
     </SafeAreaView>

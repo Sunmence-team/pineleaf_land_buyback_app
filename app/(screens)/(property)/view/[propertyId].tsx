@@ -1,24 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { plotDetails, purchaseProperty } from "@/lib/data";
 import TrackCard from "@/components/cards/TrackCard";
+import api from "@/helpers/axios";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import * as ImagePicker from "expo-image-picker";
+import { useLocalSearchParams } from "expo-router";
+import React from "react";
+import { Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
-interface PropertyCardProps {
-  id: number;
-  title: string;
-  status: StatusType;
-  date: string;
-  plots: string | number;
-  price: string | number;
-  totalPrice: string | number;
-}
 
-const PropertyDetails = ({ status }: { status: StatusType }) => {
+
+const PropertyDetails = () => {
+
+  const { propertyId } = useLocalSearchParams();
+  const id = Number(propertyId);
 
   const [image, setImage] = React.useState<string | null>(null);
   const [uploading, setUploading] = React.useState(false);
@@ -55,46 +52,105 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
   };
 
   // UPLOAD IMAGE
-  const uploadImage = async (file: any) => {
+  // Use TanStack mutation to upload document via axios helper
+  const uploadMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await api.post(`/user/properties/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data.data;
+    },
+    onSuccess: (resp: any) => {
+      setUploaded(true);
+      console.log("Upload success", resp);
+    },
+    onError: (err: any) => {
+      console.log("Upload error", err);
+    },
+    onSettled: () => setUploading(false),
+  });
+
+  const uploadImage = (file: any) => {
     setUploading(true);
-
     const formData = new FormData();
-
     formData.append("document", {
       uri: file.uri,
       name: "allocation.jpg",
       type: "image/jpeg",
     } as any);
 
-    try {
-      const res = await fetch("YOUR_API_URL", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      const data = await res.json();
-
-      setUploaded(true);
-      console.log(data);
-
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setUploading(false);
-    }
+    uploadMutation.mutate(formData);
   };
 
+  const fetchPropertyDetails = async () => {
+    const response = await api.get(`/user/properties/${id}`)
+    return response.data.data
+  }
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["propertyDetails", id],
+    queryFn: fetchPropertyDetails,
+    enabled: !!id
+  })
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Loading Properties details...</Text>
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Failed to fetch properties</Text>
+      </View>
+    )
+  }
+
+  const property = data || {}
+  const status: StatusType = property?.status || "pending";
+
+  const plotDetails = [
+    {
+      label: "Price/Plot",
+      value: `₦${Number(property?.price_per_plots).toLocaleString()}`
+    },
+    {
+      label: "Total Value",
+      value: `${property?.number_of_plots}`
+    },
+    {
+      label: "Plots",
+      value: `${property?.number_of_plots} Plots`
+    }
+  ]
+
+  const purchaseProperty = [
+    {
+      label: "Name", value: property?.lastName
+    },
+    {
+      label: "Purchase Date",
+      value: property?.purchase_date
+    },
+    {
+      label: "Purchase Type",
+      value: property?.purchase_type
+    },
+    {
+      label: "Plot Numbers",
+      value: property?.plot_numbers
+    }
+  ]
 
   return (
-    <ScrollView className="flex-1 bg-white  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
+    <ScrollView className="flex-1 bg-secondary  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
       <View className="flex-row justify-between">
         <View className="mb-4">
-          <Text className="text-xl font-medium mb-2">Pineleaf Garden Estate</Text>
-          <Text>3 plots . Actual price. Jan 2022</Text>
+          <Text className="text-xl font-medium mb-2">{property.name}</Text>
+          <Text>{property.number_of_plots} • {property.purchase_type} • {property.purchase_date}</Text>
         </View>
 
         <View
@@ -108,7 +164,7 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
 
       <View className="flex-row flex-wrap justify-between gap-2 mt-4 items-center">
         {
-          plotDetails.map((detail, index) => (
+          plotDetails.map((detail: any, index: number) => (
             <View key={index} className="bg-fadedGreen flex items-center justify-center rounded-lg w-32 h-24 p-3 text-center">
               <Text className="text-lg mb-4">{detail.label}</Text>
               <Text className="text-xl font-medium text-primary">{detail.value}</Text>
@@ -121,12 +177,12 @@ const PropertyDetails = ({ status }: { status: StatusType }) => {
       <TouchableOpacity
         className="bg-fadedGreen border border-gray-300 rounded-lg py-6 mt-7 items-center"
         activeOpacity={0.8}>
-        <Text>Request Buyback</Text>
+        <Text>{status === "pending" ? "Track Request" : "request Buyback"}</Text>
       </TouchableOpacity>
 
       <View className="mt-5 border border-gray-300 rounded-lg p-4">
         {
-          purchaseProperty.map((detail, index) => (
+          purchaseProperty.map((detail: any, index: number) => (
             <View key={index} className="flex-row justify-between mb-3  border-b border-gray-100 pb-3">
               <Text className="text-lg font-medium">{detail.label}</Text>
               <Text className="text-gray-800">{detail.value}</Text>

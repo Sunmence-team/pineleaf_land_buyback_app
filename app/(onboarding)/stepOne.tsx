@@ -10,7 +10,7 @@ const stepOne = () => {
     title2: "Our Promise.",
     subText: "A seamless buyback experience built on trust, transparency and real value for you.",
     imageUrl: assets.onboarding1,
-    position: 1
+    position: 0,
   }
 
   return (

@@ -18,6 +18,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/context/AuthContext";
+import ActionButton from "@/components/buttons/ActionButton";
 
 export const ProfileCard = () => {
   return (
@@ -31,6 +33,7 @@ export const ProfileCard = () => {
 };
 
 const ProfileScreen = () => {
+  const { signOut } = useAuth();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.secondContainer}>
@@ -147,6 +150,11 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </ScrollView>
         </View>
+
+        <ActionButton
+          name={"Logout"} 
+          action={signOut}
+        />
       </View>
     </SafeAreaView>
   );

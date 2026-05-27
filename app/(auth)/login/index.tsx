@@ -29,19 +29,26 @@ const LoginFormSchema = Yup.object().shape({
 
 const Index = () => {
   const [visibilityOne, setVisibilityOne] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, completeOnboarding } = useAuth();
 
   const mutation = useMutation({
     mutationFn: loginService,
     onSuccess: (response) => {
       showSuccessToast(response.message || "Login successfully");
       const { data } = response;
-      signIn(data.user, data.token, data.user.role);
-      router.push("/(tabs)");
+      if (data.user.role === "user") {
+        signIn(data.user, data.token, data.user.role);
+        router.push("/(tabs)");
+      } else {
+        showErrorToast("Try to log in via web")
+      }
     },
     onError: (err: any) => {
       let errMessage = err.response?.data?.message || err.message;
       showErrorToast(errMessage || "Error occurred while logging in.");
+    },
+    onSettled: () => {
+      completeOnboarding();
     },
   });
 
@@ -135,9 +142,9 @@ const Index = () => {
 
                 <Link
                   href={"/(auth)/forgotten_password"}
-                  className="text-primary text-sm font-semibold"
+                  className="text-primary text-base font-medium"
                 >
-                  Forgot password
+                  Forgot password?
                 </Link>
               </View>
             </View>

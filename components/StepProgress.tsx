@@ -48,7 +48,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
   return (
     <View className="w-full flex flex-row items-center justify-between px-1 py-4">
       {steps.map((step, index) => (
-        <View key={step.label} className="flex-1 ">
+        <View key={step.label} className={`${index !== steps.length - 1 ? "flex-1" : ""}`}>
           <View className="flex-row items-center w-full">
             <View
               className={`h-10 w-10 rounded-full items-center justify-center border-2 ${

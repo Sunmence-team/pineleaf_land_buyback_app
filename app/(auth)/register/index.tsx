@@ -162,7 +162,7 @@ const RegisterStepOne = () => {
                 href={"/(auth)/login"}
                 className="text-primary font-semibold"
               >
-                Login
+                <AppText>Login</AppText>
               </Link>
             </AppText>
           </View>

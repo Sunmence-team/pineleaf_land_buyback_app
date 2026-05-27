@@ -50,3 +50,4 @@ app-example
 tasks/
 
 .json
+.env.local

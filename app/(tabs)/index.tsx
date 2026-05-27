@@ -49,7 +49,7 @@ export default function Index() {
   ];
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-[#F4F6F1]">
       <ScrollView>
         <View className="flex flex-col gap-5 px-5 pt-5 pb-5">
           <View className="flex flex-row items-center justify-between">

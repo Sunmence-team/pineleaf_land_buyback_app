@@ -10,8 +10,7 @@ const stepThree = () => {
     subText:
       "Request buyback, submit documents and get paid all in a few easy steps with full support.",
     imageUrl: assets.onboarding3,
-    position: 3,
-    // nextPageURL: "/(auth)/",
+    position: 2,
   };
 
   return (
