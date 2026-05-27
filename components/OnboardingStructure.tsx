@@ -49,7 +49,7 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
         style={{ flex: 1 }}
       >
         <LinearGradient
-          colors={['#F4F6F1', 'transparent', '#F4F6F1']}
+          colors={['#F4F6F1', '#ffffff05', '#F4F6F1']}
           locations={[0.2, 0.5, 1.0]}
           style={{
             flex: 1,

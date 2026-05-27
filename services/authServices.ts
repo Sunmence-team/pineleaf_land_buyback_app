@@ -33,3 +33,23 @@ export const getUserService = async () => {
   const response = await api.get("/auth/me");
   return response.data;
 };
+
+export const forgotPasswordRequestService = async (data: { email: string }) => {
+  const response = await api.post("/auth/password/forgot", data);
+  return response.data;
+};
+
+export const forgotPasswordVerifyService = async (data: { email: string; code: string }) => {
+  const response = await api.post("/auth/password/forgot/verify", data);
+  return response.data;
+};
+
+export const forgotPasswordResetService = async (data: {
+  email: string;
+  reset_token: string;
+  password: string;
+  password_confirmation: string;
+}) => {
+  const response = await api.post("/auth/password/reset", data);
+  return response.data;
+};

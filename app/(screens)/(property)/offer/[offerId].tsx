@@ -1,3 +1,4 @@
+import { assets } from '@/assets/assets';
 import CustomModal from '@/components/modal/CustomModal';
 import api from '@/helpers/axios';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,11 +101,6 @@ const Offer = ({ status }: { status: StatusType }) => {
     }, 500)
   }
 
-  const assets = {
-    mark: require("../../../../assets/images/mark.gif"),
-    reject: require("../../../../assets/images/reject.gif"),
-  };
-
   return (
     <ScrollView className='"flex-1 bg-white  border border-gray-200 rounded-lg p-4 mb-4 w-full '>
       <View className='mt-5 border border-gray-300 rounded-lg p-4'>
@@ -198,8 +194,8 @@ const Offer = ({ status }: { status: StatusType }) => {
 
         image={
           modalType === "accept"
-            ? assets.mark
-            : assets.reject
+            ? assets.successGif
+            : assets.rejectGif
         }
 
         // iconColor={

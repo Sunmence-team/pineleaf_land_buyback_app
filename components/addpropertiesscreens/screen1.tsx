@@ -3,13 +3,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useMemo, useState } from "react";
 import {
-  Modal,
   Platform,
   Pressable,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import Modal from "../modal/Modal";
+import { StyleSheet } from "react-native";
 
 export interface Screen1Values {
   propertyName: string;
@@ -105,7 +106,7 @@ const Screen1: React.FC<Screen1Props> = ({
 
       <View className="flex flex-col gap-2">
         <AppText className="text-sm font-medium text-gray-900">
-          Purchasing date
+          Purchased date
         </AppText>
         <TouchableOpacity
           activeOpacity={0.85}
@@ -196,19 +197,37 @@ const Screen1: React.FC<Screen1Props> = ({
         ) : null}
       </View>
 
-      {showDatePicker && (
-        <DateTimePicker
-          value={currentDate}
-          mode="date"
-          display={Platform.OS === "ios" ? "spinner" : "calendar"}
-          onChange={handleDateChange}
-          maximumDate={new Date()}
-        />
-      )}
+      <Modal visible={showDatePicker} customMode onClose={() => setShowDatePicker(false)}>
+        <View className="flex-1 bg-black/40 justify-end w-full">
+          <View style={styles.container}>
+            <AppText className="mb-4 text-base font-semibold text-gray-900">
+              Select purchased date
+            </AppText>
+            <DateTimePicker
+              value={currentDate}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "calendar"}
+              onChange={handleDateChange}
+              maximumDate={new Date()}
+              style={{ width: "100%" }}
+            />
+            {Platform.OS === "ios" && (
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(false)}
+                className="my-4 rounded-xl bg-gray-100 px-4 py-4"
+              >
+                <AppText className="text-center text-base text-gray-700 font-quickSemiBold">
+                  Done
+                </AppText>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
 
-      <Modal visible={showTypeModal} transparent animationType="slide">
+      <Modal visible={showTypeModal} customMode onClose={() => setShowTypeModal(false)}>
         <View className="flex-1 bg-black/40 justify-end">
-          <View className="rounded-t-3xl bg-white p-5">
+          <View style={styles.container}>
             <AppText className="mb-4 text-base font-semibold text-gray-900">
               Select purchasing type
             </AppText>
@@ -220,7 +239,7 @@ const Screen1: React.FC<Screen1Props> = ({
                   onBlur("purchaseType");
                   setShowTypeModal(false);
                 }}
-                className="rounded-xl bg-gray-50 px-4 py-4 mb-3"
+                className="rounded-xl bg-secondary px-4 py-4 mb-3"
               >
                 <AppText className="text-base text-gray-900">{option}</AppText>
               </Pressable>
@@ -239,5 +258,16 @@ const Screen1: React.FC<Screen1Props> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    backgroundColor: "white"
+  }
+})
 
 export default Screen1;

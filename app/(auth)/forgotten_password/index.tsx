@@ -1,20 +1,20 @@
 import { AppText } from "@/components/AppText";
-import api from "@/helpers/axios";
+import ActionButton from "@/components/buttons/ActionButton";
+import { useForgot } from "@/context/ForgotContext";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import { isAxiosError } from "axios";
+import { forgotPasswordRequestService } from "@/services/authServices";
 import { Link, router } from "expo-router";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
 
 const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -23,42 +23,34 @@ const ForgotPasswordSchema = Yup.object().shape({
 });
 
 const Index = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
+  const { updateForgotData } = useForgot();
+
+  const mutation = useMutation({
+    mutationFn: forgotPasswordRequestService,
+    onSuccess: (response: any, variables: { email: string }) => {
+      showSuccessToast(response.message || "Verification code sent to your email");
+      updateForgotData({ email: variables.email });
+      router.push("/(auth)/forgotten_password/stepTwo");
+    },
+    onError: (err: any) => {
+      console.log("error sending reset code: ", err)
+      let errMessage = err.response?.data?.message || err.message;
+      showErrorToast(errMessage || "Failed to send verification code");
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: ForgotPasswordSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true);
-
-      try {
-        const response = await api.post("/forgot-password", values);
-        console.log(response.data);
-        showSuccessToast(
-          response.data.message || "Password reset link sent to your email",
-        );
-        setResetSent(true);
-        setTimeout(() => router.back(), 2000);
-      } catch (err: any) {
-        let errMessage = err.response?.data?.message || err.message;
-
-        if (isAxiosError(err) && err.response) {
-          showErrorToast(errMessage || "Failed to send reset link");
-        } else {
-          console.error("err?.message", err?.message);
-          showErrorToast("Error occurred. " + errMessage);
-        }
-      } finally {
-        setIsLoading(false);
-      }
+    onSubmit: (values) => {
+      mutation.mutate(values);
     },
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <View className="flex-1 bg-white px-6">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
@@ -68,11 +60,11 @@ const Index = () => {
           <View className="flex-1">
             <View className="flex flex-col gap-8 pt-6">
               <View className="flex flex-col gap-3">
-                <AppText className="text-2xl font-quickBold text-black">
-                  Reset your password
+                <AppText className="text-3xl font-quickBold text-black">
+                  Forgot password?
                 </AppText>
-                <AppText className="text-base text-black/70 leading-6">
-                  Enter your email address and we&apos;ll send you a link to
+                <AppText className="text-base text-black/70 font-quickMedium leading-6">
+                  Enter your email address and we&apos;ll send you a code to
                   reset your password.
                 </AppText>
               </View>
@@ -82,7 +74,10 @@ const Index = () => {
                   Email address
                 </AppText>
                 <TextInput
-                  className="border border-primary bg-[#F9FAF7] rounded-[20px] px-4 py-3 text-black h-[52px]"
+                  className="border border-primary/30 focus:border-primary px-4 text-black h-[50px]"
+                  style={{
+                    borderRadius: 10,
+                  }}
                   value={formik.values.email}
                   onChangeText={formik.handleChange("email")}
                   onBlur={formik.handleBlur("email")}
@@ -90,9 +85,6 @@ const Index = () => {
                   keyboardType="email-address"
                   autoComplete="username"
                   textContentType="username"
-                  placeholder="example@mail.com"
-                  placeholderTextColor="#6B7280"
-                  editable={!resetSent}
                 />
                 {formik.touched.email && formik.errors.email && (
                   <AppText className="text-xs text-red-600 mt-1">
@@ -104,33 +96,15 @@ const Index = () => {
           </View>
 
           <View className="flex flex-col gap-4 py-8">
-            <Pressable
-              className={`h-14 w-full items-center justify-center rounded-2xl bg-primary ${isLoading || resetSent ? "opacity-50" : ""}`}
-              onPress={() => formik.handleSubmit()}
-              disabled={isLoading || resetSent}
-            >
-              <AppText className="text-white text-base font-semibold">
-                {isLoading
-                  ? "Sending..."
-                  : resetSent
-                    ? "Link sent!"
-                    : "Send reset link"}
-              </AppText>
-            </Pressable>
-
-            <AppText className="text-center text-sm text-black/70">
-              Remember your password?{" "}
-              <Link
-                href={"/(auth)/login"}
-                className="text-primary font-semibold"
-              >
-                Login
-              </Link>
-            </AppText>
+            <ActionButton
+              name={mutation.isPending ? "Sending..." : "Send code"}
+              action={() => formik.handleSubmit()}
+              disabled={mutation.isPending}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
