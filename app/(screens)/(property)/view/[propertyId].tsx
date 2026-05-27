@@ -10,17 +10,9 @@ import { Pressable, ScrollView, Text, TouchableOpacity, View } from "react-nativ
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
-interface PropertyCardProps {
-  id: number;
-  title: string;
-  status: StatusType;
-  date: string;
-  plots: string | number;
-  price: string | number;
-  totalPrice: string | number;
-}
 
-const PropertyDetails = ({ status }: { status: StatusType }): React.FC<PropertyCardProps> => {
+
+const PropertyDetails = () => {
 
   const { propertyId } = useLocalSearchParams();
   const id = Number(propertyId);
@@ -61,12 +53,13 @@ const PropertyDetails = ({ status }: { status: StatusType }): React.FC<PropertyC
 
   // UPLOAD IMAGE
   // Use TanStack mutation to upload document via axios helper
-  const uploadMutation = useMutation( async(formData: FormData) => {
-    const res = await api.post(`/user/properties/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return res.data.data;
-  }, {
+  const uploadMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await api.post(`/user/properties/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data.data;
+    },
     onSuccess: (resp: any) => {
       setUploaded(true);
       console.log("Upload success", resp);
@@ -117,6 +110,7 @@ const PropertyDetails = ({ status }: { status: StatusType }): React.FC<PropertyC
   }
 
   const property = data || {}
+  const status: StatusType = property?.status || "pending";
 
   const plotDetails = [
     {

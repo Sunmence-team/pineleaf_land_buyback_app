@@ -22,11 +22,12 @@ interface OfferModalProps {
     buttonText: string;
     buttonColor?: string;
 
-    iconName: keyof typeof Ionicons.glyphMap;
+    iconName?: keyof typeof Ionicons.glyphMap;
     iconColor?: string;
 
     showGuide?: boolean;
     footerText?: string;
+    type?: "accept" | "decline";
 }
 
 const OfferModal = ({

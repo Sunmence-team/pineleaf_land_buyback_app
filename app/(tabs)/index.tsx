@@ -2,6 +2,7 @@ import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import OverviewCard from "@/components/cards/OverviewCard";
 import MapTabsSection from "@/components/MapTabsSection";
+import { useAuth } from "@/context/AuthContext";
 import { OverviewCardProps } from "@/lib/interfaces";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -17,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<
     "all" | "myProperties" | "eligible"
   >("all");
@@ -47,7 +49,7 @@ export default function Index() {
   ];
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-[#F4F6F1]">
       <ScrollView>
         <View className="flex flex-col gap-5 px-5 pt-5 pb-5">
           <View className="flex flex-row items-center justify-between">
@@ -61,7 +63,7 @@ export default function Index() {
               </View>
               <View className="flex flex-col items-start justify-center gap-2">
                 <AppText className="font-semibold">Good Morning</AppText>
-                <AppText className="font-bold">Jay</AppText>
+                <AppText className="font-bold">{user?.first_name}</AppText>
               </View>
             </View>
             <View className="flex flex-row items-center">

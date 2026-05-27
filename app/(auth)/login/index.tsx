@@ -37,8 +37,12 @@ const Index = () => {
       console.log("response", response)
       showSuccessToast(response.message || "Login successfully");
       const { data } = response;
-      signIn(data.user, data.token, data.user.role);
-      router.push("/(tabs)");
+      if (data.user.role === "user") {
+        signIn(data.user, data.token, data.user.role);
+        router.push("/(tabs)");
+      } else {
+        showErrorToast("Try to log in via web")
+      }
     },
     onError: (err: any) => {
       let errMessage = err.response?.data?.message || err.message;
@@ -136,7 +140,7 @@ const Index = () => {
 
                 <Link
                   href={"/(auth)/forgotten_password"}
-                  className="text-primary text-sm font-semibold"
+                  className="text-primary text-sm font-medium"
                 >
                   Forgot password
                 </Link>

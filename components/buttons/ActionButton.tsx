@@ -1,5 +1,6 @@
-import { ActivityIndicator, Pressable, Text, TextStyle, View, ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, TextStyle, ViewStyle } from "react-native";
 import React from "react";
+import { AppText } from "../AppText";
 
 type IconElement = React.ReactElement<{ size?: number }>;
 
@@ -38,7 +39,7 @@ const ActionButton = ({ action, icon, name, optStyle, optStyle2, disabled, loadi
         React.cloneElement(icon, {
           size: iconSize ?? icon.props.size,
         })}
-      <Text
+      <AppText
         style={[{
           fontSize: 18,
           textAlign: "center",
@@ -47,7 +48,7 @@ const ActionButton = ({ action, icon, name, optStyle, optStyle2, disabled, loadi
         numberOfLines={1}
         adjustsFontSizeToFit
         minimumFontScale={0.85}
-      >{name}</Text>
+      >{name}</AppText>
       {loading && <ActivityIndicator size={"small"} color={hasBG ? "#F4F6F1" : "#154A22"} />}
     </Pressable>
   )

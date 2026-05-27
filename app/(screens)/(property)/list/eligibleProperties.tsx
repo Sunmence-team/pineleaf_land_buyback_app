@@ -13,7 +13,7 @@ const eligibleProperties = ({ eligibleProperties }: any) => {
           <PropertyCard
             key={property.id}
             id={property.id}
-            title={property.title}
+            name={property.title}
             status={property.status}
             date={property.date}
             plots={property.plots}

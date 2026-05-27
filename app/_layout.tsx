@@ -1,12 +1,128 @@
+// import { Stack } from "expo-router";
+// import * as SplashScreen from "expo-splash-screen";
+// import { useEffect, useRef } from "react";
+// import "../global.css";
+
+// import { StatusBar } from "react-native";
+// import { SafeAreaProvider } from "react-native-safe-area-context";
+
+// import { AuthProvider, useAuth } from "@/context/AuthContext";
+// import { queryClient } from "@/lib/queryClient";
+// import {
+//   Quicksand_300Light,
+//   Quicksand_400Regular,
+//   Quicksand_500Medium,
+//   Quicksand_600SemiBold,
+//   Quicksand_700Bold,
+//   useFonts,
+// } from "@expo-google-fonts/quicksand";
+// import { QueryClientProvider } from "@tanstack/react-query";
+
+// import Toast from "react-native-toast-message";
+// import { showErrorToast, toastConfig } from "@/helpers/toast";
+// import { router } from "expo-router";
+
+// // Prevent the splash screen from auto-hiding before we can check the onboarding status.
+// SplashScreen.preventAutoHideAsync();
+
+// function RootLayoutNav() {
+//   const { onboardingStatus, isLoading, token, role } = useAuth();
+//   const hasNavigated = useRef(false);
+
+//   useEffect(() => {
+//     if (isLoading || onboardingStatus === "loading" || hasNavigated.current) {
+//       return;
+//     }
+
+//     const setInitialRoute = async () => {
+//       try {
+//         console.log("Onboarding Status:", onboardingStatus);
+//         console.log("Token exists:", !!token);
+
+//         if (onboardingStatus === "complete") {
+//           if (token) {
+//             if (role === "user") {
+//               router.replace("/(tabs)");
+//             } else {
+//               showErrorToast("Try to log in via web")
+//             }
+//           } else {
+//             // If not logged in but onboarding done, go to login
+//             router.replace("/(auth)/login");
+//           }
+//         } else {
+//           // If onboarding is not done, the initial route is the onboarding flow.
+//           router.replace("/(onboarding)/stepOne");
+//         }
+        
+//         hasNavigated.current = true;
+//       } catch (e) {
+//         console.error("Error during initial routing:", e);
+//         router.replace("/(onboarding)/stepOne");
+//       } finally {
+//         await SplashScreen.hideAsync();
+//       }
+//     };
+
+//     setInitialRoute();
+//   }, [onboardingStatus, isLoading, token, role]);
+
+//   return (
+//     <Stack screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="index" options={{ headerShown: false }} />
+//       <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+//       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+//       <Stack.Screen name="(auth)" />
+//     </Stack>
+//   );
+// }
+
+// export default function RootLayout() {
+//   const [fontsLoaded, error] = useFonts({
+//     quickLight: Quicksand_300Light,
+//     quickRegular: Quicksand_400Regular,
+//     quickMedium: Quicksand_500Medium,
+//     quickSemiBold: Quicksand_600SemiBold,
+//     quickBold: Quicksand_700Bold,
+//   });
+
+//   useEffect(() => {
+//     if (fontsLoaded || error) {
+//       SplashScreen.hideAsync();
+//     }
+//   }, [fontsLoaded, error]);
+
+//   if (!fontsLoaded && !error) {
+//     return null;
+//   }
+
+//   return (
+//     <QueryClientProvider client={queryClient}>
+//       <AuthProvider>
+//         <SafeAreaProvider className="font-quickRegular">
+//           <StatusBar
+//             backgroundColor={"transparent"}
+//             translucent={true}
+//             animated={true}
+//           />
+//             <RootLayoutNav />
+//           <Toast config={toastConfig} />
+//         </SafeAreaProvider>
+//       </AuthProvider>
+//     </QueryClientProvider>
+//   );
+// }
+
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import "../global.css";
 
 import { StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { queryClient } from "@/lib/queryClient";
 import {
   Quicksand_300Light,
@@ -19,21 +135,64 @@ import {
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import Toast from "react-native-toast-message";
-import { toastConfig, showInfoToast } from "@/helpers/toast";
+import { showErrorToast, toastConfig } from "@/helpers/toast";
+import { router } from "expo-router";
 
-// Prevent the splash screen from auto-hiding before we can check the onboarding status.
+// Keep splash screen visible until we are explicitly ready to hide it
 SplashScreen.preventAutoHideAsync();
 
-function RootLayoutNav() {
-  // const { isLoading, user } = useAuth();
+function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
+  const { onboardingStatus, isLoading, token, role } = useAuth();
+  const hasNavigated = useRef(false);
 
-  // if (isLoading) {
-  //   return <LoadingScreen/>;
-  // }
+  // Combine auth loading states
+  const isAuthLoading = isLoading || onboardingStatus === "loading";
 
-  // if (!user) {
-  //   return <Redirect href="/(auth)/login" />;
-  // }
+  useEffect(() => {
+    // CRITICAL: Wait until both fonts and auth state are ready
+    if (!fontsReady || isAuthLoading || hasNavigated.current) {
+      return;
+    }
+
+    const setInitialRoute = async () => {
+      try {
+        console.log("Onboarding Status:", onboardingStatus);
+        console.log("Token exists:", !!token);
+
+        if (onboardingStatus === "complete") {
+          if (token) {
+            if (role === "user") {
+              router.replace("/(tabs)");
+            } else {
+              showErrorToast("Try to log in via web");
+              // Fallback if role is invalid so app isn't stuck
+              router.replace("/(auth)/login"); 
+            }
+          } else {
+            router.replace("/(auth)/login");
+          }
+        } else {
+          router.replace("/(onboarding)/stepOne");
+        }
+        
+        hasNavigated.current = true;
+      } catch (e) {
+        console.error("Error during initial routing:", e);
+        router.replace("/(onboarding)/stepOne");
+      } finally {
+        // Hide splash screen ONLY after the router replacement has triggered
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    setInitialRoute();
+  }, [onboardingStatus, isAuthLoading, token, role, fontsReady]);
+
+  // CRITICAL: Block rendering the Stack until the redirect logic fires.
+  // This keeps the native splash screen up and prevents app/index from flashing.
+  if (!fontsReady || isAuthLoading) {
+    return null; 
+  }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -54,15 +213,11 @@ export default function RootLayout() {
     quickBold: Quicksand_700Bold,
   });
 
-  useEffect(() => {
-    if (fontsLoaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, error]);
+  const fontsReady = fontsLoaded || !!error;
 
-  if (!fontsLoaded && !error) {
-    return null;
-  }
+  useEffect(() => {
+    if (error) console.error("Font loading error:", error);
+  }, [error]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -73,7 +228,7 @@ export default function RootLayout() {
             translucent={true}
             animated={true}
           />
-            <RootLayoutNav />
+          <RootLayoutNav fontsReady={fontsReady} />
           <Toast config={toastConfig} />
         </SafeAreaProvider>
       </AuthProvider>
