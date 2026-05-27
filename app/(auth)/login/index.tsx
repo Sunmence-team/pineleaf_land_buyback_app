@@ -34,7 +34,6 @@ const Index = () => {
   const mutation = useMutation({
     mutationFn: loginService,
     onSuccess: (response) => {
-      console.log("response", response)
       showSuccessToast(response.message || "Login successfully");
       const { data } = response;
       if (data.user.role === "user") {
