@@ -47,7 +47,8 @@
           "project": "react-native",
           "organization": "adeleke-oluwamayokun"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
