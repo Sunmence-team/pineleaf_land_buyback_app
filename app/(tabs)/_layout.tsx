@@ -61,12 +61,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          // headerLeft: () => (
-          //   <View className="w-10 h-10 rounded-full border-0 border-white items-center justify-center">
-          //     <Text className="text-2xl font-bold uppercase">SA</Text>
-          //   </View>
-          // ),
-          // headerShown: false,
+          headerShown: false,
           headerTitle: () => null,
           tabBarIcon: ({ focused }) => (
             <Feather
@@ -76,7 +71,6 @@ export default function TabLayout() {
               opacity={focused ? 1 : 0.3}
             />
           ),
-          headerShown: false,
         }}
       />
       {/* Properties */}
@@ -84,16 +78,6 @@ export default function TabLayout() {
         name="properties/index"
         options={{
           title: "Properties",
-          headerShown: false,
-          headerTitle: () => (
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Properties
-            </Text>
-          ),
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="golf-outline"
@@ -140,7 +124,6 @@ export default function TabLayout() {
         name="alerts/index"
         options={{
           title: "Alerts",
-          headerShown: false,
           headerTitle: () => (
             <Text
               style={{
@@ -150,9 +133,6 @@ export default function TabLayout() {
               Alerts
             </Text>
           ),
-          // headerRight: () => (
-          //   <ReferralLevelDropdown />
-          // ),
           tabBarIcon: ({ focused }) => (
             <Feather
               name="alert-triangle"
@@ -168,7 +148,6 @@ export default function TabLayout() {
         name="profile/index"
         options={{
           title: "Profile",
-          headerShown: false,
           headerTitle: () => (
             <Text
               style={{

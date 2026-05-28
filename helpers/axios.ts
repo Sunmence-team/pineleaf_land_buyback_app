@@ -1,17 +1,13 @@
-import Constants from "expo-constants";
 import { globals } from "@/lib/constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "axios";
+import * as Sentry from "@sentry/react-native";
 
-const apiBaseUrl =
-  process.env.EXPO_PUBLIC_API_URL ||
-  Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL ||
-  Constants.manifest?.extra?.EXPO_PUBLIC_API_URL ||
-  "https://buyback.pineleafesates.com.ng/api";
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL
 
 // api constructor
 const api = create({
-  baseURL: apiBaseUrl,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -44,6 +40,7 @@ export const setupInterceptors = (logout: () => void) => {
   responseInterceptor = api.interceptors.response.use(
     (res) => res,
     async (error) => {
+      Sentry.captureException(error);
       if (error.code === "ERR_NETWORK") {
         console.error("No internet or server down");
       } else if (error.response?.status === 401) {

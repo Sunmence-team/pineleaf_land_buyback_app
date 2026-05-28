@@ -1,6 +1,6 @@
-import { Stack } from "expo-router";
+import { Stack, router, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import "../global.css";
 
 import { StatusBar } from "react-native";
@@ -20,7 +20,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import Toast from "react-native-toast-message";
 import { showErrorToast, toastConfig } from "@/helpers/toast";
-import { router } from "expo-router";
 import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
@@ -47,14 +46,14 @@ SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
   const { onboardingStatus, isLoading, token, role } = useAuth();
-  const hasNavigated = useRef(false);
+  const segments = useSegments();
 
   // Combine auth loading states
   const isAuthLoading = isLoading || onboardingStatus === "loading";
 
   useEffect(() => {
     // CRITICAL: Wait until both fonts and auth state are ready
-    if (!fontsReady || isAuthLoading || hasNavigated.current) {
+    if (!fontsReady || isAuthLoading) {
       return;
     }
 
@@ -62,24 +61,34 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
       try {
         console.log("Onboarding Status:", onboardingStatus);
         console.log("Token exists:", !!token);
+        console.log("Segments:", segments);
+
+        const inTabsGroup = segments[0] === "(tabs)" || segments[0] === "(screens)";
+        const inAuthGroup = segments[0] === "(auth)";
+        const inOnboardingGroup = segments[0] === "(onboarding)";
 
         if (onboardingStatus === "complete") {
           if (token) {
             if (role === "user") {
-              router.replace("/(tabs)");
+              if (!inTabsGroup) {
+                router.replace("/(tabs)");
+              }
             } else {
               showErrorToast("Try to log in via web");
-              // Fallback if role is invalid so app isn't stuck
-              router.replace("/(auth)/login"); 
+              if (!inAuthGroup) {
+                router.replace("/(auth)/login");
+              }
             }
           } else {
-            router.replace("/(auth)/login");
+            if (!inAuthGroup) {
+              router.replace("/(auth)/login");
+            }
           }
         } else {
-          router.replace("/(onboarding)/stepOne");
+          if (!inOnboardingGroup) {
+            router.replace("/(onboarding)/stepOne");
+          }
         }
-        
-        hasNavigated.current = true;
       } catch (e) {
         console.error("Error during initial routing:", e);
         router.replace("/(onboarding)/stepOne");
@@ -90,7 +99,7 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
     };
 
     setInitialRoute();
-  }, [onboardingStatus, isAuthLoading, token, role, fontsReady]);
+  }, [onboardingStatus, isAuthLoading, token, role, fontsReady, segments]);
 
   // CRITICAL: Block rendering the Stack until the redirect logic fires.
   // This keeps the native splash screen up and prevents app/index from flashing.

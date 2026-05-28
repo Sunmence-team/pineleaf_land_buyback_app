@@ -1,8 +1,10 @@
 import { AppText } from "@/components/AppText";
+import ActionButton from "@/components/buttons/ActionButton";
 import { useAuth } from "@/context/AuthContext";
-import { loginService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { loginService } from "@/services/authServices";
 import { Ionicons } from "@expo/vector-icons";
+import { useMutation } from "@tanstack/react-query";
 import { Link, router } from "expo-router";
 import { useFormik } from "formik";
 import React, { useState } from "react";
@@ -14,9 +16,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import ActionButton from "@/components/buttons/ActionButton";
 import * as Yup from "yup";
-import { useMutation } from "@tanstack/react-query";
 
 const LoginFormSchema = Yup.object().shape({
   email: Yup.string()
@@ -40,10 +40,11 @@ const Index = () => {
         signIn(data.user, data.token, data.user.role);
         router.push("/(tabs)");
       } else {
-        showErrorToast("Try to log in via web")
+        showErrorToast("Try to log in via web");
       }
     },
     onError: (err: any) => {
+      console.error("error logging in", err);
       let errMessage = err.response?.data?.message || err.message;
       showErrorToast(errMessage || "Error occurred while logging in.");
     },

@@ -1,8 +1,6 @@
 import Screen1 from "@/components/addpropertiesscreens/screen1";
 import Screen2 from "@/components/addpropertiesscreens/screen2";
-import Screen3, {
-  DocumentItem,
-} from "@/components/addpropertiesscreens/screen3";
+import Screen3 from "@/components/addpropertiesscreens/screen3";
 import Screen4 from "@/components/addpropertiesscreens/screen4";
 import { AppText } from "@/components/AppText";
 import StepProgress from "@/components/StepProgress";
@@ -10,9 +8,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
+import { DocumentItem } from "@/lib/interfaces";
+import { useMutation } from "@tanstack/react-query";
+import api from "@/helpers/axios";
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 
 /**
  * Add Property Screen
@@ -53,27 +55,28 @@ import * as Yup from "yup";
  */
 
 interface AddPropertyFormValues {
-  propertyName: string;
-  purchaseDate: string;
-  purchaseType: string;
-  numberOfPlots: string;
-  plotNumbers: string;
-  pricePerPlot: string;
+  property_id: string;
+  property_name: string;
+  purchase_date: string;
+  purchase_type: string;
+  number_of_plots: string;
+  plot_numbers: string;
+  price_per_plots: string;
   documents: DocumentItem[];
 }
 
 const defaultDocuments: DocumentItem[] = [
-  { key: "allocationLetter", label: "Allocation letter", status: "empty" },
-  { key: "deedOfAssignment", label: "Deed of assignment", status: "empty" },
-  { key: "companyReceipt", label: "Company receipt", status: "empty" },
+  { key: "allocation_letter", label: "Allocation letter", status: "empty" },
+  { key: "deed_of_assignment", label: "Deed of assignment", status: "empty" },
+  { key: "company_receipt", label: "Company receipt", status: "empty" },
   {
-    key: "electronicReceipt",
+    key: "electronic_receipt",
     label: "Electronic receipt (if applicable)",
     status: "empty",
     optional: true,
   },
   {
-    key: "otherDocument",
+    key: "other_document",
     label: "Other document (Optional)",
     status: "empty",
     optional: true,
@@ -81,38 +84,37 @@ const defaultDocuments: DocumentItem[] = [
 ];
 
 const defaultFormValues: AddPropertyFormValues = {
-  propertyName: "",
-  purchaseDate: "",
-  purchaseType: "",
-  numberOfPlots: "",
-  plotNumbers: "",
-  pricePerPlot: "",
+  property_id: "",
+  property_name: "",
+  purchase_date: "",
+  purchase_type: "",
+  number_of_plots: "",
+  plot_numbers: "",
+  price_per_plots: "",
   documents: defaultDocuments,
 };
 
 const documentSchema = Yup.object({
   status: Yup.string().oneOf(["empty", "uploaded"]).required(),
   optional: Yup.boolean(),
-}).test(
-  "required-document-uploaded",
-  "Upload all required documents before continuing",
-  (doc) => Boolean(doc?.optional || doc?.status === "uploaded"),
-);
+});
 
 const validationSchema = Yup.object({
-  propertyName: Yup.string()
+  property_id: Yup.string()
     .trim()
-    .min(2, "Type at least 2 characters")
+    .required("Property selection is required"),
+  property_name: Yup.string()
+    .trim()
     .required("Property name is required"),
-  purchaseDate: Yup.string().trim().required("Purchasing date is required"),
-  purchaseType: Yup.string().trim().required("Purchasing type is required"),
-  numberOfPlots: Yup.number()
+  purchase_date: Yup.string().trim().required("Purchasing date is required"),
+  purchase_type: Yup.string().trim().required("Purchasing type is required"),
+  number_of_plots: Yup.number()
     .typeError("Enter a valid number")
     .integer("Use a whole number")
     .positive("At least 1 plot")
     .required("Number of plots is required"),
-  plotNumbers: Yup.string().trim().required("Plot number is required"),
-  pricePerPlot: Yup.number()
+  plot_numbers: Yup.string().trim().required("Plot number is required"),
+  price_per_plots: Yup.number()
     .typeError("Enter a valid amount")
     .positive("Amount must be greater than 0")
     .required("Price per plot is required"),
@@ -121,26 +123,28 @@ const validationSchema = Yup.object({
 
 const stepValidationSchemas: Record<number, Yup.AnyObjectSchema> = {
   1: validationSchema.pick([
-    "propertyName",
-    "purchaseDate",
-    "purchaseType",
-    "numberOfPlots",
-    "plotNumbers",
+    "property_id",
+    "property_name",
+    "purchase_date",
+    "purchase_type",
+    "number_of_plots",
+    "plot_numbers",
   ]),
-  2: validationSchema.pick(["numberOfPlots", "pricePerPlot"]),
+  2: validationSchema.pick(["number_of_plots", "price_per_plots"]),
   3: validationSchema.pick(["documents"]),
   4: validationSchema,
 };
 
 const stepFields: Record<number, (keyof AddPropertyFormValues)[]> = {
   1: [
-    "propertyName",
-    "purchaseDate",
-    "purchaseType",
-    "numberOfPlots",
-    "plotNumbers",
+    "property_id",
+    "property_name",
+    "purchase_date",
+    "purchase_type",
+    "number_of_plots",
+    "plot_numbers",
   ],
-  2: ["numberOfPlots", "pricePerPlot"],
+  2: ["number_of_plots", "price_per_plots"],
   3: ["documents"],
   4: [],
 };
@@ -150,6 +154,50 @@ const AddProperty = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [hasSubmit, setHasSubmit] = useState(false);
+
+  const submitMutation = useMutation({
+    mutationFn: async (values: AddPropertyFormValues) => {
+      const formData = new FormData();
+      formData.append("property_id", values.property_id);
+      formData.append("purchase_date", values.purchase_date);
+      formData.append("purchase_type", values.purchase_type);
+      formData.append("number_of_plots", values.number_of_plots);
+      formData.append("plot_numbers", values.plot_numbers);
+      formData.append("price_per_plots", values.price_per_plots);
+      
+      const price = Number(values.price_per_plots.replace(/[^0-9]/g, ""));
+      const plots = Number(values.number_of_plots.replace(/[^0-9]/g, ""));
+      const total = String(price * plots);
+      formData.append("total_value", total);
+
+      // Add files
+      values.documents.forEach((doc) => {
+        if (doc.status === "uploaded" && doc.file) {
+          formData.append(doc.key, {
+            uri: doc.file.uri,
+            name: doc.file.name,
+            type: doc.file.type,
+          } as any);
+        }
+      });
+
+      const response = await api.post("/user/properties", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setHasSubmit(true);
+      setShowSubmitModal(false);
+      showSuccessToast(data.message || "Property registered successfully");
+    },
+    onError: (err: any) => {
+      let errMessage = err.response?.data?.message || err.message;
+      showErrorToast(errMessage || "Failed to register property");
+    },
+  });
 
   const formik = useFormik<AddPropertyFormValues>({
     initialValues: defaultFormValues,
@@ -172,13 +220,14 @@ const AddProperty = () => {
     formik.setFieldTouched(field, true);
   };
 
-  const handleDocumentUpload = (key: string, fileName: string) => {
+  const handleDocumentUpload = (key: string, file: any) => {
     const nextDocuments = formik.values.documents.map((doc) =>
       doc.key === key
         ? {
             ...doc,
             status: "uploaded",
-            fileName,
+            fileName: file.name,
+            file: file,
           }
         : doc,
     );
@@ -294,6 +343,8 @@ const AddProperty = () => {
             hasSubmit={hasSubmit}
             setHasSubmit={setHasSubmit}
             onBackHome={handleBackHome}
+            isSubmitting={submitMutation.isPending}
+            onSubmit={() => submitMutation.mutate(formik.values)}
           />
         );
       default:
@@ -302,68 +353,66 @@ const AddProperty = () => {
   };
 
   return (
-    <SafeAreaView className="flex-col justify-between flex-1">
-      <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
-        {currentStep <= 1 || hasSubmit ? (
-          <TouchableOpacity className=" w-[10%]" onPress={handleClose}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity className=" w-[10%]">
-            <Ionicons
-              name="chevron-back-outline"
-              size={20}
-              color="black"
-              onPress={() => {
-                setCurrentStep((prev) => Math.max(prev - 1, 1));
-                if (hasSubmit) {
-                  setHasSubmit(false);
-                }
-              }}
-            />
-          </TouchableOpacity>
-        )}
-        <AppText className="text-xl font-quickSemiBold">Add Property</AppText>
-        <View className="w-6" />
-      </View>
-
-      <View className="px-5 w-full">
-        <StepProgress steps={steps} />
-      </View>
-
-      <ScrollView
-        className="flex-1 px-5 mt-3"
-        contentContainerStyle={{ paddingBottom: 150 }}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView className="flex-col justify-between flex-1 bg-white">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        className="flex-1"
       >
-        {renderStepContent()}
-      </ScrollView>
-
-      <View className="absolute bottom-8 left-0 right-0 bg-neutral/50 px-5 py-4">
-        <View className="flex-row items-center justify-between gap-3">
-          {/* <TouchableOpacity
-            onPress={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
-            className="flex-1 rounded-3xl border border-gray-200 bg-white px-5 py-4"
-          >
-            <AppText className="text-center text-sm text-gray-600">
-              Back
-            </AppText>
-          </TouchableOpacity> */}
-          {!hasSubmit && (
-            <TouchableOpacity
-              onPress={handleNext}
-              disabled={!isCurrentStepValid}
-              className={`flex-1 rounded-xl px-5 py-4 ${
-                isCurrentStepValid ? "bg-primary" : "bg-gray-300"
-              }`}
-            >
-              <AppText className="text-center text-lg font-semibold text-white">
-                {currentStep === 4 ? "Submit" : "Next"}
-              </AppText>
+        <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
+          {currentStep <= 1 || hasSubmit ? (
+            <TouchableOpacity className=" w-[10%]" onPress={handleClose}>
+              <Ionicons name="close" size={24} color="black" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity className=" w-[10%]">
+              <Ionicons
+                name="chevron-back-outline"
+                size={20}
+                color="black"
+                onPress={() => {
+                  setCurrentStep((prev) => Math.max(prev - 1, 1));
+                  if (hasSubmit) {
+                    setHasSubmit(false);
+                  }
+                }}
+              />
             </TouchableOpacity>
           )}
+          <AppText className="text-xl font-quickSemiBold">Add Property</AppText>
+          <View className="w-6" />
         </View>
-      </View>
+
+        <View className="px-5 w-full">
+          <StepProgress steps={steps} />
+        </View>
+
+        <ScrollView
+          className="flex-1 px-5 mt-3"
+          contentContainerStyle={{ paddingBottom: 150 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {renderStepContent()}
+        </ScrollView>
+
+        <View className="absolute bottom-8 left-0 right-0 bg-neutral/50 px-5 py-4">
+          <View className="flex-row items-center justify-between gap-3">
+            {!hasSubmit && (
+              <TouchableOpacity
+                onPress={handleNext}
+                disabled={!isCurrentStepValid}
+                className={`flex-1 rounded-xl px-5 py-4 ${
+                  isCurrentStepValid ? "bg-primary" : "bg-gray-300"
+                }`}
+              >
+                <AppText className="text-center text-lg font-semibold text-white">
+                  {currentStep === 4 ? "Submit" : "Next"}
+                </AppText>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

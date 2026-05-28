@@ -1,13 +1,14 @@
-import EmptyState from '@/components/cards/EmptyStateCard'
-import PropertyCard from '@/components/cards/PropertyCard'
-import React from 'react'
-import { FlatList, View } from 'react-native'
+import EmptyStateCard from "@/components/cards/EmptyStateCard";
+import PropertyCard from "@/components/cards/PropertyCard";
+import React from "react";
+import { FlatList, View } from "react-native";
 
 const AllProperties = ({ properties }: any) => {
-
   return (
-    <View style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
-
+    <View
+      style={{ flex: 1 }}
+      className="mt-3 rounded-xl border border-gray-300 bg-white p-3"
+    >
       <FlatList
         data={properties}
         renderItem={({ item: property }) => (
@@ -25,7 +26,7 @@ const AllProperties = ({ properties }: any) => {
         )}
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={
-          <EmptyState
+          <EmptyStateCard
             icon="bag-handle-outline"
             title="No properties yet"
             description="Start by adding a property to track its details and manage buyback when eligible"
@@ -34,7 +35,7 @@ const AllProperties = ({ properties }: any) => {
         contentContainerStyle={{}}
       />
     </View>
-  )
-}
+  );
+};
 
-export default AllProperties 
+export default AllProperties;

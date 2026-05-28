@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { user } = useAuth();
+  console.log("user", user);
   const [activeTab, setActiveTab] = useState<
     "all" | "myProperties" | "eligible"
   >("all");
@@ -26,31 +27,29 @@ export default function Index() {
   const metrics: OverviewCardProps[] = [
     {
       label: "Total Properties",
-      value: 0,
+      value: user?.stats.total_properties ?? 0,
       icon: <Ionicons name="home-outline" size={20} color="black" />,
     },
     {
       label: "Eligible",
-      value: 0,
-      icon: (
-        <Ionicons name="checkmark-circle-outline" size={20} color="black" />
-      ),
+      value: user?.stats.eligible_properties ?? 0,
+      icon: <Ionicons name="checkmark-circle-outline" size={20} color="black" />,
     },
     {
       label: "Pending",
-      value: 0,
+      value: user?.stats.pending_offers ?? 0,
       icon: <Ionicons name="time-outline" size={20} color="black" />,
     },
     {
       label: "Completed",
-      value: 0,
+      value: user?.stats.completed_buybacks ?? 0,
       icon: <Ionicons name="checkmark-done-outline" size={20} color="black" />,
     },
   ];
 
   return (
     <SafeAreaView className="bg-[#F4F6F1]">
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-col gap-5 px-5 pt-5 pb-5">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row items-center gap-4">
@@ -67,7 +66,7 @@ export default function Index() {
               </View>
             </View>
             <View className="flex flex-row items-center">
-              <TouchableOpacity onPress={() => router.push("/addproperty")}>
+              <TouchableOpacity onPress={() => router.push("/alerts")}>
                 <Ionicons
                   name="notifications-outline"
                   size={24}

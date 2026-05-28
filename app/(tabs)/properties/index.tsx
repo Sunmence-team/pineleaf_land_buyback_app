@@ -1,12 +1,12 @@
 import AllProperties from "@/app/(screens)/(property)/list/allProperties"
 import EligibleProperties from "@/app/(screens)/(property)/list/eligibleProperties"
 import PendingPropertyOffers from "@/app/(screens)/(property)/list/pendingPropertyOffers"
+import ActionButton from "@/components/buttons/ActionButton"
 import SearchBar from "@/components/SearchBar"
 import api from "@/helpers/axios"
 import { useQuery } from "@tanstack/react-query"
 import React from "react"
-import { Pressable, Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { Text, View } from "react-native"
 
 type StatusType = "all" | "eligible" | "pending";
 
@@ -72,8 +72,8 @@ const Properties = () => {
   )
 
   return (
-    <SafeAreaView className="flex-1 bg-secondary " style={{ paddingHorizontal: 20 }}>
-      <View className='mb-5'>
+    <View className="flex-1 bg-secondary " style={{ paddingHorizontal: 20 }}>
+      <View className='my-5'>
         <SearchBar
           placeholder='Search property'
           value=""
@@ -87,40 +87,34 @@ const Properties = () => {
           const active = status === tab.value;
 
           return (
-            <Pressable
+            <ActionButton
               key={index}
-              onPress={() => setStatus(tab.value)}
-              style={{
+              action={() => setStatus(tab.value)}
+              name={tab.label}
+              optStyle={{
                 backgroundColor: active ? "#154A22" : "transparent",
                 paddingVertical: 18,
-
+                flex: 1,
+              
               }}
-              className="flex-1 py-5 rounded-lg mx-1 items-center justify-center"
-
-            >
-              <Text
-                style={{
-                  color: active ? 'white' : 'black',
-                  fontSize: 16,
-                  fontFamily: 'semibold',
-                  textAlign: 'center'
-                }}
-
-              >
-                {tab.label}
-              </Text>
-            </Pressable>
+              optStyle2={{
+                color: active ? 'white' : 'black',
+                fontSize: 16,
+                fontFamily: 'semibold',
+                textAlign: 'center'
+              }}
+            />
           );
         })}
       </View>
 
       {/* Content */}
-      <View className="flex-1">
+      <View className="flex-1 pb-8">
         {status === "all" && <AllProperties data={properties} />}
         {status === "eligible" && <EligibleProperties data={eligibleProperties} />}
         {status === "pending" && <PendingPropertyOffers data={pendingProperties} />}
       </View>
-    </SafeAreaView>
+    </View>
 
   )
 }

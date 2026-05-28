@@ -1,5 +1,6 @@
 import { setupInterceptors } from "@/helpers/axios";
 import { globals } from "@/lib/constants";
+import { UserStatsProps } from "@/lib/interfaces";
 import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,8 +25,7 @@ type User = {
   bank_name?: string | null;
   bank_code?: string | null;
   role: string;
-  investorActionId?: string;
-  investorBalance?: number;
+  stats: UserStatsProps;
 };
 
 type OnboardingStatus = "loading" | "complete" | "incomplete";
@@ -116,12 +116,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryFn: getUserService,
     enabled: !!token,
     retry: false,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 1,
   });
 
-  console.log("userResponse", userResponse);
+  console.log("token", token);
   const user = userResponse?.data;
-  console.log("userResponse.data", userResponse?.data);
 
   const signIn = useCallback(
     async (userData: User, authToken: string, userRole: string) => {

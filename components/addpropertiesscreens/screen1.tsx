@@ -1,23 +1,30 @@
 import { AppText } from "@/components/AppText";
+import EmptyStateCard from "@/components/cards/EmptyStateCard";
+import { searchPropertiesService } from "@/services/propertiesServices";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useQuery } from "@tanstack/react-query";
 import React, { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   Platform,
   Pressable,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import Modal from "../modal/Modal";
-import { StyleSheet } from "react-native";
+
 
 export interface Screen1Values {
-  propertyName: string;
-  purchaseDate: string;
-  purchaseType: string;
-  numberOfPlots: string;
-  plotNumbers: string;
+  property_id: string;
+  property_name: string;
+  purchase_date: string;
+  purchase_type: string;
+  number_of_plots: string;
+  plot_numbers: string;
 }
 
 interface Screen1Props {
@@ -34,11 +41,11 @@ const formatDate = (date: Date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear());
-  return `${day}-${month}-${year}`;
+  return `${year}-${month}-${day}`;
 };
 
 const parseDate = (value: string) => {
-  const [day, month, year] = value.split("-").map(Number);
+  const [year, month, day] = value.split("-").map(Number);
   const maybeDate = new Date(year, (month || 1) - 1, day || 1);
   return Number.isNaN(maybeDate.getTime()) ? new Date() : maybeDate;
 };
@@ -61,6 +68,22 @@ const Screen1: React.FC<Screen1Props> = ({
 }) => {
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showPropertyModal, setShowPropertyModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const {
+    data: searchData,
+    isLoading: isLoadingProperties,
+    refetch: refreshProperties,
+  } = useQuery({
+    queryKey: ["propertiesSearch", searchQuery],
+    queryFn: () => searchPropertiesService(searchQuery),
+    enabled: showPropertyModal,
+  });
+
+  const propertiesList = Array.isArray(searchData?.data?.data)
+    ? searchData.data.data
+    : [];
 
   const updateField = (field: keyof Screen1Values, value: string) => {
     onChange(field, value);
@@ -71,16 +94,16 @@ const Screen1: React.FC<Screen1Props> = ({
   };
 
   const currentDate = useMemo(
-    () => (values.purchaseDate ? parseDate(values.purchaseDate) : new Date()),
-    [values.purchaseDate],
+    () => (values.purchase_date ? parseDate(values.purchase_date) : new Date()),
+    [values.purchase_date],
   );
 
   const handleDateChange = (_event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === "ios");
     if (!selectedDate) return;
     const formatted = formatDate(selectedDate);
-    updateField("purchaseDate", formatted);
-    onBlur("purchaseDate");
+    updateField("purchase_date", formatted);
+    onBlur("purchase_date");
   };
 
   return (
@@ -89,17 +112,23 @@ const Screen1: React.FC<Screen1Props> = ({
         <AppText className="text-sm font-medium text-gray-900">
           Property name
         </AppText>
-        <TextInput
-          value={values.propertyName}
-          onChangeText={handleChange("propertyName")}
-          onBlur={() => onBlur("propertyName")}
-          placeholder="Pineleaf garden"
-          placeholderTextColor="#9CA3AF"
-          className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
-        />
-        {touched?.propertyName && errors?.propertyName ? (
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => setShowPropertyModal(true)}
+          className="flex-row items-center justify-between rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4"
+        >
+          <AppText
+            className={`text-base font-quickRegular ${
+              values.property_name ? "text-black" : "text-gray-400"
+            }`}
+          >
+            {values.property_name || "Select property"}
+          </AppText>
+          <Ionicons name="chevron-down-outline" size={20} color="#111827" />
+        </TouchableOpacity>
+        {touched?.property_id && errors?.property_id ? (
           <AppText className="text-xs text-red-600">
-            {errors.propertyName}
+            {errors.property_id}
           </AppText>
         ) : null}
       </View>
@@ -115,18 +144,18 @@ const Screen1: React.FC<Screen1Props> = ({
         >
           <AppText
             className={`text-base ${
-              values.purchaseDate ? "text-black" : "text-gray-400"
+              values.purchase_date ? "text-black" : "text-gray-400"
             }`}
           >
-            {values.purchaseDate || "DD-MM-YYYY"}
+            {values.purchase_date || "YYYY-MM-DD"}
           </AppText>
           <View className="">
             <Ionicons name="calendar-outline" size={20} color="#111827" />
           </View>
         </TouchableOpacity>
-        {touched?.purchaseDate && errors?.purchaseDate ? (
+        {touched?.purchase_date && errors?.purchase_date ? (
           <AppText className="text-xs text-red-600">
-            {errors.purchaseDate}
+            {errors.purchase_date}
           </AppText>
         ) : null}
       </View>
@@ -142,16 +171,16 @@ const Screen1: React.FC<Screen1Props> = ({
         >
           <AppText
             className={`text-base ${
-              values.purchaseType ? "text-black" : "text-gray-400"
+              values.purchase_type ? "text-black" : "text-gray-400"
             }`}
           >
-            {values.purchaseType || "Select purchase type"}
+            {values.purchase_type || "Select purchase type"}
           </AppText>
           <Ionicons name="chevron-down-outline" size={20} color="#111827" />
         </TouchableOpacity>
-        {touched?.purchaseType && errors?.purchaseType ? (
+        {touched?.purchase_type && errors?.purchase_type ? (
           <AppText className="text-xs text-red-600">
-            {errors.purchaseType}
+            {errors.purchase_type}
           </AppText>
         ) : null}
       </View>
@@ -161,71 +190,156 @@ const Screen1: React.FC<Screen1Props> = ({
           Number of plots
         </AppText>
         <TextInput
-          value={values.numberOfPlots}
+          value={values.number_of_plots}
           onChangeText={(text) =>
-            handleChange("numberOfPlots")(text.replace(/[^0-9]/g, ""))
+            handleChange("number_of_plots")(text.replace(/[^0-9]/g, ""))
           }
-          onBlur={() => onBlur("numberOfPlots")}
+          onBlur={() => onBlur("number_of_plots")}
           placeholder="3"
           placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
-        {touched?.numberOfPlots && errors?.numberOfPlots ? (
+        {touched?.number_of_plots && errors?.number_of_plots ? (
           <AppText className="text-xs text-red-600">
-            {errors.numberOfPlots}
+            {errors.number_of_plots}
           </AppText>
         ) : null}
       </View>
 
       <View className="flex flex-col gap-2">
         <AppText className="text-sm font-medium text-gray-900">
-          Plot number(s)
+          Plot number(s) *seperate each with a comma
         </AppText>
         <TextInput
-          value={values.plotNumbers}
-          onChangeText={handleChange("plotNumbers")}
-          onBlur={() => onBlur("plotNumbers")}
+          value={values.plot_numbers}
+          onChangeText={handleChange("plot_numbers")}
+          onBlur={() => onBlur("plot_numbers")}
           placeholder="e.g. A2 102"
           placeholderTextColor="#9CA3AF"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
-        {touched?.plotNumbers && errors?.plotNumbers ? (
+        {touched?.plot_numbers && errors?.plot_numbers ? (
           <AppText className="text-xs text-red-600">
-            {errors.plotNumbers}
+            {errors.plot_numbers}
           </AppText>
         ) : null}
       </View>
 
-      <Modal visible={showDatePicker} customMode onClose={() => setShowDatePicker(false)}>
-        <View className="flex-1 bg-black/40 justify-end w-full">
-          <View style={styles.container}>
-            <AppText className="mb-4 text-base font-semibold text-gray-900">
-              Select purchased date
+      <Modal
+        visible={showPropertyModal}
+        customMode
+        onClose={() => setShowPropertyModal(false)}
+      >
+        <View className="flex-1 bg-black/50 justify-end w-full">
+          <View style={styles.container} className="h-[75%]">
+            <AppText className="mb-4 text-lg font-semibold text-gray-900 font-quickSemiBold">
+              Select Property
             </AppText>
+
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search properties..."
+              placeholderTextColor="#9CA3AF"
+              className="rounded-lg border font-quickRegular border-gray-200 bg-white px-3 h-12 text-base text-black mb-4"
+            />
+
+            {isLoadingProperties ? (
+              <View className="flex-1 items-center justify-center">
+                <ActivityIndicator size="large" color="#154A22" />
+              </View>
+            ) : (
+              <FlatList
+                data={propertiesList}
+                keyExtractor={(item: any) => item.id?.toString() || item.name}
+                renderItem={({ item }) => (
+                  <Pressable
+                    onPress={() => {
+                      updateField("property_id", item.id?.toString() || "");
+                      updateField("property_name", item.name || "");
+                      onBlur("property_id");
+                      onBlur("property_name");
+                      setShowPropertyModal(false);
+                    }}
+                    className="rounded-xl bg-secondary px-4 py-4 mb-3"
+                  >
+                    <AppText className="text-base text-gray-900 font-quickMedium">
+                      {item.name}
+                    </AppText>
+                  </Pressable>
+                )}
+                onRefresh={refreshProperties}
+                refreshing={isLoadingProperties}
+                ListEmptyComponent={
+                  <EmptyStateCard title="No properties found" />
+                }
+                contentContainerStyle={{ paddingBottom: 20 }}
+                showsVerticalScrollIndicator={false}
+              />
+            )}
+
+            <Pressable
+              onPress={() => setShowPropertyModal(false)}
+              className="mt-2 rounded-xl bg-gray-100 px-4 py-4"
+            >
+              <AppText className="text-center text-base text-gray-700 font-quickSemiBold">
+                Cancel
+              </AppText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      
+      {
+        Platform.OS === "ios" ? (
+          <Modal
+            visible={showDatePicker}
+            customMode
+            onClose={() => setShowDatePicker(false)}
+          >
+            <View className="flex-1 bg-black/40 justify-end w-full">
+              <View style={styles.container} className="border-2 items-center">
+                <AppText className="mb-4 text-base font-semibold text-gray-900 w-full text-start">
+                  Select purchased date
+                </AppText>
+                <View style={{ borderWidth: 3, width: "100%" }}>
+                  <DateTimePicker
+                    value={currentDate}
+                    mode="date"
+                    display={"spinner"}
+                    onChange={handleDateChange}
+                    maximumDate={new Date()}
+                    style={{ borderWidth: 3, }}
+                  />
+                </View>
+                <ActionButton
+                  name="Done"
+                  action={() => setShowDatePicker(false)}
+                  hasBG={false}
+                />
+              </View>
+            </View>
+          </Modal>
+        ) : (
+          showDatePicker && (
             <DateTimePicker
               value={currentDate}
               mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "calendar"}
+              display={"calendar"}
               onChange={handleDateChange}
               maximumDate={new Date()}
               style={{ width: "100%" }}
             />
-            {Platform.OS === "ios" && (
-              <TouchableOpacity
-                onPress={() => setShowDatePicker(false)}
-                className="my-4 rounded-xl bg-gray-100 px-4 py-4"
-              >
-                <AppText className="text-center text-base text-gray-700 font-quickSemiBold">
-                  Done
-                </AppText>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </Modal>
+          )
+        )
+      }
 
-      <Modal visible={showTypeModal} customMode onClose={() => setShowTypeModal(false)}>
+      <Modal
+        visible={showTypeModal}
+        customMode
+        onClose={() => setShowTypeModal(false)}
+      >
         <View className="flex-1 bg-black/40 justify-end">
           <View style={styles.container}>
             <AppText className="mb-4 text-base font-semibold text-gray-900">
@@ -235,8 +349,8 @@ const Screen1: React.FC<Screen1Props> = ({
               <Pressable
                 key={option}
                 onPress={() => {
-                  updateField("purchaseType", option);
-                  onBlur("purchaseType");
+                  updateField("purchase_type", option);
+                  onBlur("purchase_type");
                   setShowTypeModal(false);
                 }}
                 className="rounded-xl bg-secondary px-4 py-4 mb-3"
@@ -266,8 +380,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingVertical: 30,
     paddingHorizontal: 20,
-    backgroundColor: "white"
-  }
-})
+    backgroundColor: "white",
+  },
+});
 
 export default Screen1;

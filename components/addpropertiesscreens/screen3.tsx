@@ -4,18 +4,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as DocumentPicker from "expo-document-picker";
 import React from "react";
 import { Pressable, View } from "react-native";
-
-export interface DocumentItem {
-  key: string;
-  label: string;
-  optional?: boolean;
-  status: "empty" | "uploaded";
-  fileName?: string;
-}
+import { DocumentItem } from "@/lib/interfaces";
 
 interface Screen3Props {
   documents: DocumentItem[];
-  onUpload: (key: string, fileName: string) => void;
+  onUpload: (key: string, file: any) => void;
   error?: string;
   touched?: boolean;
 }
@@ -29,11 +22,15 @@ const Screen3: React.FC<Screen3Props> = ({
   const handleSelectFile = async (key: string) => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "*/*",
-      copyToCacheDirectory: false,
+      copyToCacheDirectory: true,
     });
 
     if (!result.canceled && result.assets.length > 0) {
-      onUpload(key, result.assets[0].name);
+      onUpload(key, {
+        uri: result.assets[0].uri,
+        name: result.assets[0].name,
+        type: result.assets[0].mimeType || "application/octet-stream",
+      });
     }
   };
 

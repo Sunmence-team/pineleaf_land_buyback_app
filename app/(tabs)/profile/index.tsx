@@ -24,7 +24,7 @@ import ActionButton from "@/components/buttons/ActionButton";
 export const ProfileCard = () => {
   return (
     <View style={styles.profileCard}>
-      <Image source={assets.profileImage} style={styles.profileImage} />
+      <Image source={assets.avatar} style={styles.avatar} />
 
       <AppText style={styles.name}>Otitio Nzekwisi</AppText>
       <AppText style={styles.email}>otita@gmail.com</AppText>
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  profileImage: {
+  avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
