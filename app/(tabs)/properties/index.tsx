@@ -121,7 +121,7 @@ const Properties = () => {
               properties={propertiesList}
               refreshing={isFetching && !isFetchingNextPage}
               onRefresh={refetch}
-              onEndReached={fetchNextPage}
+              onEndReached={() => fetchNextPage()}
               isFetchingNextPage={isFetchingNextPage}
             />
           )}
@@ -130,7 +130,7 @@ const Properties = () => {
               properties={propertiesList}
               refreshing={isFetching && !isFetchingNextPage}
               onRefresh={refetch}
-              onEndReached={fetchNextPage}
+              onEndReached={() => fetchNextPage()}
               isFetchingNextPage={isFetchingNextPage}
             />
           )}
@@ -139,7 +139,7 @@ const Properties = () => {
               properties={propertiesList}
               refreshing={isFetching && !isFetchingNextPage}
               onRefresh={refetch}
-              onEndReached={fetchNextPage}
+              onEndReached={() => fetchNextPage()}
               isFetchingNextPage={isFetchingNextPage}
             />
           )}

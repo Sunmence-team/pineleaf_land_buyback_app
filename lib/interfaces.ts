@@ -37,7 +37,13 @@ export interface DocumentItem {
   file?: any;
 }
 
-export type StatusType = "all" | "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
+export type StatusType =
+  | "all"
+  | "eligible"
+  | "not_eligible"
+  | "offer_sent"
+  | "completed"
+  | "pending";
 
 export interface PropertyItemProps {
   name: string;
@@ -54,30 +60,30 @@ export interface MyPropertyProps {
   number_of_plots: number;
   plot_numbers: string;
   price_per_plots: string; // Numeric string, e.g., "3000000.00"
-  total_value: string;     // Numeric string, e.g., "3000000.00"
-  
+  total_value: string; // Numeric string, e.g., "3000000.00"
+
   offer_amount: number | null;
   offer_date: string | null;
   documents_submitted_at: string | null;
   verified_at: string | null;
   paid_at: string | null;
   offer_status: string | null;
-  
+
   decline_reason: string | null;
-  
-  allocation_letter: string; // URL string
+
+  allocation_letter: string;
   deed_of_assignment: string | null;
   company_receipt: string | null;
   electronic_receipt: string | null;
   other_document: string | null;
-  
+
   status: StatusType;
   eligibility_date: string | null;
-  created_at: string; // ISO 8601 DateTime string
-  updated_at: string; // ISO 8601 DateTime string
-  x_coord: string;    // Numeric string, e.g., "90.77"
-  y_coord: string;    // Numeric string, e.g., "87.23"
-  eligibility: 'Eligible' | "not_eligible"; // Use literal union if eligibility values are strict
+  created_at: string;
+  updated_at: string;
+  x_coord: string;
+  y_coord: string;
+  eligibility: "Eligible" | "not_eligible";
 
   property: PropertyItemProps;
   user: UserProps;
@@ -90,9 +96,11 @@ export interface PropertyCardProps extends MyPropertyProps {
 }
 
 export interface NotificationType {
-  id: string;
+  id: string | number;
+  user_id: number;
   title: string;
   message: string;
-  time: string;
-  unread: boolean;
-};
+  type: string;
+  read_at: boolean;
+  created_at: string;
+}

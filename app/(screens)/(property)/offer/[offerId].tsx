@@ -6,8 +6,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { formatterUtility, formatISODateToYYYYMMDD } from '@/helpers/formatterUtility';
+import { showSuccessToast } from '@/helpers/toast';
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
 
@@ -48,10 +48,7 @@ const Offer = ({ status }: { status: StatusType }) => {
       setOpenModal(false);
       router.push('/(tabs)/properties');
 
-      Toast.show({
-        type: "success",
-        text1: "Offer Declined Successfully",
-      });
+      showSuccessToast("Offer Declined Successfully");
     },
     onError: (err) => {
       console.error('Decline offer failed:', err);

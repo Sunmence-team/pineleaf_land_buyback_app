@@ -1,3 +1,4 @@
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -7,7 +8,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
 const documentsData = [
     {
@@ -72,22 +72,11 @@ export default function SubmitDocumentsScreen() {
 
     const handleSubmit = () => {
         if (!allDocumentsSubmitted) {
-            Toast.show({
-                type: "error",
-                text1: "Incomplete documents",
-                text2: "Please submit all required documents",
-            });
-
+            showErrorToast("Incomplete documents: Please submit all required documents")
             return;
         }
-
-        Toast.show({
-            type: "success",
-            text1: "Documents Submitted",
-            text2:
-                "Your documents are now under verification",
-        });
-
+        
+        showSuccessToast("Documents Submitted: Your documents are now under verification")
         // Example navigation
         // router.push("/tracking");
     };

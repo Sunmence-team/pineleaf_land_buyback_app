@@ -17,27 +17,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/context/AuthContext";
 import ActionButton from "@/components/buttons/ActionButton";
-
-export const ProfileCard = () => {
-  return (
-    <View style={styles.profileCard}>
-      <Image source={assets.avatar} style={styles.avatar} />
-
-      <AppText style={styles.name}>Otitio Nzekwisi</AppText>
-      <AppText style={styles.email}>otita@gmail.com</AppText>
-    </View>
-  );
-};
+import ProfileCard from "@/components/cards/ProfileCard";
 
 const ProfileScreen = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
-        <ProfileCard />
+        <ProfileCard user={user ?? undefined} />
 
         <View style={styles.smallCard}>
           <View style={styles.smallHeader}>
@@ -156,7 +145,7 @@ const ProfileScreen = () => {
           action={signOut}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -166,43 +155,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
-    paddingTop: Platform.OS === "android" ? 30 : 0,
+    padding: 20,
+    paddingTop: 0,
   },
 
   secondContainer: {
     flex: 1,
     backgroundColor: "white",
-    marginHorizontal: 20,
     borderRadius: 35,
     paddingHorizontal: 16,
     paddingTop: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
-  },
-
-  profileCard: {
-    alignItems: "center",
-    paddingVertical: 20,
-    marginBottom: 20,
-  },
-
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 12,
-  },
-
-  name: {
-    fontSize: 25,
-    color: "black",
-    fontFamily: "quickSemiBold",
-  },
-
-  email: {
-    fontSize: 18,
-    color: "#666",
-    marginTop: 8,
   },
 
   smallCard: {

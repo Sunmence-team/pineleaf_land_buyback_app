@@ -4,6 +4,7 @@ export const assets = {
   successGif: require("../assets/images/success.gif"),
   rejectGif: require("../assets/images/reject.gif"),
   emptyGif: require("../assets/images/empty.gif"),
+  alertGif: require("../assets/images/alert.gif"),
   onboarding1: require("../assets/images/onboarding1.png"),
   onboarding2: require("../assets/images/onboarding2.png"),
   onboarding3: require("../assets/images/onboarding3.png"),
