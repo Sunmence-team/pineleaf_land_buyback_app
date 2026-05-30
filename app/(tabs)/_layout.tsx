@@ -124,15 +124,6 @@ export default function TabLayout() {
         name="alerts/index"
         options={{
           title: "Alerts",
-          headerTitle: () => (
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Alerts
-            </Text>
-          ),
           tabBarIcon: ({ focused }) => (
             <Feather
               name="alert-triangle"
@@ -148,15 +139,6 @@ export default function TabLayout() {
         name="profile/index"
         options={{
           title: "Profile",
-          headerTitle: () => (
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Profile
-            </Text>
-          ),
           headerLeft: () => null,
           tabBarIcon: ({ focused }) => (
             <MaterialIcons

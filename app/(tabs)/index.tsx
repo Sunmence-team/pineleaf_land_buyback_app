@@ -27,22 +27,22 @@ export default function Index() {
   const metrics: OverviewCardProps[] = [
     {
       label: "Total Properties",
-      value: user?.stats.total_properties ?? 0,
+      value: user?.stats?.total_properties ?? 0,
       icon: <Ionicons name="home-outline" size={20} color="black" />,
     },
     {
       label: "Eligible",
-      value: user?.stats.eligible_properties ?? 0,
+      value: user?.stats?.eligible_properties ?? 0,
       icon: <Ionicons name="checkmark-circle-outline" size={20} color="black" />,
     },
     {
       label: "Pending",
-      value: user?.stats.pending_offers ?? 0,
+      value: user?.stats?.pending_offers ?? 0,
       icon: <Ionicons name="time-outline" size={20} color="black" />,
     },
     {
       label: "Completed",
-      value: user?.stats.completed_buybacks ?? 0,
+      value: user?.stats?.completed_buybacks ?? 0,
       icon: <Ionicons name="checkmark-done-outline" size={20} color="black" />,
     },
   ];

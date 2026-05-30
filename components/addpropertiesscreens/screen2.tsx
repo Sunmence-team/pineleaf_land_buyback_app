@@ -68,8 +68,6 @@ const Screen2: React.FC<Screen2Props> = ({
               handleChange("price_per_plots")(digits);
             }}
             onBlur={() => onBlur("price_per_plots")}
-            placeholder="30,000,000"
-            placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
             className="rounded-xl border border-gray-200 bg-white px-4 py-4 pr-12 text-base text-black font-quickRegular"
           />
@@ -93,8 +91,6 @@ const Screen2: React.FC<Screen2Props> = ({
             handleChange("number_of_plots")(digits);
           }}
           onBlur={() => onBlur("number_of_plots")}
-          placeholder="3"
-          placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="rounded-xl border border-gray-200 bg-white px-4 py-4 text-base text-black font-quickRegular opacity-[0.6]"
         />

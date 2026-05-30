@@ -41,18 +41,15 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
-// Keep splash screen visible until we are explicitly ready to hide it
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
   const { onboardingStatus, isLoading, token, role } = useAuth();
   const segments = useSegments();
 
-  // Combine auth loading states
   const isAuthLoading = isLoading || onboardingStatus === "loading";
 
   useEffect(() => {
-    // CRITICAL: Wait until both fonts and auth state are ready
     if (!fontsReady || isAuthLoading) {
       return;
     }
@@ -93,7 +90,6 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
         console.error("Error during initial routing:", e);
         router.replace("/(onboarding)/stepOne");
       } finally {
-        // Hide splash screen ONLY after the router replacement has triggered
         await SplashScreen.hideAsync();
       }
     };
@@ -101,8 +97,6 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
     setInitialRoute();
   }, [onboardingStatus, isAuthLoading, token, role, fontsReady, segments]);
 
-  // CRITICAL: Block rendering the Stack until the redirect logic fires.
-  // This keeps the native splash screen up and prevents app/index from flashing.
   if (!fontsReady || isAuthLoading) {
     return null; 
   }

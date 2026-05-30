@@ -1,11 +1,12 @@
 import TrackCard from "@/components/cards/TrackCard";
-import api from "@/helpers/axios";
+import { getPropertyDetailsService, uploadPropertyDocumentService } from "@/services/propertiesServices";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { formatterUtility, formatISODateToYYYYMMDD } from "@/helpers/formatterUtility";
 
 
 type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
@@ -54,12 +55,7 @@ const PropertyDetails = () => {
   // UPLOAD IMAGE
   // Use TanStack mutation to upload document via axios helper
   const uploadMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await api.post(`/user/properties/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      return res.data.data;
-    },
+    mutationFn: (formData: FormData) => uploadPropertyDocumentService(id, formData),
     onSuccess: (resp: any) => {
       setUploaded(true);
       console.log("Upload success", resp);
@@ -82,10 +78,7 @@ const PropertyDetails = () => {
     uploadMutation.mutate(formData);
   };
 
-  const fetchPropertyDetails = async () => {
-    const response = await api.get(`/user/properties/${id}`)
-    return response.data.data
-  }
+  const fetchPropertyDetails = () => getPropertyDetailsService(id);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["propertyDetails", id],
@@ -111,37 +104,39 @@ const PropertyDetails = () => {
 
   const property = data || {}
   const status: StatusType = property?.status || "pending";
+  const propertyName = property?.property?.name || property?.name || "Property";
+  const formattedDate = formatISODateToYYYYMMDD(property?.purchase_date || "");
 
   const plotDetails = [
     {
       label: "Price/Plot",
-      value: `₦${Number(property?.price_per_plots).toLocaleString()}`
+      value: formatterUtility(Number(property?.price_per_plots || 0))
     },
     {
       label: "Total Value",
-      value: `${property?.number_of_plots}`
+      value: formatterUtility(Number(property?.total_value || 0))
     },
     {
       label: "Plots",
-      value: `${property?.number_of_plots} Plots`
+      value: `${property?.number_of_plots || 0} Plots`
     }
   ]
 
   const purchaseProperty = [
     {
-      label: "Name", value: property?.lastName
+      label: "Name", value: propertyName
     },
     {
       label: "Purchase Date",
-      value: property?.purchase_date
+      value: formattedDate
     },
     {
       label: "Purchase Type",
-      value: property?.purchase_type
+      value: property?.purchase_type || ""
     },
     {
       label: "Plot Numbers",
-      value: property?.plot_numbers
+      value: property?.plot_numbers || ""
     }
   ]
 
@@ -149,8 +144,8 @@ const PropertyDetails = () => {
     <ScrollView className="flex-1 bg-secondary  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
       <View className="flex-row justify-between">
         <View className="mb-4">
-          <Text className="text-xl font-medium mb-2">{property.name}</Text>
-          <Text>{property.number_of_plots} • {property.purchase_type} • {property.purchase_date}</Text>
+          <Text className="text-xl font-medium mb-2">{propertyName}</Text>
+          <Text>{property.number_of_plots || 0} • {property.purchase_type} • {formattedDate}</Text>
         </View>
 
         <View

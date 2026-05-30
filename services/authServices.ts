@@ -31,7 +31,6 @@ export const verificationEmailService = async (data: { email: string, code: stri
 
 export const getUserService = async () => {
   const response = await api.get("/auth/me");
-  console.log("get user rep", response.data)
   return response.data;
 };
 

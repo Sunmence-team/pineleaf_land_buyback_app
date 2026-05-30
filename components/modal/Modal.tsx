@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/helpers/toast";
 
 interface modalProps {
   children: React.ReactNode;
@@ -52,6 +54,8 @@ const Modal = ({
           </View>
         </View>
       )}
+
+      <Toast config={toastConfig} />
     </RNModal>
   );
 };

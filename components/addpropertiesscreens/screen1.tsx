@@ -16,6 +16,7 @@ import {
   View,
 } from "react-native";
 import Modal from "../modal/Modal";
+import ActionButton from "@/components/buttons/ActionButton";
 
 
 export interface Screen1Values {
@@ -82,8 +83,8 @@ const Screen1: React.FC<Screen1Props> = ({
   });
 
   const propertiesList = Array.isArray(searchData?.data?.data)
-    ? searchData.data.data
-    : [];
+  ? searchData.data.data
+  : [];
 
   const updateField = (field: keyof Screen1Values, value: string) => {
     onChange(field, value);
@@ -103,11 +104,11 @@ const Screen1: React.FC<Screen1Props> = ({
     if (!selectedDate) return;
     const formatted = formatDate(selectedDate);
     updateField("purchase_date", formatted);
-    onBlur("purchase_date");
+    setTimeout(() => onBlur("purchase_date"), 0);
   };
 
   return (
-    <View className="flex flex-col gap-4 bg-white rounded-xl p-4">
+    <View className="flex-col gap-4 bg-white rounded-xl p-4">
       <View className="flex flex-col gap-2">
         <AppText className="text-sm font-medium text-gray-900">
           Property name
@@ -124,7 +125,6 @@ const Screen1: React.FC<Screen1Props> = ({
           >
             {values.property_name || "Select property"}
           </AppText>
-          <Ionicons name="chevron-down-outline" size={20} color="#111827" />
         </TouchableOpacity>
         {touched?.property_id && errors?.property_id ? (
           <AppText className="text-xs text-red-600">
@@ -162,7 +162,7 @@ const Screen1: React.FC<Screen1Props> = ({
 
       <View className="flex flex-col gap-2">
         <AppText className="text-sm font-medium text-gray-900">
-          Purchasing type
+          Purchase type
         </AppText>
         <TouchableOpacity
           activeOpacity={0.85}
@@ -195,8 +195,6 @@ const Screen1: React.FC<Screen1Props> = ({
             handleChange("number_of_plots")(text.replace(/[^0-9]/g, ""))
           }
           onBlur={() => onBlur("number_of_plots")}
-          placeholder="3"
-          placeholderTextColor="#9CA3AF"
           keyboardType="numeric"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
@@ -209,13 +207,13 @@ const Screen1: React.FC<Screen1Props> = ({
 
       <View className="flex flex-col gap-2">
         <AppText className="text-sm font-medium text-gray-900">
-          Plot number(s) *seperate each with a comma
+          Plot number(s) *separate each with a comma
         </AppText>
         <TextInput
           value={values.plot_numbers}
           onChangeText={handleChange("plot_numbers")}
           onBlur={() => onBlur("plot_numbers")}
-          placeholder="e.g. A2 102"
+          placeholder="e.g. A2, 102"
           placeholderTextColor="#9CA3AF"
           className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
         />
@@ -232,8 +230,8 @@ const Screen1: React.FC<Screen1Props> = ({
         onClose={() => setShowPropertyModal(false)}
       >
         <View className="flex-1 bg-black/50 justify-end w-full">
-          <View style={styles.container} className="h-[75%]">
-            <AppText className="mb-4 text-lg font-semibold text-gray-900 font-quickSemiBold">
+          <View style={[styles.container, { paddingBottom: 10 }]} className="h-[75%]">
+            <AppText className="mb-4 text-xl text-gray-900" style={{ fontFamily: "quickBold" }}>
               Select Property
             </AppText>
 
@@ -258,8 +256,10 @@ const Screen1: React.FC<Screen1Props> = ({
                     onPress={() => {
                       updateField("property_id", item.id?.toString() || "");
                       updateField("property_name", item.name || "");
-                      onBlur("property_id");
-                      onBlur("property_name");
+                      setTimeout(() => {
+                        onBlur("property_id");
+                        onBlur("property_name");
+                      }, 0);
                       setShowPropertyModal(false);
                     }}
                     className="rounded-xl bg-secondary px-4 py-4 mb-3"
@@ -272,16 +272,24 @@ const Screen1: React.FC<Screen1Props> = ({
                 onRefresh={refreshProperties}
                 refreshing={isLoadingProperties}
                 ListEmptyComponent={
-                  <EmptyStateCard title="No properties found" />
+                  isLoadingProperties ? null : (
+                    <EmptyStateCard 
+                      title={
+                        searchQuery.trim() !== "" 
+                          ? `No item matches your search query - '${searchQuery}'` 
+                          : "No properties found"
+                      } 
+                    />
+                  )
                 }
-                contentContainerStyle={{ paddingBottom: 20 }}
+                contentContainerStyle={{ paddingBottom: 10 }}
                 showsVerticalScrollIndicator={false}
               />
             )}
 
             <Pressable
               onPress={() => setShowPropertyModal(false)}
-              className="mt-2 rounded-xl bg-gray-100 px-4 py-4"
+              className="mt-2 mb-4 rounded-xl bg-gray-100 px-4 py-4"
             >
               <AppText className="text-center text-base text-gray-700 font-quickSemiBold">
                 Cancel
@@ -299,24 +307,26 @@ const Screen1: React.FC<Screen1Props> = ({
             onClose={() => setShowDatePicker(false)}
           >
             <View className="flex-1 bg-black/40 justify-end w-full">
-              <View style={styles.container} className="border-2 items-center">
+              <View style={styles.container}>
                 <AppText className="mb-4 text-base font-semibold text-gray-900 w-full text-start">
                   Select purchased date
                 </AppText>
-                <View style={{ borderWidth: 3, width: "100%" }}>
+                <View className="items-center w-full">
                   <DateTimePicker
                     value={currentDate}
                     mode="date"
                     display={"spinner"}
                     onChange={handleDateChange}
                     maximumDate={new Date()}
-                    style={{ borderWidth: 3, }}
                   />
                 </View>
                 <ActionButton
                   name="Done"
                   action={() => setShowDatePicker(false)}
                   hasBG={false}
+                  optStyle={{
+                    backgroundColor: "#F4F6F1"
+                  }}
                 />
               </View>
             </View>
@@ -350,7 +360,7 @@ const Screen1: React.FC<Screen1Props> = ({
                 key={option}
                 onPress={() => {
                   updateField("purchase_type", option);
-                  onBlur("purchase_type");
+                  setTimeout(() => onBlur("purchase_type"), 0);
                   setShowTypeModal(false);
                 }}
                 className="rounded-xl bg-secondary px-4 py-4 mb-3"

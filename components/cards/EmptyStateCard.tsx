@@ -1,8 +1,8 @@
 // components/EmptyStateCard.tsx
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text , Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "react-native";
+
 import { assets } from "@/assets/assets";
 
 interface EmptyStateCardProps {
@@ -20,7 +20,7 @@ export default function EmptyStateCard({
     <View className="items-center justify-center px-5">
       <Image source={assets.emptyGif} style={{ width: 150, height: 80 }} resizeMode="cover" />
 
-      <Text className="text-lg font-semibold mt-3">
+      <Text className="text-lg text-center font-semibold mt-3">
         {title}
       </Text>
 

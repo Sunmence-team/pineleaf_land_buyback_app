@@ -4,6 +4,7 @@ import { AppText } from "./AppText";
 import ActionButton from "./buttons/ActionButton";
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
 
 interface OnboardingStructureProps {
   title1: string;
@@ -23,6 +24,8 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
   resizeType
 }) => {
 
+  const { completeOnboarding } = useAuth();
+
   const onboardingNavigations: { path: any }[] = [
     { path: "/(onboarding)/stepOne" },
     { path: "/(onboarding)/stepTwo" },
@@ -30,15 +33,21 @@ export const OnboardingStructure: React.FC<OnboardingStructureProps> = ({
     { path: "/(auth)/register" }
   ];
 
-  const handleAction = () => {
+  const handleAction = async () => {
+    if (position === 2) {
+      await completeOnboarding();
+      router.replace("/(auth)/register");
+      return;
+    }
     const nextRoute = onboardingNavigations[position + 1]?.path;
     if (nextRoute) {
       router.push(nextRoute);
     }
   };
 
-  const handleSkip = () => {
-    router.push("/(auth)/register");
+  const handleSkip = async () => {
+    await completeOnboarding();
+    router.replace("/(auth)/register");
   };
 
   return (

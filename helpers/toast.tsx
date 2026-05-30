@@ -8,6 +8,7 @@ export const showSuccessToast = (message: string) => {
     position: "top",
     topOffset: 50,
     visibilityTime: 3000,
+
   });
 };
 
@@ -42,6 +43,8 @@ export const toastConfig: ToastConfig = {
         gap: 6,
         flexDirection: "row",
         alignSelf: "center",
+        zIndex: 9999,
+        elevation: 9999,
         alignItems: "center",
       }}
     >
@@ -82,6 +85,8 @@ export const toastConfig: ToastConfig = {
         gap: 6,
         flexDirection: "row",
         alignSelf: "center",
+        zIndex: 9999,
+        elevation: 9999,
         alignItems: "center",
       }}
     >
@@ -121,6 +126,8 @@ export const toastConfig: ToastConfig = {
         gap: 6,
         flexDirection: "row",
         alignSelf: "center",
+        zIndex: 9999,
+        elevation: 9999,
         alignItems: "center",
         justifyContent: "center",
       }}

@@ -1,6 +1,6 @@
 import { setupInterceptors } from "@/helpers/axios";
 import { globals } from "@/lib/constants";
-import { UserStatsProps } from "@/lib/interfaces";
+import { UserProps, UserStatsProps } from "@/lib/interfaces";
 import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,31 +13,16 @@ import React, {
   useState,
 } from "react";
 
-type User = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  current_role: string;
-  created_at: string;
-  bank_account_name?: string | null;
-  bank_account_number?: string | null;
-  bank_name?: string | null;
-  bank_code?: string | null;
-  role: string;
-  stats: UserStatsProps;
-};
-
 type OnboardingStatus = "loading" | "complete" | "incomplete";
 
 type AuthContextType = {
-  user: User | null;
+  user: UserProps | null;
   token: string | null;
   role: string | null;
   isLoading: boolean;
   isLoggedIn: boolean;
   onboardingStatus: OnboardingStatus;
-  signIn: (user: User, token: string, role: string) => Promise<void>;
+  signIn: (user: UserProps, token: string, role: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
@@ -123,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const user = userResponse?.data;
 
   const signIn = useCallback(
-    async (userData: User, authToken: string, userRole: string) => {
+    async (userData: UserProps, authToken: string, userRole: string) => {
       try {
         await Promise.all([
           AsyncStorage.setItem(globals.AUTH_TOKEN_KEY, authToken),
@@ -131,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ]);
         setToken(authToken);
         setRole(userRole);
-        queryClient.setQueryData(["user"], userData);
+        queryClient.setQueryData(["user"], { data: userData });
       } catch (e) {
         console.error("Failed to sign in", e);
         throw new Error("Login failed");

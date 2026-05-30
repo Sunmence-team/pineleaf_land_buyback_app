@@ -1,16 +1,8 @@
 import { AppText } from "@/components/AppText";
+import { NotificationType } from "@/lib/interfaces";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, Platform, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-type NotificationType = {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  unread: boolean;
-};
 
 const notifications: NotificationType[] = [
   {
@@ -69,7 +61,7 @@ const EmptyComponent = () => {
 
 const Alerts = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* <View style={styles.header}>
         <TouchableOpacity>
           <Ionicons name="chevron-back" size={26} color="#000" />
@@ -95,7 +87,7 @@ const Alerts = () => {
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

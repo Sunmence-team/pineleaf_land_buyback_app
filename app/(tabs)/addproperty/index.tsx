@@ -12,9 +12,10 @@ import { ScrollView, TouchableOpacity, View, KeyboardAvoidingView, Platform } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 import { DocumentItem } from "@/lib/interfaces";
-import { useMutation } from "@tanstack/react-query";
-import api from "@/helpers/axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addPropertyService } from "@/services/propertiesServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import ActionButton from "@/components/buttons/ActionButton"
 
 /**
  * Add Property Screen
@@ -154,6 +155,7 @@ const AddProperty = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [hasSubmit, setHasSubmit] = useState(false);
+  const queryClient = useQueryClient();
 
   const submitMutation = useMutation({
     mutationFn: async (values: AddPropertyFormValues) => {
@@ -181,21 +183,19 @@ const AddProperty = () => {
         }
       });
 
-      const response = await api.post("/user/properties", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
+      const response = await addPropertyService(formData);
+      return response;
     },
     onSuccess: (data) => {
       setHasSubmit(true);
       setShowSubmitModal(false);
       showSuccessToast(data.message || "Property registered successfully");
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (err: any) => {
       let errMessage = err.response?.data?.message || err.message;
       showErrorToast(errMessage || "Failed to register property");
+      console.log("FULL ERROR DETAILS:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
     },
   });
 
@@ -353,22 +353,22 @@ const AddProperty = () => {
   };
 
   return (
-    <SafeAreaView className="flex-col justify-between flex-1 bg-white">
+    <SafeAreaView className="flex-col justify-between flex-1 bg-secondary">
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 100}
         className="flex-1"
       >
         <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
           {currentStep <= 1 || hasSubmit ? (
-            <TouchableOpacity className=" w-[10%]" onPress={handleClose}>
-              <Ionicons name="close" size={24} color="black" />
+            <TouchableOpacity className="w-[10%]" onPress={handleClose}>
+              <Ionicons name="close" size={32} color="black" />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity className=" w-[10%]">
+            <TouchableOpacity className="w-[10%]">
               <Ionicons
                 name="chevron-back-outline"
-                size={20}
+                size={32}
                 color="black"
                 onPress={() => {
                   setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -379,7 +379,7 @@ const AddProperty = () => {
               />
             </TouchableOpacity>
           )}
-          <AppText className="text-xl font-quickSemiBold">Add Property</AppText>
+          <AppText className="text-xl" style={{ fontFamily: "quickSemiBold" }}>Add Property</AppText>
           <View className="w-6" />
         </View>
 
@@ -389,29 +389,24 @@ const AddProperty = () => {
 
         <ScrollView
           className="flex-1 px-5 mt-3"
-          contentContainerStyle={{ paddingBottom: 150 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
           showsVerticalScrollIndicator={false}
         >
           {renderStepContent()}
         </ScrollView>
 
-        <View className="absolute bottom-8 left-0 right-0 bg-neutral/50 px-5 py-4">
-          <View className="flex-row items-center justify-between gap-3">
-            {!hasSubmit && (
-              <TouchableOpacity
-                onPress={handleNext}
-                disabled={!isCurrentStepValid}
-                className={`flex-1 rounded-xl px-5 py-4 ${
-                  isCurrentStepValid ? "bg-primary" : "bg-gray-300"
-                }`}
-              >
-                <AppText className="text-center text-lg font-semibold text-white">
-                  {currentStep === 4 ? "Submit" : "Next"}
-                </AppText>
-              </TouchableOpacity>
-            )}
+        {!hasSubmit && (
+          <View className="bg-secondary px-5 py-4 border-t border-gray-100">
+            <ActionButton 
+              name={currentStep === 4 ? "Submit" : "Next"}
+              action={handleNext}
+              disabled={!isCurrentStepValid}
+              optStyle={{
+                backgroundColor: !isCurrentStepValid ? "#BDBDBD" : "#154A22"
+              }}
+            />
           </View>
-        </View>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

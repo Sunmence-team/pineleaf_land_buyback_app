@@ -66,7 +66,7 @@ const Screen4: React.FC<Screen4Props> = ({
         </View>
 
         <View className="items-center px-2">
-          <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
+          <AppText className="text-xl leading-8 text-center font-medium text-[#111827]" style={{ flex:1 }}>
             {values.property_name || "Property"} has been registered. We will
             notify you when it becomes eligible for buyback.
           </AppText>
@@ -149,7 +149,7 @@ const Screen4: React.FC<Screen4Props> = ({
               key={doc.key}
               className="flex-row items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4"
             >
-              <View>
+              <View style={{ maxWidth: "75%" }}>
                 <AppText className="text-sm font-medium text-gray-900">
                   {doc.label}
                 </AppText>
@@ -162,7 +162,7 @@ const Screen4: React.FC<Screen4Props> = ({
                 </AppText>
               </View>
               <View
-                className={`rounded-ull px-3 py-1 ${
+                className={`rounded-full px-3 py-1 ${
                   doc.status === "uploaded" ? "bg-primary/10" : "bg-gray-100"
                 }`}
               >
@@ -182,27 +182,27 @@ const Screen4: React.FC<Screen4Props> = ({
       <Modal visible={showSubmitModal} onClose={() => setShowSubmitModal(false)} customMode>
         <View className="flex-1 bg-black/40 justify-end">
           <View style={styles.container}>
-            <AppText className="text-xl font-quickSemiBold text-black">
+            <AppText className="text-2xl mb-3 text-black" style={{ fontFamily: "quickSemiBold" }}>
               Confirm submission
             </AppText>
 
-            <AppText className="text-sm leading-8 text-black">
+            <AppText className="text-sm leading-6 text-black">
               Once submitted, your property will appear in your dashboard with a
               “Not yet eligible” status. You’ll be notified when it becomes
               eligible for buyback.
             </AppText>
-            <View className="flex flex-col gap-4 mt-8">
+            <View className="flex flex-col gap-2 mt-8">
               <ActionButton 
                 name={isSubmitting ? "Submitting..." : "Yes, Submit"}
                 action={onSubmit}
                 disabled={isSubmitting}
               />
-
-              <TouchableOpacity onPress={() => setShowSubmitModal(false)}>
-                <AppText className="text-center text-lg font-medium text-black">
-                  Back to edit
-                </AppText>
-              </TouchableOpacity>
+              <ActionButton 
+                name={"Back to edit"}
+                action={() => setShowSubmitModal(false)}
+                disabled={isSubmitting}
+                hasBG={false}
+              />
             </View>
           </View>
         </View>
