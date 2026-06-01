@@ -20,7 +20,7 @@ interface PropertyCardProps {
   totalPrice: string | number;
 }
 
-const PropertyDetails = ({ status }: { status: StatusType }): React.FC<PropertyCardProps> => {
+const PropertyDetails = ({ status }: { status: StatusType }) => {
 
   const { propertyId } = useLocalSearchParams();
   const id = Number(propertyId);
