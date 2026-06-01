@@ -10,12 +10,12 @@ interface Props {
 
 const SearchBar = ({ onPress, placeholder, value, onChangeText }: Props) => {
   return (
-    <View className='flex-row items-center bg-transparent border border-gray-300 rounded-lg px-4 py-3'>
+    <View className='flex-row items-center bg-transparent border border-gray-300 rounded-lg px-4' style={{ height: 48 }}>
      <Ionicons name='search-outline' size={22} color="#666" />
 
       <TextInput
         placeholder={placeholder}
-        className='flex-1 ml-3 text-black'
+        className='flex-1 ml-3 h-full text-black'
         onPress={onPress}
         value={value}
         onChangeText={onChangeText}

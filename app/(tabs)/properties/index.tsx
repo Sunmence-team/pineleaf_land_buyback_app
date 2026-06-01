@@ -68,12 +68,11 @@ const Properties = () => {
     );
   }
 
-  console.log("data", data)
   const propertiesList = data?.pages?.flatMap((page) => page?.data?.data || []) || [];
 
   return (
     <View className="flex-1 bg-secondary" style={{ paddingHorizontal: 20 }}>
-      <View className="my-5">
+      <View className="mb-5">
         <SearchBar
           placeholder="Search property..."
           value={searchQuery}

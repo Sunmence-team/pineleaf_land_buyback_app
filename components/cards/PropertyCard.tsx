@@ -58,8 +58,6 @@ export default function PropertyCard({
   onPress,
 }: PropertyCardProps) {
 
-  console.log("property", property)
-
   const [openModal, setOpenModal] = React.useState(false)
   const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
 
@@ -161,7 +159,7 @@ export default function PropertyCard({
       </TouchableOpacity>
 
       <Modal onClose={() => setOpenModal(false)} visible={openModal} showClose={true}>
-        <View className="flex-1 items-center px-5 pt-15">
+        <View className="flex-1 items-center pt-15" style={{ paddingHorizontal: 24 }}>
           <Image
             source={assets.microphone}
             style={{ width: 140, height: 140 }}

@@ -1,11 +1,18 @@
 import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import PropertyCard from "@/components/cards/PropertyCard";
+import { router } from "expo-router";
 import React from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 
-const PendingPropertyOffers = ({ properties, refreshing, onRefresh, onEndReached, isFetchingNextPage }: any) => {
+const PendingPropertyOffers = ({
+  properties,
+  refreshing,
+  onRefresh,
+  onEndReached,
+  isFetchingNextPage,
+}: any) => {
   return (
-    <View 
+    <View
       style={{ flex: 1, borderRadius: 20 }}
       className="mt-3 border border-gray-200 bg-white p-4"
     >
@@ -26,7 +33,9 @@ const PendingPropertyOffers = ({ properties, refreshing, onRefresh, onEndReached
           <PropertyCard
             key={property.id}
             {...property}
-            onPress={() => console.log(property.property?.name || property.name || "Property")}
+            onPress={() =>
+              router.push(`/(screens)/(property)/view/${property.id}`)
+            }
           />
         )}
         showsVerticalScrollIndicator={false}

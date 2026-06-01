@@ -7,11 +7,7 @@ import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { formatterUtility, formatISODateToYYYYMMDD } from "@/helpers/formatterUtility";
-
-
-type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
-
-
+import { StatusType } from "@/lib/interfaces";
 
 const PropertyDetails = () => {
 
@@ -23,6 +19,7 @@ const PropertyDetails = () => {
   const [uploaded, setUploaded] = React.useState(false);
 
   const statusStyles = {
+    all: "",
     eligible: "bg-fadedGreen text-primary",
     not_eligible: "bg-red-100 text-red-600",
     offer_sent: "bg-blue-100 offerText",
@@ -31,6 +28,7 @@ const PropertyDetails = () => {
   };
 
   const statusLabel = {
+    all: "N/A",
     eligible: "Eligible",
     not_eligible: "Not Eligible",
     offer_sent: "Offer Sent",
