@@ -10,8 +10,6 @@ import {
 } from "@expo/vector-icons";
 import React from "react";
 import {
-  Image,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -20,39 +18,18 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import ActionButton from "@/components/buttons/ActionButton";
 import ProfileCard from "@/components/cards/ProfileCard";
+import BankDetailsAlertCard from "@/components/cards/BankDetailsAlertCard";
+import { maskNumber } from "@/helpers/formatterUtility";
 
 const ProfileScreen = () => {
   const { signOut, user } = useAuth();
+
   return (
     <View style={styles.container}>
       <View style={styles.secondContainer}>
         <ProfileCard user={user ?? undefined} />
 
-        <View style={styles.smallCard}>
-          <View style={styles.smallHeader}>
-            <View>
-              <View style={styles.smallFlex}>
-                <AppText style={styles.smallTitle}>
-                  Bank details missing
-                </AppText>
-
-                <AntDesign name="plus" size={22} color="#000" />
-              </View>
-
-              <AppText style={styles.smallText}>
-                Add your account details to receive buyback payment.
-              </AppText>
-            </View>
-          </View>
-
-          <View style={styles.progressWrapper}>
-            <View style={styles.progressBackground}>
-              <View style={styles.progressFill} />
-            </View>
-
-            <AppText style={styles.percent}>76%</AppText>
-          </View>
-        </View>
+        <BankDetailsAlertCard user={user ?? undefined} />
 
         <View style={styles.menuContainer}>
           <ScrollView
@@ -84,7 +61,7 @@ const ProfileScreen = () => {
                 <View>
                   <AppText style={styles.menuText}>Bank details</AppText>
 
-                  <AppText style={styles.subText}>434***</AppText>
+                  {user?.bank_account_number && (<AppText style={styles.subText}>{maskNumber(user?.bank_account_number ?? "")}</AppText>)}
                 </View>
               </View>
 
@@ -139,11 +116,15 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </ScrollView>
         </View>
-
+        
         <ActionButton
           name={"Logout"} 
           action={signOut}
+          optStyle={{
+            height: 45
+          }}
         />
+
       </View>
     </View>
   );
@@ -162,77 +143,19 @@ const styles = StyleSheet.create({
   secondContainer: {
     flex: 1,
     backgroundColor: "white",
-    borderRadius: 35,
+    borderRadius: 30,
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
-  },
-
-  smallCard: {
-    backgroundColor: "#E8EFEA",
-    padding: 18,
-    marginBottom: 20,
-    borderRadius: 15,
-  },
-
-  smallHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  smallFlex: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-  },
-
-  smallTitle: {
-    fontSize: 18,
-    marginBottom: 8,
-    fontFamily: "quickSemiBold",
-  },
-
-  smallText: {
-    fontSize: 16,
-    color: "#45464D",
-    lineHeight: 22,
-  },
-
-  progressWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-  },
-
-  progressBackground: {
-    flex: 1,
-    height: 10,
-    backgroundColor: "#E5E5E5",
-    borderRadius: 20,
-    overflow: "hidden",
-    marginRight: 10,
-  },
-
-  progressFill: {
-    width: "76%",
-    height: "100%",
-    backgroundColor: "#175326",
-    borderRadius: 20,
-  },
-
-  percent: {
-    fontSize: 16,
-    color: "black",
   },
 
   menuContainer: {
     flex: 1,
     backgroundColor: "white",
-    marginBottom: 20,
     borderRadius: 15,
     paddingTop: 10,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",
     overflow: "hidden",

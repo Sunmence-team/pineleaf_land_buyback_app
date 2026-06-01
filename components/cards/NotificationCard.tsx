@@ -84,6 +84,9 @@ const NotificationCard = ({ item }: NotificationCardProps) => {
                         hasBG={false}
                         disabled={isPending}
                         action={() => setOpenAlertInfoModal(null)}
+                        optStyle={{
+                            backgroundColor: "#F4F6F1"
+                        }}
                     />
                 </View>
             </View>

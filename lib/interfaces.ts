@@ -104,3 +104,9 @@ export interface NotificationType {
   read_at: boolean;
   created_at: string;
 }
+
+export interface MaskOptions {
+  visibleStart?: number; // Number of digits to show at the start
+  visibleEnd?: number;   // Number of digits to show at the end
+  maskChar?: string;     // The character used for masking
+}

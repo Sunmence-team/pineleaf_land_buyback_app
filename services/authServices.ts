@@ -53,3 +53,4 @@ export const forgotPasswordResetService = async (data: {
   const response = await api.post("/auth/password/reset", data);
   return response.data;
 };
+

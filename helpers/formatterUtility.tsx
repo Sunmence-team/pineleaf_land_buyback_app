@@ -1,3 +1,5 @@
+import { MaskOptions } from "@/lib/interfaces";
+
 export const formatterUtility = (amount: number, noSign=false) => {
   if (amount === null || amount === undefined) {
     return '';
@@ -216,3 +218,30 @@ export const formatISODateToYYYYMMDD = (isoString: string): string => {
     return "";
   }
 };
+
+export function maskNumber(
+  value: string | number, 
+  options: MaskOptions = {}
+): string {
+  // 1. Convert to string and strip non-numeric characters
+  const str = String(value).replace(/\D/g, '');
+  
+  // 2. Extract configuration or use default values
+  const { visibleStart = 2, visibleEnd = 2, maskChar = '•' } = options;
+  
+  const totalLength = str.length;
+  const visibleCount = visibleStart + visibleEnd;
+
+  // 3. Return original numbers if they are too short to mask safely
+  if (totalLength <= visibleCount || totalLength <= 2) {
+    return str;
+  }
+
+  // 4. Extract segments and build the masked string
+  const startSegment = str.slice(0, visibleStart);
+  const endSegment = str.slice(-visibleEnd);
+  const maskedLength = totalLength - visibleCount;
+  const maskSegment = maskChar.repeat(maskedLength);
+
+  return `${startSegment}${maskSegment}${endSegment}`;
+}

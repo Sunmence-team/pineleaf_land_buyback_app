@@ -15,7 +15,9 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
   const { first_name, last_name, email } = user;
   return (
     <View style={styles.profileCard}>
-      <Image source={assets.avatar} style={styles.avatar} />
+      <View style={styles.avatarCont} className="bg-tertiary rounded-full">
+        <Image source={assets.avatar} className="w-full h-full object-contain" />
+      </View>
 
       <AppText style={styles.name}>{first_name ?? ""} {last_name ?? ""}</AppText>
       <AppText style={styles.email}>{email ?? ""}</AppText>
@@ -27,26 +29,24 @@ const styles = StyleSheet.create({
   profileCard: {
     alignItems: "center",
     paddingVertical: 20,
-    marginBottom: 20,
+    marginBottom: 5,
   },
-
-  avatar: {
+  avatarCont: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    marginBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10
   },
-
   name: {
-    fontSize: 25,
+    fontSize: 22,
     color: "black",
     fontFamily: "quickSemiBold",
   },
-
   email: {
-    fontSize: 18,
-    color: "#666",
-    marginTop: 8,
+    fontSize: 14,
+    color: "#666"
   },
 });
 
