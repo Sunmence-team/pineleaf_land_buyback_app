@@ -1,45 +1,24 @@
 import { router } from "expo-router";
 import React from "react";
-import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import Modal from "../modal/Modal";
 
 import { assets } from "@/assets/assets";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "@/helpers/axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { requestPropertyBuybackService } from "@/services/propertiesServices";
+import { formatCompactAmount, formatUnderScores, formatPrettyDate } from "@/helpers/formatterUtility";
+import { PropertyCardProps, StatusType } from "@/lib/interfaces";
 
-type StatusType = "eligible" | "not_eligible" | "offer_sent" | "completed" | "pending";
-
-interface PropertyCardProps {
-  id: number;
-  name: string;
-  status: StatusType;
-  date: string;
-  plots: string | number;
-  price: string | number;
-  totalPrice: string | number;
-
-  offerId?: string;
-  onPress: () => void;
-
-  children?: React.ReactNode;
-}
 
 const statusStyles = {
+  all: "",
   eligible: "bg-fadedGreen text-primary",
   not_eligible: "bg-red-100 text-red-600",
   offer_sent: "bg-blue-100 offerText",
   completed: "bg-gray-200 text-gray-700",
   pending: "bg-yellow-100 text-yellow-700"
-};
-
-const statusLabel = {
-  eligible: "Eligible",
-  not_eligible: "Not Eligible",
-  offer_sent: "Offer Sent",
-  completed: "Completed",
-  pending: 'Pending'
 };
 
 const getButtonText = (status: StatusType) => {
@@ -66,12 +45,15 @@ const getButtonText = (status: StatusType) => {
 
 export default function PropertyCard({
   id,
-  name,
   status,
-  date,
-  plots,
-  price,
-  totalPrice,
+  number_of_plots,
+  purchase_date,
+  price_per_plots,
+  total_value,
+
+  property,
+  user,
+
   children,
   onPress,
 }: PropertyCardProps) {
@@ -93,16 +75,10 @@ export default function PropertyCard({
     return
   };
 
-  const requestBuyback = async ({ id }: { id: number, name: string }) => {
-    const response = await api.put(`/user/properties/${id}/request`)
-    return response.data
-
-  }
-
   const queryClient = useQueryClient()
 
   const { mutate, isPending } = useMutation({
-    mutationFn: requestBuyback,
+    mutationFn: ({ id }: { id: number; name: string }) => requestPropertyBuybackService(id),
 
     onSuccess: (data, variables) => {
       setOpenModal(false);
@@ -128,7 +104,7 @@ export default function PropertyCard({
   })
 
   const handleRequest = () => {
-    mutate({ id, name });
+    mutate({ id, name: property?.name || "Property" });
   }
 
   return (
@@ -142,30 +118,30 @@ export default function PropertyCard({
         {/* Header */}
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-base font-semibold text-gray-800">
-            {name}
+            {property?.name}
           </Text>
 
           <View
             className={`px-3 py-1 rounded-lg ${statusStyles[currentStatus]}`}
           >
             <Text className="text-xs font-medium">
-              {statusLabel[currentStatus]}
+              {formatUnderScores(currentStatus, true)}
             </Text>
           </View>
         </View>
 
         {/* Details */}
         <View className="flex-row justify-between mb-2">
-          <Text className="text-sm text-gray-600">Purchase: {date}</Text>
+          <Text className="text-sm text-gray-600">Purchase: {formatPrettyDate(purchase_date)}</Text>
           <Text className="text-sm font-medium text-gray-800">
-            {plots} plots
+            {number_of_plots} plots
           </Text>
         </View>
 
         <View className="flex-row justify-between mb-2">
-          <Text className="text-sm text-gray-600">₦{price}/plot </Text>
+          <Text className="text-sm text-gray-600">{formatCompactAmount(Number(price_per_plots))}/plot </Text>
           <Text className="text-sm font-medium text-gray-800">
-            Total price ₦{totalPrice}
+            Total price {formatCompactAmount(Number(total_value))}
           </Text>
         </View>
 
@@ -183,7 +159,7 @@ export default function PropertyCard({
       </TouchableOpacity>
 
       <Modal onClose={() => setOpenModal(false)} visible={openModal} showClose={true}>
-        <View className="flex-1 items-center px-5 pt-15">
+        <View className="flex-1 items-center pt-15" style={{ paddingHorizontal: 24 }}>
           <Image
             source={assets.microphone}
             style={{ width: 140, height: 140 }}
@@ -207,7 +183,7 @@ export default function PropertyCard({
                 </Text>
 
                 <Text className="text-gray-600 text-sm">
-                  By confirming you are requesting a formal review of your property by our cooperate aquisition team .
+                  By confirming you are requesting a formal review of your property by our cooperate acquisition team .
                 </Text>
               </View>
             </View>

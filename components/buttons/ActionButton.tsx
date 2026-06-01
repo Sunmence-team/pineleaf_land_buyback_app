@@ -1,5 +1,6 @@
-import { ActivityIndicator, Pressable, Text, TextStyle, View, ViewStyle } from "react-native";
+import { ActivityIndicator, Pressable, TextStyle, ViewStyle } from "react-native";
 import React from "react";
+import { AppText } from "../AppText";
 
 type IconElement = React.ReactElement<{ size?: number }>;
 
@@ -20,39 +21,35 @@ const ActionButton = ({ action, icon, name, optStyle, optStyle2, disabled, loadi
     <Pressable
       disabled={disabled}
       onPress={action}
-      className={`px-3 py-3 rounded-lg disabled:opacity-50`}
+      className={`px-3 rounded-lg disabled:opacity-50`}
       style={[
         {
           opacity: (loading || disabled) ? 0.7 : 1,
           minWidth: 0,
-          backgroundColor: hasBG ? "#154A22" : "#F4F6F1"
-        },
-        optStyle]}
-    >
-      <View
-        style={{
+          height: 52,
+          backgroundColor: hasBG ? "#154A22" : "transparent",
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
           gap: 3,
-        }}
-      >
-        {icon &&
-          React.cloneElement(icon, {
-            size: iconSize ?? icon.props.size,
-          })}
-        <Text
-          style={[{
-            fontSize: 18,
-            textAlign: "center",
-            color: hasBG ? "#F4F6F1" : "#154A22"
-          }, optStyle2]}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.85}
-        >{name}</Text>
-        {loading && <ActivityIndicator size={"small"} color={hasBG ? "#F4F6F1" : "#154A22"} />}
-      </View>
+        },
+        optStyle]}
+    >
+      {icon &&
+        React.cloneElement(icon, {
+          size: iconSize ?? icon.props.size,
+        })}
+      <AppText
+        style={[{
+          fontSize: 18,
+          textAlign: "center",
+          color: hasBG ? "#F4F6F1" : "#154A22"
+        }, optStyle2]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
+      >{name}</AppText>
+      {loading && <ActivityIndicator size={"small"} color={hasBG ? "#F4F6F1" : "#154A22"} />}
     </Pressable>
   )
 }

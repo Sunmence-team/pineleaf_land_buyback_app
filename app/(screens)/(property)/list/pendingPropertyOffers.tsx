@@ -1,33 +1,55 @@
-import { AppText } from '@/components/AppText'
-import PropertyCard from '@/components/cards/PropertyCard'
-import React from 'react'
-import { FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyStateCard from "@/components/cards/EmptyStateCard";
+import PropertyCard from "@/components/cards/PropertyCard";
+import { router } from "expo-router";
+import React from "react";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
-const pendingPropertyOffers = ({ pendingProperties }: any) => {
+const PendingPropertyOffers = ({
+  properties,
+  refreshing,
+  onRefresh,
+  onEndReached,
+  isFetchingNextPage,
+}: any) => {
   return (
-    <SafeAreaView style={{ flex: 1 }} className='mt-3 rounded-xl border border-gray-300 bg-white p-3'>
+    <View
+      style={{ flex: 1, borderRadius: 20 }}
+      className="mt-3 border border-gray-200 bg-white p-4"
+    >
       <FlatList
-        data={pendingProperties}
+        data={properties}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View className="py-4 justify-center items-center">
+              <ActivityIndicator size="small" color="#154A22" />
+            </View>
+          ) : null
+        }
         renderItem={({ item: property }) => (
           <PropertyCard
             key={property.id}
-            id={property.id}
-            title={property.title}
-            status={property.status}
-            date={property.date}
-            plots={property.plots}
-            price={property.price}
-            totalPrice={property.totalPrice}
-            onPress={() => console.log(property.title)}
+            {...property}
+            onPress={() =>
+              router.push(`/(screens)/(property)/view/${property.id}`)
+            }
           />
         )}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<AppText>No pending offers</AppText>}
-        contentContainerStyle={{}}
+        ListEmptyComponent={
+          <EmptyStateCard
+            icon="time-outline"
+            title="No pending offers"
+            description="You don't have any pending buyback offers at the moment."
+          />
+        }
       />
-    </SafeAreaView>
-  )
-}
+    </View>
+  );
+};
 
-export default pendingPropertyOffers
+export default PendingPropertyOffers;

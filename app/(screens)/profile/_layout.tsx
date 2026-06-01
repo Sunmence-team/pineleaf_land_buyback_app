@@ -12,6 +12,13 @@ export default function ProfileLayout () {
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
+        headerStyle: {
+          backgroundColor: "#F4F6F1",
+          height: 100,
+          elevation: 0,
+          shadowColor: "transparent"
+        },
+        headerTitleAlign: "center"
       }}
     >
       <Stack.Screen

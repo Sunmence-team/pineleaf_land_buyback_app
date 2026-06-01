@@ -1,5 +1,6 @@
-import { ProfileCard } from "@/app/(tabs)/profile";
 import { AppText } from "@/components/AppText";
+import ProfileCard from "@/components/cards/ProfileCard";
+import { useAuth } from "@/context/AuthContext";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -11,8 +12,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const EditScreen = () => {
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState(user?.first_name ?? "");
+  const [lastName, setLastName] = useState(user?.last_name ?? "");
   const [email, setEmail] = useState("");
 
   return (
@@ -25,7 +27,7 @@ const EditScreen = () => {
           <TextInput
             placeholder="First name"
             placeholderTextColor="black"
-            value={firstname}
+            value={firstName}
             onChangeText={setFirstName}
             style={styles.input}
           />
@@ -36,7 +38,7 @@ const EditScreen = () => {
           <TextInput
             placeholder="Last name"
             placeholderTextColor="black"
-            value={lastname}
+            value={lastName}
             onChangeText={setLastName}
             keyboardType="email-address"
             style={styles.input}
@@ -68,7 +70,7 @@ export default EditScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "#F4F6F1",
   },
 
   secondContainer: {

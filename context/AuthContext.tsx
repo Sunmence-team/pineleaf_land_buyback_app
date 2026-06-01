@@ -1,6 +1,9 @@
-import api, { setupInterceptors } from "@/helpers/axios";
+import { setupInterceptors } from "@/helpers/axios";
+import { globals } from "@/lib/constants";
+import { UserProps, UserStatsProps } from "@/lib/interfaces";
+import { getUserService, logoutService } from "@/services/authServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import isEqual from "lodash/isEqual";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, {
   createContext,
   useCallback,
@@ -10,97 +13,50 @@ import React, {
   useState,
 } from "react";
 
-import { globals } from "@/lib/constants";
-
-const AUTH_TOKEN_KEY = globals.AUTH_TOKEN_KEY;
-const ONBOARDING_STATUS_KEY = "@hasCompletedOnboarding";
-const CURRENT_ROLE_KEY = "current_role";
-
-type User = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  current_role: string;
-  created_at: string;
-  bank_account_name?: string | null;
-  bank_account_number?: string | null;
-  bank_name?: string | null;
-  bank_code?: string | null;
-  pin?: string | null;
-  my_referral_code: string;
-};
-
 type OnboardingStatus = "loading" | "complete" | "incomplete";
 
 type AuthContextType = {
-  user: User | null;
+  user: UserProps | null;
   token: string | null;
   role: string | null;
   isLoading: boolean;
   isLoggedIn: boolean;
   onboardingStatus: OnboardingStatus;
-  signIn: (user: User, token: string, role: string) => Promise<void>;
-  signOut: () => void;
-  refreshUser: (token: string) => Promise<void>;
+  signIn: (user: UserProps, token: string, role: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [onboardingStatus, setOnboardingStatus] =
     useState<OnboardingStatus>("loading");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [role, setRole] = useState<string | null>(null);
+  const [isBootstrapLoading, setIsBootstrapLoading] = useState(true);
 
-  const handleUserResponse = (responseData: any) => {
-    // console.log("responseData", responseData)
-    const baseUser = responseData?.user;
-    const dataObject = responseData?.data;
-    // Check if dataObject is an object (not array) and has user property for Investor structure
-    const investorData =
-      dataObject && !Array.isArray(dataObject) && dataObject.user
-        ? dataObject.user
-        : null;
-    console.log("investorData", investorData);
+  const queryClient = useQueryClient();
 
-    if (baseUser && investorData) {
-      const {
-        id: investorActionId,
-        balance: investorBalance,
-        ...restOfInvestorData
-      } = investorData;
-      const {
-        user: nestedUser,
-        created_at: detailsCreatedAt,
-        ...restOfDataObject
-      } = dataObject;
-
-      const combinedUser = {
-        ...baseUser,
-        ...restOfDataObject,
-        ...restOfInvestorData,
-        investorActionId,
-        investorBalance,
-      };
-      console.log("combinedUser", combinedUser);
-      return combinedUser;
+  const signOut = useCallback(async () => {
+    try {
+      if (token) {
+        await logoutService();
+      }
+    } catch (error) {
+      console.error("Logout API call failed:", error);
+    } finally {
+      await Promise.all([
+        AsyncStorage.removeItem(globals.AUTH_TOKEN_KEY),
+        AsyncStorage.removeItem(globals.CURRENT_ROLE_KEY),
+      ]);
+      setToken(null);
+      setRole(null);
+      queryClient.setQueryData(["user"], null);
+      queryClient.clear();
     }
-
-    // Fallback for Realtor or basic user where extra data is empty or structured differently
-    if (baseUser) {
-      return baseUser;
-    }
-
-    console.error(
-      "Could not find full user data structure in response:",
-      responseData,
-    );
-    return null;
-  };
+  }, [token, queryClient]);
 
   useEffect(() => {
     setupInterceptors(signOut);
@@ -110,117 +66,79 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const bootstrapAsync = async () => {
       try {
         const [storedToken, onboardingValue, storedRole] = await Promise.all([
-          AsyncStorage.getItem(AUTH_TOKEN_KEY),
-          AsyncStorage.getItem(ONBOARDING_STATUS_KEY),
-          AsyncStorage.getItem(CURRENT_ROLE_KEY),
+          AsyncStorage.getItem(globals.AUTH_TOKEN_KEY),
+          AsyncStorage.getItem(globals.ONBOARDING_STATUS_KEY),
+          AsyncStorage.getItem(globals.CURRENT_ROLE_KEY),
         ]);
 
+        setToken(storedToken);
+        setRole(storedRole);
         setOnboardingStatus(
           onboardingValue === "true" ? "complete" : "incomplete",
         );
-        setRole(storedRole);
-
-        if (storedToken) {
-          const response = await api.get("/refreshUser");
-          const combinedUser = handleUserResponse(response.data.data);
-
-          if (combinedUser) {
-            setUser(combinedUser);
-            setToken(storedToken);
-          } else {
-            await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
-            setToken(null);
-          }
-        }
       } catch (e: any) {
         console.error("Failed to load initial app state:", e);
-        if (e.response && (e.response.status === 401 || e.response.status === 404)) {
-          await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+        if (
+          e?.response &&
+          (e.response.status === 401 || e.response.status === 404)
+        ) {
+          await AsyncStorage.removeItem(globals.AUTH_TOKEN_KEY);
           setToken(null);
         }
       } finally {
-        setIsLoading(false);
+        setIsBootstrapLoading(false);
       }
     };
     bootstrapAsync();
   }, [signOut]);
 
-  const completeOnboarding = useCallback(async () => {
-    try {
-      console.log("Setting onboarding status to true...");
-      await AsyncStorage.setItem(ONBOARDING_STATUS_KEY, "true");
-      setOnboardingStatus("complete");
-      console.log("Onboarding status set successfully.");
-    } catch (e) {
-      console.error("Failed to save onboarding status", e);
-    }
-  }, []);
+  const {
+    data: userResponse,
+    isLoading: isUserLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: getUserService,
+    enabled: !!token,
+    retry: false,
+    staleTime: 1000 * 60 * 1,
+  });
+
+  console.log("token", token);
+  const user = userResponse?.data;
 
   const signIn = useCallback(
-    async (responseData: User, authToken: string, role: string) => {
+    async (userData: UserProps, authToken: string, userRole: string) => {
       try {
-
-        await AsyncStorage.setItem(AUTH_TOKEN_KEY, authToken);
-        await AsyncStorage.setItem(CURRENT_ROLE_KEY, role);
+        await Promise.all([
+          AsyncStorage.setItem(globals.AUTH_TOKEN_KEY, authToken),
+          AsyncStorage.setItem(globals.CURRENT_ROLE_KEY, userRole),
+        ]);
         setToken(authToken);
-        setUser(responseData);
-        setRole(role);
+        setRole(userRole);
+        queryClient.setQueryData(["user"], { data: userData });
       } catch (e) {
         console.error("Failed to sign in", e);
         throw new Error("Login failed");
       }
     },
-    [],
+    [queryClient],
   );
 
-  const signOut = useCallback(async () => {
-    if (token) {
-      try {
-        await api.put("/logout", token);
-      } catch (error) {
-        console.error(
-          "Logout API call failed, but clearing storage anyway:",
-          error,
-        );
-      }
+  const refreshUser = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const completeOnboarding = useCallback(async () => {
+    try {
+      await AsyncStorage.setItem(globals.ONBOARDING_STATUS_KEY, "true");
+      setOnboardingStatus("complete");
+    } catch (e) {
+      console.error("Failed to save onboarding status", e);
     }
-    await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
-    await AsyncStorage.removeItem(CURRENT_ROLE_KEY);
-    setToken(null);
-    setUser(null);
-    setRole(null);
-  }, [token]);
+  }, []);
 
-  const refreshUser = useCallback(
-    async (authToken: string) => {
-      if (!authToken) return;
-
-      try {
-        const response = await api.get("/refreshUser");
-        console.log("Refresh user response:", response.data);
-        console.log(
-          "Refresh user response:",
-          JSON.stringify(response.data, null, 2),
-        );
-        const combinedUser = handleUserResponse(response.data.data);
-
-        if (combinedUser) {
-          setUser((currentUser) => {
-            if (!isEqual(currentUser, combinedUser)) {
-              return combinedUser;
-            }
-            return currentUser;
-          });
-        }
-      } catch (err: any) {
-        console.error("Error during user refresh:", err);
-        if (err.response && err.response.status === 401) {
-          signOut();
-        }
-      }
-    },
-    [signOut],
-  );
+  const isLoading = isBootstrapLoading || (!!token && isUserLoading);
 
   const value = useMemo(
     () => ({
@@ -228,11 +146,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       token,
       role,
       isLoading,
-      isLoggedIn: !!user,
+      isLoggedIn: !!user && !!token,
       onboardingStatus,
       signIn,
       signOut,
-      setRole,
       refreshUser,
       completeOnboarding,
     }),
@@ -244,7 +161,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       onboardingStatus,
       signIn,
       signOut,
-      setRole,
       refreshUser,
       completeOnboarding,
     ],

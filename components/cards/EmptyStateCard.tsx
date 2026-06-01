@@ -1,29 +1,26 @@
-// components/EmptyState.tsx
-
+// components/EmptyStateCard.tsx
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text , Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-interface EmptyStateProps {
+import { assets } from "@/assets/assets";
+
+interface EmptyStateCardProps {
   icon?: keyof typeof Ionicons.glyphMap;
   title: string;
   description?: string;
 }
 
-export default function EmptyState({
+export default function EmptyStateCard({
   icon = "bag-handle-outline",
   title,
   description,
-}: EmptyStateProps) {
+}: EmptyStateCardProps) {
   return (
-    <View className="flex-1 items-center justify-center mt-10 px-5">
-      <Ionicons
-        name={icon}
-        size={30}
-        color="#154A22"
-      />
+    <View className="items-center justify-center px-5">
+      <Image source={assets.emptyGif} style={{ width: 150, height: 80 }} resizeMode="cover" />
 
-      <Text className="text-lg font-semibold mt-3">
+      <Text className="text-lg text-center font-semibold mt-3">
         {title}
       </Text>
 

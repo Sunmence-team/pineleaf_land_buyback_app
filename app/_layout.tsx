@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, router, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
@@ -6,7 +6,7 @@ import "../global.css";
 import { StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { queryClient } from "@/lib/queryClient";
 import {
   Quicksand_300Light,
@@ -18,19 +18,88 @@ import {
 } from "@expo-google-fonts/quicksand";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-// Prevent the splash screen from auto-hiding before we can check the onboarding status.
+import Toast from "react-native-toast-message";
+import { showErrorToast, toastConfig } from "@/helpers/toast";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://a265f8577f4b5e8f790abf7a01d3115d@o4511461391532032.ingest.de.sentry.io/4511461394874448',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
 SplashScreen.preventAutoHideAsync();
 
-function RootLayoutNav() {
-  // const { isLoading, user } = useAuth();
+function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
+  const { onboardingStatus, isLoading, token, role } = useAuth();
+  const segments = useSegments();
 
-  // if (isLoading) {
-  //   return <LoadingScreen/>;
-  // }
+  const isAuthLoading = isLoading || onboardingStatus === "loading";
 
-  // if (!user) {
-  //   return <Redirect href="/(auth)/login" />;
-  // }
+  useEffect(() => {
+    if (!fontsReady || isAuthLoading) {
+      return;
+    }
+
+    const setInitialRoute = async () => {
+      try {
+        console.log("Onboarding Status:", onboardingStatus);
+        console.log("Token exists:", !!token);
+        console.log("Segments:", segments);
+
+        const inTabsGroup = segments[0] === "(tabs)" || segments[0] === "(screens)";
+        const inAuthGroup = segments[0] === "(auth)";
+        const inOnboardingGroup = segments[0] === "(onboarding)";
+
+        if (onboardingStatus === "complete") {
+          if (token) {
+            if (role === "user") {
+              if (!inTabsGroup) {
+                router.replace("/(tabs)");
+              }
+            } else {
+              showErrorToast("Try to log in via web");
+              if (!inAuthGroup) {
+                router.replace("/(auth)/login");
+              }
+            }
+          } else {
+            if (!inAuthGroup) {
+              router.replace("/(auth)/login");
+            }
+          }
+        } else {
+          if (!inOnboardingGroup) {
+            router.replace("/(onboarding)/stepOne");
+          }
+        }
+      } catch (e) {
+        console.error("Error during initial routing:", e);
+        router.replace("/(onboarding)/stepOne");
+      } finally {
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    setInitialRoute();
+  }, [onboardingStatus, isAuthLoading, token, role, fontsReady, segments]);
+
+  if (!fontsReady || isAuthLoading) {
+    return null; 
+  }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -42,7 +111,7 @@ function RootLayoutNav() {
   );
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const [fontsLoaded, error] = useFonts({
     quickLight: Quicksand_300Light,
     quickRegular: Quicksand_400Regular,
@@ -51,28 +120,25 @@ export default function RootLayout() {
     quickBold: Quicksand_700Bold,
   });
 
-  useEffect(() => {
-    if (fontsLoaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, error]);
+  const fontsReady = fontsLoaded || !!error;
 
-  if (!fontsLoaded && !error) {
-    return null;
-  }
+  useEffect(() => {
+    if (error) console.error("Font loading error:", error);
+  }, [error]);
 
   return (
-    <AuthProvider>
-      <SafeAreaProvider className="font-quickRegular">
-        <StatusBar
-          backgroundColor={"transparent"}
-          translucent={true}
-          animated={true}
-        />
-        <QueryClientProvider client={queryClient}>
-          <RootLayoutNav />
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SafeAreaProvider className="font-quickRegular">
+          <StatusBar
+            backgroundColor={"transparent"}
+            translucent={true}
+            animated={true}
+          />
+          <RootLayoutNav fontsReady={fontsReady} />
+          <Toast config={toastConfig} />
+        </SafeAreaProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
-}
+});

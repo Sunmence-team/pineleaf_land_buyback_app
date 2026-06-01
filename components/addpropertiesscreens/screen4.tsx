@@ -1,25 +1,20 @@
 import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
-
 import React from "react";
-import { Image, Modal, TouchableOpacity, View } from "react-native";
-
-export interface DocumentItem {
-  key: string;
-  label: string;
-  optional?: boolean;
-  status: "empty" | "uploaded";
-  fileName?: string;
-}
+import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { DocumentItem } from "@/lib/interfaces";
+import Modal from "../modal/Modal";
+import ActionButton from "../buttons/ActionButton";
 
 interface Screen4Props {
   values: {
-    propertyName: string;
-    purchaseDate: string;
-    purchaseType: string;
-    numberOfPlots: string;
-    plotNumbers: string;
-    pricePerPlot: string;
+    property_id: string;
+    property_name: string;
+    purchase_date: string;
+    purchase_type: string;
+    number_of_plots: string;
+    plot_numbers: string;
+    price_per_plots: string;
   };
   documents: DocumentItem[];
   showSubmitModal: boolean;
@@ -27,6 +22,8 @@ interface Screen4Props {
   hasSubmit: boolean;
   setHasSubmit: (value: React.SetStateAction<boolean>) => void;
   onBackHome: () => void;
+  isSubmitting: boolean;
+  onSubmit: () => void;
 }
 
 const formatNaira = (value: string) => {
@@ -34,9 +31,9 @@ const formatNaira = (value: string) => {
   return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "0";
 };
 
-const calculateTotal = (pricePerPlot: string, numberOfPlots: string) => {
-  const price = Number(pricePerPlot.replace(/[^0-9]/g, ""));
-  const plots = Number(numberOfPlots.replace(/[^0-9]/g, ""));
+const calculateTotal = (price_per_plots: string, number_of_plots: string) => {
+  const price = Number(price_per_plots.replace(/[^0-9]/g, ""));
+  const plots = Number(number_of_plots.replace(/[^0-9]/g, ""));
   if (!price || !plots) return "0";
   return String(price * plots);
 };
@@ -49,9 +46,11 @@ const Screen4: React.FC<Screen4Props> = ({
   hasSubmit,
   setHasSubmit,
   onBackHome,
+  isSubmitting,
+  onSubmit,
 }) => {
   const totalValue = formatNaira(
-    calculateTotal(values.pricePerPlot, values.numberOfPlots),
+    calculateTotal(values.price_per_plots, values.number_of_plots),
   );
 
   console.log(values)
@@ -67,8 +66,8 @@ const Screen4: React.FC<Screen4Props> = ({
         </View>
 
         <View className="items-center px-2">
-          <AppText className="text-lg leading-8 text-center font-medium text-[#111827]">
-            {values.propertyName || "Property"} has been registered. We will
+          <AppText className="text-xl leading-8 text-center font-medium text-[#111827]" style={{ flex:1 }}>
+            {values.property_name || "Property"} has been registered. We will
             notify you when it becomes eligible for buyback.
           </AppText>
         </View>
@@ -95,25 +94,25 @@ const Screen4: React.FC<Screen4Props> = ({
         <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
           <AppText className="text-sm text-gray-500">Name</AppText>
           <AppText className="text-sm text-gray-900">
-            {values.propertyName || "-"}
+            {values.property_name || "-"}
           </AppText>
         </View>
         <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
           <AppText className="text-sm text-gray-500">Purchase date</AppText>
           <AppText className="text-sm text-gray-900">
-            {values.purchaseDate || "-"}
+            {values.purchase_date || "-"}
           </AppText>
         </View>
         <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
           <AppText className="text-sm text-gray-500">Purchase type</AppText>
           <AppText className="text-sm text-gray-900">
-            {values.purchaseType || "-"}
+            {values.purchase_type || "-"}
           </AppText>
         </View>
         <View className="flex-row justify-between">
           <AppText className="text-sm text-gray-500">Plot numbers</AppText>
           <AppText className="text-sm text-gray-900">
-            {values.plotNumbers || "-"}
+            {values.plot_numbers || "-"}
           </AppText>
         </View>
       </View>
@@ -126,7 +125,7 @@ const Screen4: React.FC<Screen4Props> = ({
           <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
             <AppText className="text-sm text-gray-500">Price per plot</AppText>
             <AppText className="text-sm font-semibold text-gray-900">
-              ₦{formatNaira(values.pricePerPlot)}
+              ₦{formatNaira(values.price_per_plots)}
             </AppText>
           </View>
           <View className="flex-row justify-between">
@@ -150,7 +149,7 @@ const Screen4: React.FC<Screen4Props> = ({
               key={doc.key}
               className="flex-row items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4"
             >
-              <View>
+              <View style={{ maxWidth: "75%" }}>
                 <AppText className="text-sm font-medium text-gray-900">
                   {doc.label}
                 </AppText>
@@ -163,7 +162,7 @@ const Screen4: React.FC<Screen4Props> = ({
                 </AppText>
               </View>
               <View
-                className={`rounded-ull px-3 py-1 ${
+                className={`rounded-full px-3 py-1 ${
                   doc.status === "uploaded" ? "bg-primary/10" : "bg-gray-100"
                 }`}
               >
@@ -180,36 +179,30 @@ const Screen4: React.FC<Screen4Props> = ({
         </View>
       </View>
 
-      <Modal visible={showSubmitModal} transparent animationType="slide">
+      <Modal visible={showSubmitModal} onClose={() => setShowSubmitModal(false)} customMode>
         <View className="flex-1 bg-black/40 justify-end">
-          <View className="bg-white w-full rounded-t-3xl p-6 flex flex-col gap-3">
-            <AppText className="text-xl font-semibold text-black">
+          <View style={styles.container}>
+            <AppText className="text-2xl mb-3 text-black" style={{ fontFamily: "quickSemiBold" }}>
               Confirm submission
             </AppText>
 
-            <AppText className="text-sm leading-8 text-black">
+            <AppText className="text-sm leading-6 text-black">
               Once submitted, your property will appear in your dashboard with a
               “Not yet eligible” status. You’ll be notified when it becomes
               eligible for buyback.
             </AppText>
-            <View className="flex flex-col gap-4">
-              <TouchableOpacity
-                onPress={() => {
-                  setHasSubmit(true);
-                  setShowSubmitModal(false);
-                }}
-                className="bg-primary rounded-xl py-4 items-center"
-              >
-                <AppText className="text-white text-lg font-semibold">
-                  Yes, Submit
-                </AppText>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => setShowSubmitModal(false)}>
-                <AppText className="text-center text-lg font-medium text-black">
-                  Back to edit
-                </AppText>
-              </TouchableOpacity>
+            <View className="flex flex-col gap-2 mt-8">
+              <ActionButton 
+                name={isSubmitting ? "Submitting..." : "Yes, Submit"}
+                action={onSubmit}
+                disabled={isSubmitting}
+              />
+              <ActionButton 
+                name={"Back to edit"}
+                action={() => setShowSubmitModal(false)}
+                disabled={isSubmitting}
+                hasBG={false}
+              />
             </View>
           </View>
         </View>
@@ -217,5 +210,17 @@ const Screen4: React.FC<Screen4Props> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    backgroundColor: "white"
+  }
+})
+
 
 export default Screen4;

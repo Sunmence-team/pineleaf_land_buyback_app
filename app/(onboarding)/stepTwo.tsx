@@ -10,9 +10,8 @@ const stepTwo = () => {
     title2: "Stay Informed",
     subText: "See your property status, eligibility and buyback progress  all in real time, always clear.",
     imageUrl: assets.onboarding2,
-    position: 2,
-    resizeType: "contain",
-    // nextPageURL: "/(onboarding)/stepThree"
+    position: 1,
+    resizeType: "contain" as const,
   }
 
   return (

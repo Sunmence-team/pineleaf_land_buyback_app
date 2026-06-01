@@ -1,62 +1,18 @@
 import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, Platform, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View, Image } from "react-native";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getUserNotificationsService } from "@/services/notificationServices";
+import { assets } from "@/assets/assets";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type NotificationType = {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  unread: boolean;
-};
-
-const notifications: NotificationType[] = [
-  {
-    id: "1",
-    title: "Offer received",
-    message:
-      "Pineleaf phase 2 property offer of NGN2.3M will be ready for your review",
-    time: "2mins",
-    unread: true,
-  },
-  {
-    id: "2",
-    title: "Offer received",
-    message:
-      "Pineleaf phase 2 property offer of NGN2.3M will be ready for your review",
-    time: "2mins",
-    unread: true,
-  },
-];
-
-type NotificationCardProps = {
-  item: NotificationType;
-};
-
-const NotificationCard = ({ item }: NotificationCardProps) => {
-  return (
-    <View style={styles.notificationCard}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.ola}>
-          <AppText style={styles.title}>{item.title}</AppText>
-
-          <AppText style={styles.time}>{item.time}</AppText>
-        </View>
-
-        <AppText style={styles.message}>{item.message}</AppText>
-      </View>
-
-      {item.unread && <View style={styles.dot} />}
-    </View>
-  );
-};
+import ActionButton from "@/components/buttons/ActionButton";
+import NotificationCard from "@/components/cards/NotificationCard";
 
 const EmptyComponent = () => {
   return (
     <View style={styles.emptyWrapper}>
-      <Ionicons name="notifications-outline" size={70} color="black" />
+      <Image source={assets.alertGif} style={{ width: 150, height: 80 }} resizeMode="cover" />
 
       <AppText style={styles.titleNote}>Your notifications live here</AppText>
 
@@ -68,34 +24,82 @@ const EmptyComponent = () => {
 };
 
 const Alerts = () => {
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isFetching,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["userNotifications"],
+    queryFn: ({ pageParam = 1 }) => getUserNotificationsService({ page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage?.data?.current_page;
+      const lastPageNum = lastPage?.data?.last_page;
+      return currentPage < lastPageNum ? currentPage + 1 : undefined;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color="#154A22" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 gap-4 justify-center items-center bg-[#F4F6F1]" style={{ padding: 20 }}>
+        <AppText className="text-gray-600 text-xl font-[quickMedium]">Failed to fetch alerts</AppText>
+        <View className="w-full">
+          <ActionButton
+            name={"Retry"}
+            action={refetch}
+            disabled={isFetching || isLoading}
+            optStyle={{
+              height: 40
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const notificationsList = data?.pages?.flatMap((page) => page?.data?.data || []) || [];
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="chevron-back" size={26} color="#000" />
-        </TouchableOpacity>
-
-        <AppText style={styles.headerTitle}>Alerts</AppText>
-
-        <View style={{ width: 24 }} />
-      </View> */}
-
+    <View style={styles.container}>
       <View style={styles.bigContainer}>
         <FlatList
-          data={notifications}
-          keyExtractor={(item) => item.id}
+          data={notificationsList}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => <NotificationCard item={item} />}
           ListEmptyComponent={<EmptyComponent />}
+          refreshing={isFetching && !isFetchingNextPage}
+          onRefresh={refetch}
+          onEndReached={() => fetchNextPage()}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={{ paddingVertical: 12, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="small" color="#154A22" />
+              </View>
+            ) : null
+          }
           contentContainerStyle={[
             styles.contentContainer,
-            notifications.length === 0 && {
+            notificationsList.length === 0 && {
               justifyContent: "center",
             },
           ]}
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -105,107 +109,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
-    paddingTop: Platform.OS === "android" ? 30 : 0,
-  },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingBottom: 20,
   },
-
-  headerTitle: {
-    fontSize: 25,
-    fontFamily: "quickSemiBold",
-  },
-
   bigContainer: {
     flex: 1,
     backgroundColor: "white",
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 35,
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    width: "100%",
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-
   contentContainer: {
-    flexGrow: 1,
+    gap: 12,
     paddingBottom: 20,
   },
-
-  notificationCard: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#ECECEC",
-    borderRadius: 13,
-    padding: 18,
-    marginTop: 19,
-    flexDirection: "row",
-  },
-
-  ola: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-
-  title: {
-    fontFamily: "quickSemiBold",
-    flex: 1,
-    color: "#000",
-    fontSize: Platform.select({
-      ios: 18,
-      android: 14,
-    }),
-  },
-
-  time: {
-    color: "black",
-    marginRight: Platform.select({
-      ios: 132,
-      android: 100,
-    }),
-    fontSize: Platform.select({
-      ios: 15,
-      android: 15,
-    }),
-  },
-
-  message: {
-    fontSize: 14,
-    color: "black",
-    lineHeight: 22,
-    marginTop: 2,
-  },
-
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#00A428",
-    marginLeft: 10,
-    marginTop: 4,
-  },
-
   emptyWrapper: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 30,
   },
-
   titleNote: {
     fontSize: 24,
     fontFamily: "quickSemiBold",
     marginTop: 20,
     textAlign: "center",
   },
-
   textNote: {
     fontSize: 17,
     color: "#444",
