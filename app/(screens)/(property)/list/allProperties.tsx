@@ -14,7 +14,7 @@ const AllProperties = ({
   return (
     <View
       style={{ flex: 1, borderRadius: 20 }}
-      className="mt-3 border border-gray-200 bg-white p-4"
+      className="mt-3 border border-gray-200 bg-white p-4 w-full"
     >
       <FlatList
         data={properties}

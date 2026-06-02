@@ -72,7 +72,8 @@ export default function PropertyCard({
       router.push(`/offer/${id}`);
     }
 
-    return
+
+    router.push(`/view/${id}`);
   };
 
   const queryClient = useQueryClient()
