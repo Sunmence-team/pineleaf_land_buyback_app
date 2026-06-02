@@ -82,8 +82,8 @@ const statusStyles = {
 
 export default function RequestTracker() {
   return (
-    <ScrollView className="flex-1 bg-white py-5">
-      <View className="border border-gray-300 rounded-lg p-5">
+    <ScrollView className="flex-1 py-5">
+      <View className="bg-secondary border border-gray-300 rounded-lg p-5">
 
         {timelineData.map((item, index) => {
           const isLast = index === timelineData.length - 1;

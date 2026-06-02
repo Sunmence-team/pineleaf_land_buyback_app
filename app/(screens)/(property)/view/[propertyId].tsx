@@ -33,7 +33,8 @@ const PropertyDetails = () => {
     not_eligible: "Not Eligible",
     offer_sent: "Offer Sent",
     completed: "Completed",
-    pending: 'Pending'
+    pending: 'Pending',
+    buyback_requested: "Buyback Requested"
   };
 
   // PICK IMAGE
@@ -102,6 +103,8 @@ const PropertyDetails = () => {
 
   const property = data || {}
   const status: StatusType = property?.status || "pending";
+  console.log("Current status:", property?.status);
+  console.log("Status type:", typeof property?.status);
   const propertyName = property?.property?.name || property?.name || "Property";
   const formattedDate = formatISODateToYYYYMMDD(property?.purchase_date || "");
 
@@ -139,7 +142,7 @@ const PropertyDetails = () => {
   ]
 
   return (
-    <ScrollView className="flex-1 bg-secondary  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
+    <ScrollView className="flex-1 bg-white  border border-gray-200 rounded-lg p-4 mb-4 w-full ">
       <View className="flex-row justify-between">
         <View className="mb-4">
           <Text className="text-xl font-medium mb-2">{propertyName}</Text>
@@ -158,8 +161,8 @@ const PropertyDetails = () => {
       <View className="flex-row flex-wrap justify-between gap-2 mt-4 items-center">
         {
           plotDetails.map((detail: any, index: number) => (
-            <View key={index} className="bg-fadedGreen flex items-center justify-center rounded-lg w-32 h-24 p-3 text-center">
-              <Text className="text-lg mb-4">{detail.label}</Text>
+            <View key={index} className="bg-fadedGreen flex items-center justify-center rounded-lg w-28 h-24 p-3 text-center">
+              <Text className="text-lg mb-2">{detail.label}</Text>
               <Text className="text-xl font-medium text-primary">{detail.value}</Text>
             </View>
           ))
@@ -170,7 +173,7 @@ const PropertyDetails = () => {
       <TouchableOpacity
         className="bg-fadedGreen border border-gray-300 rounded-lg py-6 mt-7 items-center"
         activeOpacity={0.8}>
-        <Text>{status === "pending" ? "Track Request" : "request Buyback"}</Text>
+        <Text>{status === "pending" || status === "buyback_requested" ? "Buyback Requested" : "request Buyback"}</Text>
       </TouchableOpacity>
 
       <View className="mt-5 border border-gray-300 rounded-lg p-4">
