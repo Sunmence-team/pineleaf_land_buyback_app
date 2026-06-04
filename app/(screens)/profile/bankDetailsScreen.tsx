@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
+    marginTop: 30
   },
 
   secondContainer: {
@@ -336,6 +337,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 20,
+    height: 50,
+    display: "flex",
+    alignItems: "center",
+
   },
 
   modalContainer: {

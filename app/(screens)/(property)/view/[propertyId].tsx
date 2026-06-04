@@ -171,7 +171,7 @@ const PropertyDetails = () => {
       </View>
 
       <TouchableOpacity
-        className="bg-fadedGreen border border-gray-300 rounded-lg py-6 mt-7 items-center"
+        className="border border-gray-300 rounded-lg py-6 mt-7 items-center font-medium"
         activeOpacity={0.8}>
         <Text>{status === "pending" || status === "buyback_requested" ? "Buyback Requested" : "request Buyback"}</Text>
       </TouchableOpacity>

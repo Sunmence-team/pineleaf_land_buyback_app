@@ -98,10 +98,6 @@ const SupportScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.button}>
-          <AppText style={styles.buttonText}>Save changes</AppText>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -113,6 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
+    marginTop: 30
   },
 
   secondContainer: {

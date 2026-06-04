@@ -106,6 +106,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   console.log("token", token);
   const user = userResponse?.data;
+  console.log("user:", user)
 
   const signIn = useCallback(
     async (userData: UserProps, authToken: string, userRole: string) => {

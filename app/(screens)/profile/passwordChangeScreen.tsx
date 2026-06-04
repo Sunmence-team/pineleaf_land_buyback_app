@@ -5,11 +5,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  
+
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { AppText } from "@/components/AppText";
+import { useMutation } from "@tanstack/react-query";
+import { passwordChangeService } from "@/services/authServices";
+import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 const ChangePasswordScreen = () => {
   const [oldPassword, setOldPassword] = useState("");
@@ -19,6 +23,60 @@ const ChangePasswordScreen = () => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const changePasswordMutation = useMutation({
+    mutationFn: (payload: {
+      old_password: string;
+      new_password: string;
+      retype_password: string;
+    }) => passwordChangeService(payload),
+
+    onSuccess: (response: any) => {
+      Toast.show({
+        type: "success",
+        text1: response?.data?.message || "Password changed successfully",
+      });
+      router.back()
+    },
+
+    onError: (error: any) => {
+      Toast.show({
+        type: "error",
+        text1: "Password Change Failed",
+        text2:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong",
+      });
+      return;
+    },
+  });
+
+  const handleChangePassword = () => {
+    // Implement password change logic here
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "All Field are required"
+      })
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Toast.show({
+        type: 'error',
+        text1: "New Password do not match"
+      })
+      return;
+    }
+
+    changePasswordMutation.mutate({
+      old_password: oldPassword,
+      new_password: newPassword,
+      retype_password: confirmPassword,
+    });
+
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,8 +151,13 @@ const ChangePasswordScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button}>
-            <AppText style={styles.buttonText}>Save changes</AppText>
+          <TouchableOpacity
+            onPress={handleChangePassword}
+            disabled={changePasswordMutation.isPending}
+            style={styles.button}>
+            <AppText style={styles.buttonText}>
+              {changePasswordMutation.isPending ? "Updating..." : "Save changes"}
+            </AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -108,6 +171,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
+    marginTop: 30
   },
 
   secondContainer: {
@@ -164,11 +228,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 10
   },
 
   buttonText: {
     color: "white",
     fontSize: 20,
+    height: 50,
+    display: 'flex',
+    alignItems: "center",
   },
 });

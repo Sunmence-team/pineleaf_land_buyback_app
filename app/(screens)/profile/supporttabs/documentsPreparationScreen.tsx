@@ -3,6 +3,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Entypo from "@expo/vector-icons/Entypo";
+
 
 const DocumentsPreparationScreen = () => {
   const documents = [
@@ -30,41 +32,33 @@ const DocumentsPreparationScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.secondContainer}>
-        <View style={styles.thirdContainer}>
-          <View>
-            <AppText style={styles.headerText}>
-              Please provide the following documents at your selected office to
-              complete your buyback process.
-            </AppText>
+      <View style={styles.thirdContainer}>
+        <View>
+          <View style={styles.innerCard}>
+            <AppText style={styles.requiredText}>Required documents</AppText>
 
-            <View style={styles.innerCard}>
-              <AppText style={styles.requiredText}>Required documents</AppText>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {documents.map((item, index) => (
+                <View key={index} style={styles.documentItem}>
+                  <View style={styles.row}>
+                    <Entypo name="dot-single" size={40} color="black" />
 
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {documents.map((item, index) => (
-                  <View key={index} style={styles.documentItem}>
-                    <View style={styles.row}>
-                      <MaterialIcons
-                        name="check-box-outline-blank"
-                        size={30}
-                        color="black"
-                      />
+                    <View style={styles.textContainer}>
+                      <AppText style={styles.title}>{item.title}</AppText>
 
-                      <View style={styles.textContainer}>
-                        <AppText style={styles.title}>{item.title}</AppText>
-
-                        <AppText style={styles.description}>
-                          {item.description}
-                        </AppText>
-                      </View>
+                      <AppText style={styles.description}>
+                        {item.description}
+                      </AppText>
                     </View>
                   </View>
-                ))}
-              </ScrollView>
-            </View>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         </View>
+        <AppText style={styles.headerText}>
+          Kindly submit the requierd at the nearest office close to you.
+        </AppText>
       </View>
     </SafeAreaView>
   );
@@ -105,6 +99,12 @@ const styles = StyleSheet.create({
       ios: 27,
       android: 23,
     }),
+    marginTop: 30,
+    textAlign: "center",
+    width: '100%',
+    display: "flex",
+    justifyContent: "center",
+    borderColor: "black"
   },
 
   innerCard: {
