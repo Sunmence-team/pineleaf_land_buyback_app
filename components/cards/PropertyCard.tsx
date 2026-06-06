@@ -58,12 +58,11 @@ export default function PropertyCard({
   onPress,
 }: PropertyCardProps) {
 
-  const [openModal, setOpenModal] = React.useState(false)
   const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
 
   const logic = (status: StatusType) => {
     if (status === "eligible") {
-      setOpenModal(true);
+       router.push(`/view/${id}`);
     }
     else if (status === "not_eligible" || status === "completed") {
       router.push(`/view/${id}`);
@@ -75,38 +74,6 @@ export default function PropertyCard({
 
     router.push(`/view/${id}`);
   };
-
-  const queryClient = useQueryClient()
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: ({ id }: { id: number; name: string }) => requestPropertyBuybackService(id),
-
-    onSuccess: (data, variables) => {
-      setOpenModal(false);
-
-      queryClient.invalidateQueries({ queryKey: ['properties'] })
-
-      setCurrentStatus("pending");
-
-      Toast.show({
-        type: "success",
-        text1: "Request Submitted",
-        text2: `${variables.name}Your buyback request is being processed`,
-      });
-    },
-
-    onError: () => {
-      Toast.show({
-        type: "error",
-        text1: "Request Failed",
-        text2: "Something went wrong.",
-      });
-    },
-  })
-
-  const handleRequest = () => {
-    mutate({ id, name: property?.name || "Property" });
-  }
 
   return (
     <>
@@ -159,110 +126,7 @@ export default function PropertyCard({
         {children && <View className="mt-2">{children}</View>}
       </TouchableOpacity>
 
-      <Modal onClose={() => setOpenModal(false)} visible={openModal} showClose={true}>
-        <View className="flex-1 items-center pt-15" style={{ paddingHorizontal: 24 }}>
-          <Image
-            source={assets.microphone}
-            style={{ width: 140, height: 140 }}
-            resizeMode="contain"
-          />
-          <Text className="font-medium w-2/3 mb-10 text-center">Are you sure you want to request for
-            buyback.
-          </Text>
-          <>
-            {/* Step 1 */}
-            <View className="flex-row gap-3 mb-5">
-              <Ionicons
-                name="sparkles-outline"
-                size={20}
-                color="black"
-              />
-
-              <View className="flex-1">
-                <Text className="font-semibold mb-1">
-                  Company Review Process
-                </Text>
-
-                <Text className="text-gray-600 text-sm">
-                  By confirming you are requesting a formal review of your property by our cooperate acquisition team .
-                </Text>
-              </View>
-            </View>
-
-            {/* Step 2 */}
-            <View className="flex-row gap-3 mb-5">
-              <Ionicons
-                name="locate-outline"
-                size={20}
-                color="black"
-              />
-
-              <View className="flex-1">
-                <Text className="font-semibold mb-1">
-                  Fixed Valuation Offer
-                </Text>
-
-                <Text className="text-gray-600 text-sm">
-                  An approved review result in a non-negotiable fixed prce offer based on current market metrics.
-                </Text>
-              </View>
-            </View>
-
-            {/* Step 3 */}
-            <View className="flex-row gap-3 mb-10">
-              <Ionicons
-                name="card-outline"
-                size={20}
-                color="black"
-              />
-
-              <View className="flex-1">
-                <Text className="font-semibold mb-1">
-                  Not Immediate Payment
-                </Text>
-
-                <Text className="text-gray-600 text-sm">
-                  This is the initail stage of a transaction. Payment is not immediate.
-                </Text>
-              </View>
-            </View>
-
-            {/* Step 4 */}
-            <View className="flex-row gap-3 mb-10">
-              <Ionicons
-                name="card-outline"
-                size={20}
-                color="black"
-              />
-
-              <View className="flex-1">
-                <Text className="font-semibold mb-1">
-                  Documentation Requirements
-                </Text>
-
-                <Text className="text-gray-600 text-sm">
-                  Further financial and structural document may be required to finalize the valuation.
-                </Text>
-              </View>
-
-            </View>
-          </>
-
-          <TouchableOpacity
-            onPress={handleRequest}
-            disabled={isPending}
-            activeOpacity={0.8}
-            className="bg-primary items-center py-5 rounded-lg mb-5 w-full">
-            <Text className="text-white font-semibold"> Confirm Request</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity activeOpacity={0.8}>
-            <Text className="text-gray-600 font-semibold">Cancel</Text>
-          </TouchableOpacity>
-        </View>
-
-
-      </Modal>
+     
     </>
 
   );
