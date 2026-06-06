@@ -5,18 +5,18 @@ import { AppText } from "../AppText";
 type IconElement = React.ReactElement<{ size?: number }>;
 
 interface ActionButtonProps {
-    action?: () => void;
-    icon?: IconElement;
-    name: string | null;
-    optStyle?: ViewStyle | ViewStyle[];
-    optStyle2?: TextStyle | TextStyle[];
-    disabled?: boolean;
-    loading?: boolean;
-    iconSize?: number;
-    hasBG?: boolean;
+  action?: () => void;
+  icon?: IconElement;
+  name: string | null;
+  optStyle?: ViewStyle | ViewStyle[];
+  optStyle2?: TextStyle | TextStyle[];
+  disabled?: boolean;
+  loading?: boolean;
+  iconSize?: number;
+  hasBG?: boolean;
 }
 
-const ActionButton = ({ action, icon, name, optStyle, optStyle2, disabled, loading, iconSize, hasBG=true } : ActionButtonProps) => {
+const ActionButton = ({ action, icon, name, optStyle, optStyle2, disabled, loading, iconSize, hasBG = true }: ActionButtonProps) => {
   return (
     <Pressable
       disabled={disabled}
