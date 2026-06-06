@@ -44,6 +44,7 @@ export type StatusType =
   | "offer_sent"
   | "completed"
   | "pending"
+  | "verified"
   | "buyback_requested";
 
 export interface PropertyItemProps {

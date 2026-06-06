@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { AppText } from "./AppText";
-import MapScreen from "@/app/(screens)/map";
+// import MapScreen from "@/app/(screens)/map";
 
 interface MapTabsSectionProps {
   activeTab: "all" | "myProperties" | "eligible";
@@ -43,7 +43,7 @@ const MapTabsSection: React.FC<MapTabsSectionProps> = ({
       </View>
 
       <View className="flex items-center justify-center rounded-xl h-64 border">
-        <MapScreen />
+        {/* <MapScreen /> */}
       </View>
     </View>
   );

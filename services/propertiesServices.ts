@@ -86,7 +86,12 @@ export const uploadPropertyDocumentService = async (
   const res = await api.post(`/user/properties/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-  return res.data.data;
+  return res.data;
+};
+
+export const acceptPropertyOfferService = async (id: number) => {
+  const response = await api.put(`/user/properties/${id}/offer/accept`);
+  return response.data;
 };
 
 export const declinePropertyOfferService = async (id: number) => {

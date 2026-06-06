@@ -1,7 +1,7 @@
 import { AppText } from "@/components/AppText";
 import ProfileCard from "@/components/cards/ProfileCard";
 import { useAuth } from "@/context/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -10,12 +10,14 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
+import { editprofileService } from "@/services/profileServices";
+import { showSuccessToast, showErrorToast } from "@/helpers/toast";
 
 const EditScreen = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [firstName, setFirstName] = useState(user?.first_name ?? "");
   const [lastName, setLastName] = useState(user?.last_name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -28,32 +30,40 @@ const EditScreen = () => {
     }) => editprofileService(payload),
 
     onSuccess: (response: any) => {
-      Toast.show({
-        type: "success",
-        text1: response?.data?.message || "Profile changed successfully",
-      });
-      router.back()
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      showSuccessToast(response?.message || "Profile changed successfully");
+      router.back();
     },
 
     onError: (error: any) => {
-      Toast.show({
-        type: "error",
-        text1: "Profile Change Failed",
-        text2:
-          error?.response?.data?.message ||
+      showErrorToast(
+        error?.response?.data?.message ||
           error?.message ||
-          "Something went wrong",
-      });
-      return;
+          "Profile change failed"
+      );
     },
-  })
+  });
 
   const handleProfileEdit = () => {
+    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
+      showErrorToast("First name, last name, and email are required");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      showErrorToast("Please enter a valid email address");
+      return;
+    }
 
-  }
+    editProfileMutation.mutate({
+      firstName,
+      lastName,
+      email,
+    });
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
         <ProfileCard />
 
@@ -75,7 +85,6 @@ const EditScreen = () => {
             placeholderTextColor="black"
             value={lastName}
             onChangeText={setLastName}
-            keyboardType="email-address"
             style={styles.input}
           />
         </View>
@@ -87,18 +96,25 @@ const EditScreen = () => {
             placeholderTextColor="black"
             value={email}
             onChangeText={setEmail}
-            secureTextEntry
+            keyboardType="email-address"
+            autoCapitalize="none"
             style={styles.input}
           />
         </View>
 
-        <TouchableOpacity style={styles.button}
+        <TouchableOpacity 
+          style={styles.button}
           onPress={handleProfileEdit}
+          disabled={editProfileMutation.isPending}
         >
-          <AppText style={styles.buttonText}>Confirm changes</AppText>
+          {editProfileMutation.isPending ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <AppText style={styles.buttonText}>Confirm changes</AppText>
+          )}
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -9,9 +9,14 @@ export default function ViewLayout() {
       screenOptions={{
         headerLeft: () => (
           <Pressable onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={24} color="#000" />
+            <Ionicons name="chevron-back" color="#000" />
           </Pressable>
         ),
+        headerStyle: {
+          backgroundColor: "transparent",
+        },
+        headerShadowVisible: false,
+        headerTitleAlign: "center",
       }}
     >
       <Stack.Screen

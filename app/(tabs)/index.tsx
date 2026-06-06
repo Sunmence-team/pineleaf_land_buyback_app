@@ -102,10 +102,14 @@ export default function Index() {
             <AppText className="text-lg font-quickBold">Live Map</AppText>
             <MapTabsSection activeTab={activeTab} onTabChange={setActiveTab} />
           </View>
+
           <View className="flex flex-col gap-3 bg-white rounded-xl p-3 w-full overflow-auto flex-shrink">
             <AppText className="text-lg font-quickBold">Quick Actions</AppText>
             <View className="flex flex-row justify-between gap-3 w-full">
-              <TouchableOpacity className="bg-primary/10 rounded-xl px-3 py-3 flex flex-row items-center gap-3 min-w-0 flex-1">
+              <TouchableOpacity 
+                onPress={() => router.push("/(tabs)/properties")}
+                className="bg-primary/10 rounded-xl px-3 py-3 flex flex-row items-center gap-3 min-w-0 flex-1"
+              >
                 <View className="bg-white p-3 rounded-full">
                   <MaterialCommunityIcons
                     name="shield-plus-outline"

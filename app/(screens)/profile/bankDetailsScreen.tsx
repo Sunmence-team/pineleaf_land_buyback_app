@@ -10,15 +10,18 @@ import {
   Pressable,
   FlatList,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/context/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBanksService, resolveBankAccountService, updateBankAccountService } from "@/services/profileServices";
 import Modal from "@/components/modal/Modal";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Toast from "react-native-toast-message";
 import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import { router } from "expo-router";
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+
+const getErrorMessage = (error: any) => {
+  return error?.response?.data?.message || error?.message || "Something went wrong";
+};
 
 const EditScreen = () => {
   const { user } = useAuth();
@@ -62,13 +65,10 @@ const EditScreen = () => {
         setAccountName(resolvedName);
       }
     },
-    onError: (err: any) => {
+    onError: (error) => {
       setAccountName("");
-      Toast.show({
-        type: "error",
-        text1: "Failed to resolve account",
-        text2: err.response?.data?.message || err.message || "Invalid account number or bank selection.",
-      });
+      showErrorToast(getErrorMessage(error || "Invalid account number or bank selection"))
+      console.error(error|| "Invalid account number or bank selection.");
     },
   });
 
@@ -90,45 +90,25 @@ const EditScreen = () => {
     }) => updateBankAccountService(payload),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: data?.message || "Bank details updated successfully.",
-      });
+      showSuccessToast(data?.message || "Bank details updated successfully.");
       router.back();
     },
     onError: (err: any) => {
-      Toast.show({
-        type: "error",
-        text1: "Failed to update bank details",
-        text2: err.response?.data?.message || err.message,
-      });
+      showErrorToast(err.response?.data?.message || err.message || "Failed to update bank details");
     },
   });
 
   const handleSubmit = () => {
     if (!bankName || !bankCode) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please select a bank.",
-      });
+      showErrorToast("Please select a bank.");
       return;
     }
     if (accountNumber.length !== 10) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Account number must be 10 digits.",
-      });
+      showErrorToast("Account number must be 10 digits.");
       return;
     }
     if (!accountName) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please wait for account name to be resolved.",
-      });
+      showErrorToast("Please wait for account name to be resolved.");
       return;
     }
 
@@ -141,7 +121,7 @@ const EditScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
         {/* Bank name */}
         <View style={styles.inputContainer}>
@@ -274,7 +254,7 @@ const EditScreen = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

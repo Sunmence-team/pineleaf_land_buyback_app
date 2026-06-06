@@ -3,7 +3,7 @@ import { router, Stack } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
 
-export default function PropertyLayout() {
+export default function OfferLayout() {
   return (
     <Stack
       screenOptions={{
@@ -12,24 +12,19 @@ export default function PropertyLayout() {
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
-        headerShown: false,
+        headerStyle: {
+          backgroundColor: "#F4F6F1",
+        },
+        headerShadowVisible: false,
+        headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="map"></Stack.Screen>
-      <Stack.Screen 
-        name="(property)/view/[propertyId]"
-      ></Stack.Screen>
-      <Stack.Screen 
-        name="(property)/offer/[offerId]"
-        options={{
-          headerShown: true
-        }}
-      ></Stack.Screen>
       <Stack.Screen
-        name="profile"
+        name="[offerId]"
         options={{
+          title: "Offer for buyback",
         }}
-      ></Stack.Screen>
+      />
     </Stack>
   );
 }

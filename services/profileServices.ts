@@ -19,3 +19,17 @@ export const updateBankAccountService = async (data: {
   const response = await api.put("/auth/bank/update", data);
   return response.data;
 };
+
+export const editprofileService = async (data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+}) => {
+  const response = await api.put("/auth/profile/update", {
+    first_name: data.firstName,
+    last_name: data.lastName,
+    email: data.email,
+  });
+  return response.data;
+};
+
