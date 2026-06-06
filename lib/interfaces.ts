@@ -43,7 +43,8 @@ export type StatusType =
   | "not_eligible"
   | "offer_sent"
   | "completed"
-  | "pending";
+  | "pending"
+  | "buyback_requested";
 
 export interface PropertyItemProps {
   name: string;
