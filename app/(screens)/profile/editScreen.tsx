@@ -1,6 +1,8 @@
 import { AppText } from "@/components/AppText";
 import ProfileCard from "@/components/cards/ProfileCard";
 import { useAuth } from "@/context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -10,12 +12,45 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const EditScreen = () => {
   const { user } = useAuth();
   const [firstName, setFirstName] = useState(user?.first_name ?? "");
   const [lastName, setLastName] = useState(user?.last_name ?? "");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(user?.email ?? "");
+
+  const editProfileMutation = useMutation({
+    mutationFn: (payload: {
+      firstName: string;
+      lastName: string;
+      email: string;
+    }) => editprofileService(payload),
+
+    onSuccess: (response: any) => {
+      Toast.show({
+        type: "success",
+        text1: response?.data?.message || "Profile changed successfully",
+      });
+      router.back()
+    },
+
+    onError: (error: any) => {
+      Toast.show({
+        type: "error",
+        text1: "Profile Change Failed",
+        text2:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong",
+      });
+      return;
+    },
+  })
+
+  const handleProfileEdit = () => {
+
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,7 +92,9 @@ const EditScreen = () => {
           />
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button}
+          onPress={handleProfileEdit}
+        >
           <AppText style={styles.buttonText}>Confirm changes</AppText>
         </TouchableOpacity>
       </View>
@@ -71,12 +108,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6F1",
+    marginTop: 30
   },
 
   secondContainer: {
     height: Platform.select({
       ios: "90%",
-      android: "98%",
+      android: "98%"
     }),
     marginBottom: Platform.select({
       android: "100%",
@@ -84,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
-    paddingHorizontal: 16,
+    padding: 16,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -124,5 +162,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 20,
+    height: 50,
+    display: 'flex',
+    alignItems: "center",
   },
 });

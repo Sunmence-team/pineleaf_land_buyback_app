@@ -54,3 +54,8 @@ export const forgotPasswordResetService = async (data: {
   return response.data;
 };
 
+export const passwordChangeService = async (data: { old_password: string; new_password: string; retype_password: string }) => {
+  const response = await api.post("/password/change", data);
+  return response.data;
+}
+
