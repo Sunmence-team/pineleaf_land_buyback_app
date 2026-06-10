@@ -14,10 +14,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBanksService, resolveBankAccountService, updateBankAccountService } from "@/services/profileServices";
 import Modal from "@/components/modal/Modal";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import { router } from "expo-router";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import ActionButton from "@/components/buttons/ActionButton";
 
 const getErrorMessage = (error: any) => {
   return error?.response?.data?.message || error?.message || "Something went wrong";
@@ -48,6 +48,7 @@ const EditScreen = () => {
     data: banksResponse,
     isLoading: isLoadingBanks,
     refetch: refetchBanks,
+    error: banksError,
   } = useQuery({
     queryKey: ["banksSearch", searchQuery],
     queryFn: () => getBanksService(searchQuery),
@@ -170,18 +171,13 @@ const EditScreen = () => {
             </View>
           )}
         </View>
-
-        <TouchableOpacity
+        
+        <ActionButton 
+          name={"Submit"}
+          loading={updateMutation.isPending}
           disabled={updateMutation.isPending}
-          onPress={handleSubmit}
-          style={styles.button}
-        >
-          {updateMutation.isPending ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <AppText style={styles.buttonText}>Submit</AppText>
-          )}
-        </TouchableOpacity>
+          action={handleSubmit}
+        />
       </View>
 
       <Modal
@@ -263,20 +259,16 @@ export default EditScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
-    marginTop: 30
+    backgroundColor: "#F4F6F1",
+    paddingVertical: 20,
   },
 
   secondContainer: {
-    height: Platform.select({
-      ios: "65%",
-      android: "70%",
-    }),
     backgroundColor: "white",
-    marginHorizontal: 20,
     borderRadius: 35,
+    marginHorizontal: 20,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 30,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -295,9 +287,9 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 16,
+    borderRadius: 12,
     paddingHorizontal: 15,
-    height: 60,
+    height: 50,
     fontSize: 16,
     backgroundColor: "white",
   },

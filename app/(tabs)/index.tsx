@@ -18,7 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   console.log("user", user);
   const [activeTab, setActiveTab] = useState<
     "all" | "myProperties" | "eligible"
@@ -49,7 +49,9 @@ export default function Index() {
 
   return (
     <SafeAreaView className="bg-[#F4F6F1]">
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+      >
         <View className="flex flex-col gap-5 px-5 pt-5 pb-5">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row items-center gap-4">

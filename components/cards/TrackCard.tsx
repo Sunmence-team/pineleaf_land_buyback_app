@@ -63,7 +63,7 @@ export default function RequestTracker({ property }: TrackCardProps) {
 
   const isEligible = eligibility === "Eligible" || status !== "not_eligible";
   const isRequested = status !== "not_eligible" && status !== "eligible";
-  const isOfferSent = !!property.offer_date || status === "offer_sent" || status === "verified" || status === "completed";
+  const isOfferSent = !!property.offer_date || status === "offer_sent" || offerStatus === "pending" || status === "verified" || status === "completed";
   const isOfferAccepted = offerStatus === "accepted" || status === "verified" || status === "completed";
   const isDocsSubmitted = !!property.documents_submitted_at || status === "verified" || status === "completed";
   const isDocsVerified = !!property.verified_at || status === "completed";

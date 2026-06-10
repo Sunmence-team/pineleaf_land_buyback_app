@@ -23,6 +23,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
+import { RefreshControl } from "react-native";
 import { StyleSheet } from "react-native";
 import {
   Image,
@@ -91,7 +92,7 @@ const PropertyDetails = () => {
 
   const fetchPropertyDetails = () => getPropertyDetailsService(id);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["propertyDetails", id],
     queryFn: fetchPropertyDetails,
     enabled: !!id,
@@ -232,6 +233,13 @@ const PropertyDetails = () => {
         style={{ flex: 1, borderRadius: 20 }} 
         className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={refetch}
+            tintColor={"#F4F6F1"}
+          />
+        }
       >
         <View className="flex-row justify-between items-start">
           <View className="mb-4">

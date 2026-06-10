@@ -88,67 +88,69 @@ const Offer = () => {
 
   return (
     <View className="flex-1 bg-secondary pt-6" style={{ paddingHorizontal: 20 }}>
-      <ScrollView 
-        style={{ borderRadius: 20 }} 
-        className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
-        showsVerticalScrollIndicator={false}
-      >
-        <View className='border border-gray-300 rounded-xl p-4'>
-          <View className="flex-row justify-between items-start">
-            <View className="mb-4">
-              <Text className="text-xl font-medium mb-2">Pineleaf Phase 2</Text>
+      <View>
+        <ScrollView 
+          style={{ borderRadius: 20 }} 
+          className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
+          showsVerticalScrollIndicator={false}
+        >
+          <View className='border border-gray-300 rounded-xl p-4'>
+            <View className="flex-row justify-between items-start">
+              <View className="mb-4">
+                <Text className="text-xl font-medium mb-2">Pineleaf Phase 2</Text>
+              </View>
+
+              <StatusCard currentStatus={offer?.offer_status} />
             </View>
 
-            <StatusCard currentStatus={offer?.offer_status} />
+            <View className='flex-row justify-between mb-4'>
+              <View>
+                <Text className='text-lg'>Plot</Text>
+                <Text className='text-medium'>{offer?.number_of_plots || 0}</Text>
+              </View>
+              <View>
+                <Text className='text-lg'>Purchased value</Text>
+                <Text className='text-medium'>{formatterUtility(Number(offer?.price_per_plots || 0))}</Text>
+              </View>
+            </View>
+            <View className='flex-row justify-between'>
+              <View>
+                <Text className='text-lg'>Purchase Date</Text>
+                <Text className='text-medium'>{formatISODateToYYYYMMDD(offer?.purchase_date || "")}</Text>
+              </View>
+              <View>
+                <Text className='text-lg'>Plot numbers</Text>
+                <Text className='text-medium'>{offer?.plot_numbers || ""}</Text>
+              </View>
+            </View>
           </View>
 
-          <View className='flex-row justify-between mb-4'>
-            <View>
-              <Text className='text-lg'>Plot</Text>
-              <Text className='text-medium'>{offer?.number_of_plots || 0}</Text>
-            </View>
-            <View>
-              <Text className='text-lg'>Purchased value</Text>
-              <Text className='text-medium'>{formatterUtility(Number(offer?.price_per_plots || 0))}</Text>
-            </View>
+          <View className='rounded-xl bg-secondary p-4 h-40 mt-5 items-center justify-center'>
+            <Text className='text-lg mb-4 '>Company Buyback Offer</Text>
+            <Text className='text-4xl font-semibold text-primary mb-4'>{formatterUtility(Number(offer?.offer_amount || 0))}</Text>
+            <Text className='text-base text-gray-600 font-medium'>+{formatterUtility(Number(offer?.offer_amount || 0) - Number(offer?.total_value || 0))} above your purchase price</Text>
           </View>
-          <View className='flex-row justify-between'>
-            <View>
-              <Text className='text-lg'>Purchase Date</Text>
-              <Text className='text-medium'>{formatISODateToYYYYMMDD(offer?.purchase_date || "")}</Text>
-            </View>
-            <View>
-              <Text className='text-lg'>Plot numbers</Text>
-              <Text className='text-medium'>{offer?.plot_numbers || ""}</Text>
-            </View>
+
+          <View className='flex-row items-center gap-2 my-4'>
+            <Ionicons name='alert-circle-outline' size={24} color='#000000' className='my-4' />
+            <Text className='w-80 '>This is a fixed company offer. No negotiation is approved on this amount.</Text>
           </View>
-        </View>
 
-        <View className='rounded-xl bg-secondary p-4 h-40 mt-5 items-center justify-center'>
-          <Text className='text-lg mb-4 '>Company Buyback Offer</Text>
-          <Text className='text-4xl font-semibold text-primary mb-4'>{formatterUtility(Number(offer?.offer_amount || 0))}</Text>
-          <Text className='text-base text-gray-600 font-medium'>+{formatterUtility(Number(offer?.offer_amount || 0) - Number(offer?.total_value || 0))} above your purchase price</Text>
-        </View>
+          <ActionButton 
+            action={handleAcceptOffer}
+            name="Accept Offer"
+            loading={acceptOfferMutation.isPending}
+            disabled={acceptOfferMutation.isPending || declineOfferMutation.isPending}
+          />
+          <ActionButton 
+            action={handleDeclineOffer}
+            name="Decline Offer"
+            hasBG={false}
+            loading={declineOfferMutation.isPending}
+            disabled={acceptOfferMutation.isPending || declineOfferMutation.isPending}
+          />
 
-        <View className='flex-row items-center gap-2 my-4'>
-          <Ionicons name='alert-circle-outline' size={24} color='#000000' className='my-4' />
-          <Text className='w-80 '>This is a fixed company offer. No negotiation is approved on this amount.</Text>
-        </View>
-
-        <ActionButton 
-          action={handleAcceptOffer}
-          name="Accept Offer"
-          loading={acceptOfferMutation.isPending}
-          disabled={acceptOfferMutation.isPending || declineOfferMutation.isPending}
-        />
-        <ActionButton 
-          action={handleDeclineOffer}
-          name="Decline Offer"
-          hasBG={false}
-          loading={declineOfferMutation.isPending}
-          disabled={acceptOfferMutation.isPending || declineOfferMutation.isPending}
-        />
-
+        </ScrollView>
         <CustomModal
           visible={openModal}
           type={modalType}
@@ -199,7 +201,7 @@ const Offer = () => {
               : "Request again"
           }
         />
-      </ScrollView>
+      </View>
     </View>
   )
 }

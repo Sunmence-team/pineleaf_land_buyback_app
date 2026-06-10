@@ -64,7 +64,7 @@ export const getUserPropertiesService = async (params: any) => {
   return res.data;
 };
 
-export const getUserMapOptPropertiesService = async (params: any) => {
+export const getUserPropertiesMapCoordinatesService = async (params: any) => {
   const res = await api.get("/user/properties/map", { params });
   return res.data.data;
 };

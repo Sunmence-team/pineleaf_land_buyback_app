@@ -1,11 +1,18 @@
 import api from "@/helpers/axios";
 
 export const getBanksService = async (search?: string) => {
-  const response = await api.get("/auth/banks", { params: { search } });
+  const params: Record<string, string> = {};
+  if (search && search.trim() !== "") {
+    params.search = search;
+  }
+  const response = await api.get("/auth/banks", { params });
   return response.data;
 };
 
-export const resolveBankAccountService = async (data: { account_number: string; bank_code: string }) => {
+export const resolveBankAccountService = async (data: {
+  account_number: string;
+  bank_code: string;
+}) => {
   const response = await api.post("/auth/bank/resolve", data);
   return response.data;
 };
@@ -32,4 +39,3 @@ export const editprofileService = async (data: {
   });
   return response.data;
 };
-

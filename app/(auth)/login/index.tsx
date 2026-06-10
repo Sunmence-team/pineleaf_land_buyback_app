@@ -17,6 +17,8 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
+// import { globals } from "@/lib/constants";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginFormSchema = Yup.object().shape({
   email: Yup.string()
@@ -36,6 +38,7 @@ const Index = () => {
     onSuccess: (response) => {
       showSuccessToast(response.message || "Login successfully");
       const { data } = response;
+      console.log("data", data)
       if (data.user.role === "user") {
         signIn(data.user, data.token, data.user.role);
         router.push("/(tabs)");
@@ -63,6 +66,10 @@ const Index = () => {
       mutation.mutate(values);
     },
   });
+
+  // const removeSpecificKey = async (key: string) => {
+  //   await AsyncStorage.removeItem(key);
+  // }
 
   return (
     <View className="flex-1 bg-white px-6">
@@ -167,6 +174,11 @@ const Index = () => {
                 Sign up
               </Link>
             </AppText>
+
+            {/* <ActionButton
+              name={"Clear Async Storage"}
+              action={() => removeSpecificKey(globals.ONBOARDING_STATUS_KEY)}
+            /> */}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
