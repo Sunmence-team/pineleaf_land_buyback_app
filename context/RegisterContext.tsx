@@ -17,7 +17,7 @@ interface RegisterContextType {
   registerData: RegisterData;
   updateRegisterData: (data: Partial<RegisterData>) => void;
   resetRegisterData: () => void;
-}
+} 
 
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
 

@@ -49,8 +49,6 @@ const VerifyEmailCode = () => {
     },
   });
 
-  const codeArray = formik.values.code.split("");
-
   return (
     <View className="flex-1 bg-white px-6">
       <KeyboardAvoidingView
