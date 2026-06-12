@@ -121,7 +121,8 @@ const ProfileScreen = () => {
           name={"Logout"} 
           action={signOut}
           optStyle={{
-            height: 45
+            height: 45,
+            marginTop: 20
           }}
         />
 
@@ -141,20 +142,17 @@ const styles = StyleSheet.create({
   },
 
   secondContainer: {
-    flex: 1,
     backgroundColor: "white",
     borderRadius: 30,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 15,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
 
   menuContainer: {
-    flex: 1,
-    backgroundColor: "white",
     borderRadius: 15,
-    paddingTop: 10,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#EEEEEE",

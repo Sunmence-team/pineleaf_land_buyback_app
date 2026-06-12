@@ -8,7 +8,7 @@ export default function ProfileLayout () {
     <Stack
       screenOptions={{
         headerLeft: () => (
-          <Pressable onPress={() => router.back()} style={{ paddingLeft: 10 }}>
+          <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),

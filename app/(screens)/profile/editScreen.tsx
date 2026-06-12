@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { editprofileService } from "@/services/profileServices";
 import { showSuccessToast, showErrorToast } from "@/helpers/toast";
+import ActionButton from "@/components/buttons/ActionButton";
 
 const EditScreen = () => {
   const { user } = useAuth();
@@ -102,17 +103,16 @@ const EditScreen = () => {
           />
         </View>
 
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={handleProfileEdit}
+        <ActionButton
+          name={"Confirm changes"} 
+          action={handleProfileEdit}
+          loading={editProfileMutation.isPending}
           disabled={editProfileMutation.isPending}
-        >
-          {editProfileMutation.isPending ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <AppText style={styles.buttonText}>Confirm changes</AppText>
-          )}
-        </TouchableOpacity>
+          optStyle={{
+            height: 50,
+            marginTop: 20
+          }}
+        />
       </View>
     </View>
   );

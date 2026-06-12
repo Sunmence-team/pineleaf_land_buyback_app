@@ -42,9 +42,9 @@ const MapTabsSection: React.FC<MapTabsSectionProps> = ({
         ))}
       </View>
 
-      <View className="flex items-center justify-center rounded-xl h-64 border">
-        {/* <MapScreen /> */}
-      </View>
+      {/* <View className="flex items-center justify-center rounded-xl h-64 overflow-hidden">
+        <MapScreen isMini={true} />
+      </View> */}
     </View>
   );
 };

@@ -45,6 +45,10 @@ const StatusCard = ({
       bg: "bg-[#94F975]/25",
       text: "text-[#1A8701]"
     },
+    accepted: {
+      bg: "bg-[#94F975]/25",
+      text: "text-[#1A8701]"
+    },
     // Red guys
     declined: {
       bg: "bg-[#F6E7E6]",
@@ -58,6 +62,16 @@ const StatusCard = ({
       bg: "bg-[#F6E7E6]",
       text: "text-[#A80B00]"
     },
+    // Purple guys
+    payment_processing: {
+      bg: "bg-[#6633992a]",
+      text: "text-[#663399]",
+    },
+  };
+
+  const style = statusStyles[currentStatus as keyof typeof statusStyles] || {
+    bg: "bg-gray-100",
+    text: "text-gray-600"
   };
 
   const finalDisplayText = currentStatus === "verified" 
@@ -68,9 +82,9 @@ const StatusCard = ({
 
   return (
     <View
-      className={`px-3 py-2 rounded-lg inline-flex ${statusStyles[currentStatus].bg}`}
+      className={`px-3 py-2 rounded-lg inline-flex ${style.bg}`}
     >
-      <Text className={`text-xs font-medium ${statusStyles[currentStatus].text}`}>
+      <Text className={`text-xs font-medium ${style.text}`}>
         {formatUnderScores(finalDisplayText, true)}
       </Text>
     </View>

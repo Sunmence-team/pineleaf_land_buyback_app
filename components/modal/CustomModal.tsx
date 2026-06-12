@@ -1,5 +1,3 @@
-// components/OfferModal.tsx
-
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -9,6 +7,8 @@ import {
     View,
 } from "react-native";
 import Modal from "./Modal";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/helpers/toast";
 
 interface OfferModalProps {
     visible: boolean;
@@ -164,7 +164,7 @@ const OfferModal = ({
                 )}
 
             </View>
-
+            <Toast config={toastConfig} />
         </Modal>
     );
 };
