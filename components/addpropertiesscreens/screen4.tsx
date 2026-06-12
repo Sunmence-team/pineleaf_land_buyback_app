@@ -1,7 +1,7 @@
 import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import React from "react";
-import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Image, TouchableOpacity, View, StyleSheet, ScrollView } from "react-native";
 import { DocumentItem } from "@/lib/interfaces";
 import Modal from "../modal/Modal";
 import ActionButton from "../buttons/ActionButton";
@@ -56,13 +56,14 @@ const Screen4: React.FC<Screen4Props> = ({
   console.log(values)
 
   return hasSubmit ? (
+    <ScrollView showsVerticalScrollIndicator={false}>
     <View
       key="submitted"
       className="flex-1 items-center justify-between py-20 px-5"
     >
       <View className="w-full flex flex-col gap-8">
         <View className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#EAF8EE]">
-          <Image source={assets.successGif} alt="success-gif" />
+          <Image source={assets.success} alt="success-gif" />
         </View>
 
         <View className="items-center px-2">
@@ -88,7 +89,9 @@ const Screen4: React.FC<Screen4Props> = ({
         </AppText>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   ) : (
+    <ScrollView showsVerticalScrollIndicator={false}>
     <View key="review" className="flex flex-col gap-4">
       <View className="rounded-xl bg-white p-5 flex flex-col gap-3">
         <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
@@ -208,6 +211,7 @@ const Screen4: React.FC<Screen4Props> = ({
         </View>
       </Modal>
     </View>
+    </ScrollView>
   );
 };
 
