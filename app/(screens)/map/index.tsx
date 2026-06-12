@@ -22,7 +22,7 @@ const MapScreen = () => {
                 isLoading ? (
                     <ActivityIndicator />
                 ) : error ? (
-                    <AppText>Can't display your properties on the map right now...</AppText>
+                    <AppText>Can&apos;t display your properties on the map right now...</AppText>
                 ) : (
                     <MapView 
                         ref={mapRef}
