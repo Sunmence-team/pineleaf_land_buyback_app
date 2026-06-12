@@ -7,12 +7,11 @@ import {
   View,
 
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { AppText } from "@/components/AppText";
 import { useMutation } from "@tanstack/react-query";
 import { passwordChangeService } from "@/services/authServices";
-import Toast from "react-native-toast-message";
+import { showSuccessToast, showErrorToast } from "@/helpers/toast";
 import { router } from "expo-router";
 
 const ChangePasswordScreen = () => {
@@ -32,41 +31,27 @@ const ChangePasswordScreen = () => {
     }) => passwordChangeService(payload),
 
     onSuccess: (response: any) => {
-      Toast.show({
-        type: "success",
-        text1: response?.data?.message || "Password changed successfully",
-      });
-      router.back()
+      showSuccessToast(response?.message || "Password changed successfully");
+      router.back();
     },
 
     onError: (error: any) => {
-      Toast.show({
-        type: "error",
-        text1: "Password Change Failed",
-        text2:
-          error?.response?.data?.message ||
+      showErrorToast(
+        error?.response?.data?.message ||
           error?.message ||
-          "Something went wrong",
-      });
-      return;
+          "Password change failed"
+      );
     },
   });
 
   const handleChangePassword = () => {
-    // Implement password change logic here
     if (!oldPassword || !newPassword || !confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "All Field are required"
-      })
+      showErrorToast("All fields are required");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Toast.show({
-        type: 'error',
-        text1: "New Password do not match"
-      })
+      showErrorToast("New passwords do not match");
       return;
     }
 
@@ -75,11 +60,10 @@ const ChangePasswordScreen = () => {
       new_password: newPassword,
       retype_password: confirmPassword,
     });
-
-  }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
         <View style={styles.thirdContainer}>
           <AppText style={styles.label}>Old password</AppText>
@@ -161,7 +145,7 @@ const ChangePasswordScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

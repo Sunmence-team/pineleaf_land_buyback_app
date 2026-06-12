@@ -20,20 +20,32 @@ export const searchPropertiesService = async (
       data = {};
     } else {
       try {
-        const sanitized = cleanData.replace(/[\u0000-\u001F\u007F-\u009F]/g, (match) => {
-          if (match === '\n') return '\\n';
-          if (match === '\r') return '\\r';
-          if (match === '\t') return '\\t';
-          return '\\u' + ('0000' + match.charCodeAt(0).toString(16)).slice(-4);
-        });
+        const sanitized = cleanData.replace(
+          /[\u0000-\u001F\u007F-\u009F]/g,
+          (match) => {
+            if (match === "\n") return "\\n";
+            if (match === "\r") return "\\r";
+            if (match === "\t") return "\\t";
+            return (
+              "\\u" + ("0000" + match.charCodeAt(0).toString(16)).slice(-4)
+            );
+          },
+        );
         data = JSON.parse(sanitized);
       } catch (e) {
-        if (cleanData.startsWith('"') && cleanData.endsWith('"') && cleanData.length > 2) {
+        if (
+          cleanData.startsWith('"') &&
+          cleanData.endsWith('"') &&
+          cleanData.length > 2
+        ) {
           try {
             const stripped = cleanData.slice(1, -1).replace(/\\"/g, '"');
             data = JSON.parse(stripped);
           } catch (innerErr) {
-            console.warn("Failed to parse clean JSON (stripped fallback):", innerErr);
+            console.warn(
+              "Failed to parse clean JSON (stripped fallback):",
+              innerErr,
+            );
             data = {};
           }
         } else {
@@ -52,6 +64,11 @@ export const getUserPropertiesService = async (params: any) => {
   return res.data;
 };
 
+export const getUserMapOptPropertiesService = async (params: any) => {
+  const res = await api.get("/user/properties/map", { params });
+  return res.data.data;
+};
+
 export const requestPropertyBuybackService = async (id: number) => {
   const response = await api.put(`/user/properties/${id}/request`);
   return response.data;
@@ -62,11 +79,19 @@ export const getPropertyDetailsService = async (id: number) => {
   return response.data.data;
 };
 
-export const uploadPropertyDocumentService = async (id: number, formData: FormData) => {
+export const uploadPropertyDocumentService = async (
+  id: number,
+  formData: FormData,
+) => {
   const res = await api.post(`/user/properties/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-  return res.data.data;
+  return res.data;
+};
+
+export const acceptPropertyOfferService = async (id: number) => {
+  const response = await api.put(`/user/properties/${id}/offer/accept`);
+  return response.data;
 };
 
 export const declinePropertyOfferService = async (id: number) => {

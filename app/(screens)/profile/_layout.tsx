@@ -8,16 +8,14 @@ export default function ProfileLayout () {
     <Stack
       screenOptions={{
         headerLeft: () => (
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()} style={{ paddingLeft: 10 }}>
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
         headerStyle: {
           backgroundColor: "#F4F6F1",
-          height: 100,
-          elevation: 0,
-          shadowColor: "transparent"
         },
+        headerShadowVisible: false,
         headerTitleAlign: "center"
       }}
     >

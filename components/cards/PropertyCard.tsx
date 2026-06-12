@@ -1,27 +1,11 @@
 import { router } from "expo-router";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import Modal from "../modal/Modal";
-
-import { assets } from "@/assets/assets";
-import { Ionicons } from "@expo/vector-icons";
-import Toast from "react-native-toast-message";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { requestPropertyBuybackService } from "@/services/propertiesServices";
-import { formatCompactAmount, formatUnderScores, formatPrettyDate } from "@/helpers/formatterUtility";
+import { Text, TouchableOpacity, View } from "react-native";
+import { formatCompactAmount, formatPrettyDate } from "@/helpers/formatterUtility";
 import { PropertyCardProps, StatusType } from "@/lib/interfaces";
+import StatusCard from "./StatusCard";
 
-
-const statusStyles = {
-  all: "",
-  eligible: "bg-fadedGreen text-primary",
-  not_eligible: "bg-red-100 text-red-600",
-  offer_sent: "bg-blue-100 offerText",
-  completed: "bg-gray-200 text-gray-700",
-  pending: "bg-yellow-100 text-yellow-700"
-};
-
-const getButtonText = (status: StatusType) => {
+export const getButtonText = (status: StatusType) => {
   switch (status) {
     case "eligible":
       return "Request Buyback";
@@ -58,23 +42,6 @@ export default function PropertyCard({
   onPress,
 }: PropertyCardProps) {
 
-  const [currentStatus, setCurrentStatus] = React.useState<StatusType>(status);
-
-  const logic = (status: StatusType) => {
-    if (status === "eligible") {
-       router.push(`/view/${id}`);
-    }
-    else if (status === "not_eligible" || status === "completed") {
-      router.push(`/view/${id}`);
-    }
-    else if (status === "offer_sent" || status === "pending") {
-      router.push(`/offer/${id}`);
-    }
-
-
-    router.push(`/view/${id}`);
-  };
-
   return (
     <>
       <TouchableOpacity
@@ -89,13 +56,7 @@ export default function PropertyCard({
             {property?.name}
           </Text>
 
-          <View
-            className={`px-3 py-1 rounded-lg ${statusStyles[currentStatus]}`}
-          >
-            <Text className="text-xs font-medium">
-              {formatUnderScores(currentStatus, true)}
-            </Text>
-          </View>
+          <StatusCard currentStatus={status} />
         </View>
 
         {/* Details */}
@@ -113,14 +74,13 @@ export default function PropertyCard({
           </Text>
         </View>
 
-        <TouchableOpacity
+        <View
           className="bg-secondary border border-gray-300 rounded-lg py-3 mt-4 items-center"
-          onPress={() => logic(currentStatus)}
         >
           <Text className="font-semibold">
-            {getButtonText(currentStatus)}
+            {getButtonText(status)}
           </Text>
-        </TouchableOpacity>
+        </View>
 
         {/* Custom children (buttons, extra actions, etc.) */}
         {children && <View className="mt-2">{children}</View>}

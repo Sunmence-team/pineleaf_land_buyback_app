@@ -54,4 +54,42 @@
     );
   };
 
+
+export function getErrorMessage(
+  error: unknown,
+  fallback = "Something went wrong",
+): string {
+  if (typeof error === "object" && error !== null) {
+    const data = (error as any).response?.data;
+    const validationErrors = data?.errors;
+
+    if (validationErrors && typeof validationErrors === "object") {
+      const messages = Object.values(validationErrors)
+        .flat()
+        .filter((message): message is string => typeof message === "string");
+
+      if (messages.length) {
+        return messages.join(" ");
+      }
+    }
+
+    if (data?.message) {
+      return data.message;
+    }
+
+    if (error instanceof Error) {
+      return error.message || fallback;
+    }
+
+    return (error as any).message || fallback;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  return fallback;
+}
+
+
   export default api;

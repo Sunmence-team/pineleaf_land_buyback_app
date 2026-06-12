@@ -76,7 +76,7 @@ const OfferModal = ({
 
                 {/* Guide */}
                 {showGuide && (
-                    <>
+                    <View className="px-4">
                         <Text className="text-lg font-semibold mb-4">
                             Submission guide
                         </Text>
@@ -140,7 +140,7 @@ const OfferModal = ({
                                 </Text>
                             </View>
                         </View>
-                    </>
+                    </View>
                 )}
 
                 {/* Button */}

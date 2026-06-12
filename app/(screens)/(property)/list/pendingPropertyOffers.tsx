@@ -34,7 +34,7 @@ const PendingPropertyOffers = ({
             key={property.id}
             {...property}
             onPress={() =>
-              router.push(`/(screens)/(property)/offer/${id}`)
+              router.push(`/(screens)/(property)/view/${property.id}`)
             }
           />
         )}
