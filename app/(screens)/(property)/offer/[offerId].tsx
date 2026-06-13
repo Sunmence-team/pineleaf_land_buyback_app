@@ -183,8 +183,8 @@ const Offer = () => {
 
           image={
             modalType === "accept"
-              ? assets.successGif
-              : assets.rejectGif
+              ? assets.success
+              : assets.reject
           }
 
           // iconColor={
