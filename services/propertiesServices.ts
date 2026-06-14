@@ -89,8 +89,8 @@ export const uploadPropertyDocumentService = async (
   return res.data;
 };
 
-export const acceptPropertyOfferService = async (id: number) => {
-  const response = await api.put(`/user/properties/${id}/offer/accept`);
+export const acceptPropertyOfferService = async (id: number, branch: string) => {
+  const response = await api.put(`/user/properties/${id}/offer/accept`, { branch });
   return response.data;
 };
 
