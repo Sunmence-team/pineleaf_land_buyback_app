@@ -229,7 +229,7 @@ const PropertyDetails = () => {
 
   return (
     <View className="flex-1 bg-secondary pt-6" style={{ paddingHorizontal: 20 }}>
-      <ScrollView 
+      <ScrollView
         style={{ flex: 1, borderRadius: 20 }} 
         className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
         showsVerticalScrollIndicator={false}

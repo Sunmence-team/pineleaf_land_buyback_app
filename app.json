@@ -13,9 +13,6 @@
       "bundleIdentifier": "com.mayorkun27.pineleaflandbuyback",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      },
-      "config": {
-        "googleMapsApiKey": "process.env.IOS_MAPS_API_KEY"
       }
     },
     "android": {
@@ -26,12 +23,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "adjustResize",
-      "package": "com.mayorkun27.pineleaflandbuyback",
-      "config": {
-        "googleMaps": {
-          "apiKey": "process.env.GOOGLE_MAPS_API_KEY"
-        }
-      }
+      "package": "com.mayorkun27.pineleaflandbuyback"
     },
     "web": {
       "output": "static",

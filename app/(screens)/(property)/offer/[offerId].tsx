@@ -10,11 +10,13 @@ import { formatterUtility, formatISODateToYYYYMMDD } from '@/helpers/formatterUt
 import { showSuccessToast, showErrorToast } from '@/helpers/toast';
 import StatusCard from '@/components/cards/StatusCard';
 import ActionButton from '@/components/buttons/ActionButton';
+import SelectBranch from '@/components/SelectBranch';
 
 const Offer = () => {
   const { offerId } = useLocalSearchParams();
   const [openModal, setOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState<"accept" | "decline">("accept");
+  const [selectedBranch, setSelectedBranch] = React.useState<string | null>(null);
 
   const fetchPropertyDetails = () => getPropertyDetailsService(Number(offerId));
 
@@ -25,11 +27,11 @@ const Offer = () => {
   });
 
   const acceptOfferMutation = useMutation({
-    mutationFn: () => acceptPropertyOfferService(Number(offerId)),
+    mutationFn: ({ branch }: { branch: string }) => acceptPropertyOfferService(Number(offerId), branch),
     onSuccess: () => {
       showSuccessToast("Offer Accepted Successfully");
       setModalType("accept");
-      setOpenModal(true);
+      setOpenModal(false);
     },
     onError: (err: any) => {
       showErrorToast(err.response?.data?.message || err.message || "Failed to accept offer");
@@ -67,7 +69,14 @@ const Offer = () => {
   }
 
   const handleAcceptOffer = () => {
-    acceptOfferMutation.mutate();
+    if (!selectedBranch) {
+      showErrorToast("Please select a branch");
+      return;
+    }
+
+    acceptOfferMutation.mutate({
+      branch: selectedBranch
+    });
   }
 
   const handleDeclineOffer = () => {
@@ -89,9 +98,9 @@ const Offer = () => {
   return (
     <View className="flex-1 bg-secondary pt-6" style={{ paddingHorizontal: 20 }}>
       <View>
-        <ScrollView 
-          style={{ borderRadius: 20 }} 
-          className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
+        <ScrollView
+          style={{ borderRadius: 20 }}
+          className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full"
           showsVerticalScrollIndicator={false}
         >
           <View className='border border-gray-300 rounded-xl p-4'>
@@ -136,13 +145,13 @@ const Offer = () => {
             <Text className='w-80 '>This is a fixed company offer. No negotiation is approved on this amount.</Text>
           </View>
 
-          <ActionButton 
+          <ActionButton
             action={handleAcceptOffer}
             name="Accept Offer"
             loading={acceptOfferMutation.isPending}
             disabled={acceptOfferMutation.isPending || declineOfferMutation.isPending}
           />
-          <ActionButton 
+          <ActionButton
             action={handleDeclineOffer}
             name="Decline Offer"
             hasBG={false}
@@ -183,8 +192,8 @@ const Offer = () => {
 
           image={
             modalType === "accept"
-              ? assets.successGif
-              : assets.rejectGif
+              ? assets.success
+              : assets.reject
           }
 
           // iconColor={
@@ -200,6 +209,13 @@ const Offer = () => {
               ? "Takes 3-4 business day"
               : "Request again"
           }
+        />
+
+        <SelectBranch
+          value={selectedBranch}
+          onChange={setSelectedBranch}
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
         />
       </View>
     </View>

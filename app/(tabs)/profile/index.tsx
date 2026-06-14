@@ -87,23 +87,6 @@ const ProfileScreen = () => {
 
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() =>
-                router.push("/profile/supporttabs/documentsPreparationScreen")
-              }
-            >
-              <View style={styles.menuLeft}>
-                <Ionicons name="document-outline" size={22} color="#111" />
-
-                <AppText style={styles.menuText}>Document</AppText>
-              </View>
-
-              <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity>
-
-            <View style={styles.horizontalLine} />
-
-            <TouchableOpacity
-              style={styles.menuItem}
               onPress={() => router.push("/profile/supportScreen")}
             >
               <View style={styles.menuLeft}>
