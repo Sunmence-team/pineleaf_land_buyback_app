@@ -1,10 +1,7 @@
 import { AppText } from "@/components/AppText";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Entypo from "@expo/vector-icons/Entypo";
 import React from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Entypo from "@expo/vector-icons/Entypo";
-
 
 const DocumentsPreparationScreen = () => {
   const documents = [
@@ -31,9 +28,13 @@ const DocumentsPreparationScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.thirdContainer}>
-        <View>
+    <View style={styles.container}>
+      <View style={styles.secondContainer}>
+        <View style={styles.thirdContainer}>
+          <AppText className="text-lg" style={{ fontFamily: "quickSemiBold" }}>
+            Please provide the following documents at your selected office to
+            complete your buyback process.
+          </AppText>
           <View style={styles.innerCard}>
             <AppText style={styles.requiredText}>Required documents</AppText>
 
@@ -41,9 +42,9 @@ const DocumentsPreparationScreen = () => {
               {documents.map((item, index) => (
                 <View key={index} style={styles.documentItem}>
                   <View style={styles.row}>
-                    <Entypo name="dot-single" size={40} color="black" />
+                    <Entypo name="dot-single" size={20} color="black" />
 
-                    <View style={styles.textContainer}>
+                    <View style={{ flex: 1 }}>
                       <AppText style={styles.title}>{item.title}</AppText>
 
                       <AppText style={styles.description}>
@@ -56,11 +57,8 @@ const DocumentsPreparationScreen = () => {
             </ScrollView>
           </View>
         </View>
-        <AppText style={styles.headerText}>
-          Kindly submit the requierd at the nearest office close to you.
-        </AppText>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -69,52 +67,32 @@ export default DocumentsPreparationScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    paddingBottom: 20,
+    backgroundColor: "#F4F6F1",
   },
-
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
-    padding: 20,
+    padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-
   thirdContainer: {
     backgroundColor: "white",
-    padding: 14,
     borderRadius: 15,
+    padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-
-  headerText: {
-    fontSize: Platform.select({
-      ios: 20,
-      android: 16,
-    }),
-    color: "black",
-    lineHeight: Platform.select({
-      ios: 27,
-      android: 23,
-    }),
-    marginTop: 30,
-    textAlign: "center",
-    width: '100%',
-    display: "flex",
-    justifyContent: "center",
-    borderColor: "black"
-  },
-
   innerCard: {
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
+    backgroundColor: "white",
     borderRadius: 15,
-    padding: 18,
-    marginTop: 25,
+    padding: 10,
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: "#EEEEEE",
   },
-
   requiredText: {
     fontSize: Platform.select({
       ios: 24,
@@ -126,17 +104,13 @@ const styles = StyleSheet.create({
   },
 
   documentItem: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
 
   row: {
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 4,
-  },
-
-  textContainer: {
-    flex: 1,
   },
 
   title: {

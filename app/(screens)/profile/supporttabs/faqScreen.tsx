@@ -9,7 +9,6 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -37,7 +36,7 @@ const faqData = [
     id: "4",
     question: "Which documents do I need to submit?",
     answer:
-      "You may need to submit your ID card, proof of address, and bank details.",
+      "You may need to submit your receipt, allocation letter, and some others. See the documents page for more info.",
   },
   {
     id: "5",
@@ -57,9 +56,9 @@ const FaqScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
-        <View>
+        <View className="flex-col gap-4">
           {faqData.map((item) => {
             const isOpen = activeId === item.id;
 
@@ -88,7 +87,7 @@ const FaqScreen = () => {
           })}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -97,18 +96,16 @@ export default FaqScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "#F4F6F1",
   },
 
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
     borderRadius: 35,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 20,
     borderWidth: 1,
     borderColor: "#EEEEEE",
-    paddingBottom: 10,
   },
 
   faqBox: {
@@ -117,7 +114,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 18,
     paddingVertical: 18,
-    marginBottom: 18,
     backgroundColor: "#fff",
   },
 

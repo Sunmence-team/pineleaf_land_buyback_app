@@ -7,11 +7,14 @@ export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
-        headerLeft: () => (
-          <Pressable onPress={() => router.back()}>
+        headerLeft: (props) => props.canGoBack ? (
+          <Pressable 
+            onPress={() => router.back()} 
+            style={{ paddingRight: 15, paddingVertical: 5 }}
+          >
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
-        ),
+        ) : null,
         headerTitle: "",
         headerShadowVisible: false,
         headerStyle: {
@@ -19,10 +22,11 @@ export default function AuthLayout() {
         },
       }}
     >
-      <Stack.Screen name="login/index" />
+      <Stack.Screen name="login/index" options={{ headerShown: false, contentStyle: { paddingTop: 30, backgroundColor: "white" } }} />
       <Stack.Screen name="register" />
       <Stack.Screen name="forgotten_password" />
       <Stack.Screen name="verify_email/index" />
+      <Stack.Screen name="verify_email/code" />
     </Stack>
   );
 }

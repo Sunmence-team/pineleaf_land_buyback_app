@@ -231,7 +231,8 @@ const PropertyDetails = () => {
     <View className="flex-1 bg-secondary pt-6" style={{ paddingHorizontal: 20 }}>
       <ScrollView
         style={{ flex: 1, borderRadius: 20 }} 
-        className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full" 
+        className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full"
+        contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -257,10 +258,20 @@ const PropertyDetails = () => {
           {plotDetails.map((detail: any, index: number) => (
             <View
               key={index}
-              className="bg-fadedGreen flex items-center justify-center rounded-lg flex-1 h-24 p-3 text-center"
+              className="bg-fadedGreen flex items-center justify-center rounded-lg flex-1 max-h-24 p-3 text-center"
             >
-              <Text className="text-lg mb-2">{detail.label}</Text>
-              <Text className="text-xl font-medium text-primary">
+              <Text 
+                numberOfLines={1} 
+                adjustsFontSizeToFit 
+                minimumFontScale={0.55}
+                className="w-full text-center text-lg mb-2"
+              >{detail.label}</Text>
+              <Text 
+                numberOfLines={1} 
+                adjustsFontSizeToFit 
+                minimumFontScale={0.65}
+                className="w-full text-center text-xl font-medium text-primary"
+              >
                 {detail.value}
               </Text>
             </View>
@@ -280,15 +291,18 @@ const PropertyDetails = () => {
         }
 
         <View className="mt-5 border border-gray-300 rounded-lg p-4">
-          {purchaseProperty.map((detail: any, index: number) => (
-            <View
-              key={index}
-              className="flex-row justify-between mb-3  border-b border-gray-100 pb-3"
-            >
-              <Text className="text-lg font-medium">{detail.label}</Text>
-              <Text className="text-gray-800">{detail.value}</Text>
-            </View>
-          ))}
+          {purchaseProperty.map((detail: any, index: number) => {
+            const isLast = index === purchaseProperty.length - 1;
+            return (
+              <View
+                key={index}
+                className={`flex-row justify-between ${isLast ? "" : "mb-3 border-b border-gray-100 pb-3"}`}
+              >
+                <Text className="text-lg font-medium">{detail.label}</Text>
+                <Text className="text-gray-800">{detail.value}</Text>
+              </View>
+            );
+          })}
         </View>
 
         <View className="mt-5 border border-gray-300 rounded-lg p-4">
@@ -338,7 +352,7 @@ const PropertyDetails = () => {
           </Pressable>
         </View>
 
-        <View>
+        <View className="my-5">
           <TrackCard property={property} />
         </View>
 

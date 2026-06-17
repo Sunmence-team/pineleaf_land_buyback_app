@@ -88,7 +88,7 @@ const Offer = () => {
 
     setTimeout(() => {
       if (modalType === "accept") {
-        router.push('/(tabs)/');
+        router.push('/(tabs)');
       } else {
         router.push('/(tabs)/properties');
       }

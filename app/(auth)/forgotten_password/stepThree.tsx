@@ -219,7 +219,7 @@ const StepThree = () => {
         <View className="flex-1 w-full h-full bg-white justify-center items-center gap-16 px-6">
           <View className="flex-col items-center">
             <Image
-              source={assets.successGif}
+              source={assets.success}
               style={{ width: 140, height: 140, marginBottom: 14 }}
               resizeMode="cover"
             />

@@ -24,80 +24,63 @@ import { maskNumber } from "@/helpers/formatterUtility";
 const ProfileScreen = () => {
   const { signOut, user } = useAuth();
 
+  const menuItems = [
+    {
+      key: "view",
+      label: "View profile",
+      onPress: () => router.push("/profile/editScreen?edit=false"),
+      icon: (color: string) => <FontAwesome5 name="user" size={22} color={color} />,
+    },
+    {
+      key: "bank",
+      label: "Bank details",
+      onPress: () => router.push("/profile/bankDetailsScreen"),
+      icon: (color: string) => <Feather name="credit-card" size={22} color={color} />,
+      subText: user?.bank_account_number ? maskNumber(user.bank_account_number) : null,
+    },
+    {
+      key: "security",
+      label: "Security",
+      onPress: () => router.push("/profile/passwordChangeScreen"),
+      icon: (color: string) => <AntDesign name="lock" size={22} color={color} />,
+    },
+    {
+      key: "support",
+      label: "Support",
+      onPress: () => router.push("/profile/supportScreen"),
+      icon: (color: string) => <MaterialCommunityIcons name="headset" size={22} color={color} />,
+    },
+  ];
+
   return (
     <View style={styles.container}>
-      <View style={styles.secondContainer}>
+      <ScrollView style={styles.secondContainer} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}>
         <ProfileCard user={user ?? undefined} />
 
         <BankDetailsAlertCard user={user ?? undefined} />
 
         <View style={styles.menuContainer}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          >
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/profile/editScreen")}
-            >
-              <View style={styles.menuLeft}>
-                <FontAwesome5 name="user" size={22} color="#111" />
-
-                <AppText style={styles.menuText}>Edit profile</AppText>
-              </View>
-
-              <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity>
-
-            <View style={styles.horizontalLine} />
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/profile/bankDetailsScreen")}
-            >
-              <View style={styles.menuLeft}>
-                <Feather name="credit-card" size={22} color="#111" />
-
-                <View>
-                  <AppText style={styles.menuText}>Bank details</AppText>
-
-                  {user?.bank_account_number && (<AppText style={styles.subText}>{maskNumber(user?.bank_account_number ?? "")}</AppText>)}
-                </View>
-              </View>
-
-              <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity>
-
-            <View style={styles.horizontalLine} />
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/profile/passwordChangeScreen")}
-            >
-              <View style={styles.menuLeft}>
-                <AntDesign name="lock" size={22} color="#111" />
-
-                <AppText style={styles.menuText}>Security</AppText>
-              </View>
-
-              <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity>
-
-            <View style={styles.horizontalLine} />
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/profile/supportScreen")}
-            >
-              <View style={styles.menuLeft}>
-                <MaterialCommunityIcons name="headset" size={22} color="#111" />
-
-                <AppText style={styles.menuText}>Support</AppText>
-              </View>
-
-              <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity>
-          </ScrollView>
+          {menuItems.map((item, index) => {
+            const isLast = index === menuItems.length - 1;
+            return (
+              <React.Fragment key={item.key}>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={item.onPress}
+                >
+                  <View style={styles.menuLeft}>
+                    {item.icon("#111")}
+                    <View>
+                      <AppText style={styles.menuText}>{item.label}</AppText>
+                      {item.subText && <AppText style={styles.subText}>{item.subText}</AppText>}
+                    </View>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="black" />
+                </TouchableOpacity>
+                {!isLast && <View style={styles.horizontalLine} />}
+              </React.Fragment>
+            );
+          })}
         </View>
         
         <ActionButton
@@ -109,7 +92,7 @@ const ProfileScreen = () => {
           }}
         />
 
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -127,9 +110,6 @@ const styles = StyleSheet.create({
   secondContainer: {
     backgroundColor: "white",
     borderRadius: 30,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 15,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },

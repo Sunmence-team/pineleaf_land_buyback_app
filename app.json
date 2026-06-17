@@ -16,13 +16,13 @@
       }
     },
     "android": {
-      "adaptiveIcon": {
+      "adaptiveIcon": { 
         "backgroundColor": "#1A5C2A",
         "foregroundImage": "./assets/images/logo.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "adjustResize",
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.mayorkun27.pineleaflandbuyback"
     },
     "web": {

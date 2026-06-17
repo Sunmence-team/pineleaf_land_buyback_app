@@ -29,7 +29,7 @@ const TimelineExpectationsScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
         <View style={styles.thirdContainer}>
           <View>
@@ -45,9 +45,9 @@ const TimelineExpectationsScreen = () => {
                 {documents.map((item, index) => (
                   <View key={index} style={styles.documentItem}>
                     <View style={styles.row}>
-                      <Entypo name="dot-single" size={40} color="black" />
+                      <Entypo name="dot-single" size={20} color="black" />
 
-                      <View style={styles.textContainer}>
+                      <View style={{ flex: 1 }}>
                         <AppText style={styles.title}>{item.title}</AppText>
 
                         <AppText style={styles.description}>
@@ -62,7 +62,7 @@ const TimelineExpectationsScreen = () => {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -71,23 +71,21 @@ export default TimelineExpectationsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
-    paddingTop: Platform.OS === "android" ? 30 : 0,
+    paddingBottom: 20,
+    backgroundColor: "#F4F6F1",
   },
-
   secondContainer: {
     backgroundColor: "white",
-    marginHorizontal: 16,
-    borderRadius: 30,
+    marginHorizontal: 20,
+    borderRadius: 35,
     padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-
   thirdContainer: {
     backgroundColor: "white",
-    padding: 16,
     borderRadius: 15,
+    padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -121,17 +119,12 @@ const styles = StyleSheet.create({
   },
 
   documentItem: {
-    marginBottom: 22,
+    marginBottom: 16,
   },
 
   row: {
     flexDirection: "row",
     alignItems: "flex-start",
-  },
-
-  textContainer: {
-    flex: 1,
-    paddingRight: 8,
   },
 
   title: {

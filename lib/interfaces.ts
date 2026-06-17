@@ -43,6 +43,7 @@ export type StatusType =
   | "not_eligible"
   | "offer_sent"
   | "completed"
+  | "paid"
   | "pending"
   | "verified"
   | "buyback_requested";

@@ -1,7 +1,9 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 import { AppText } from "./AppText";
-// import MapScreen from "@/app/(screens)/map";
+import MapScreen from "@/app/(screens)/map";
+import { router, Link } from "expo-router";
+import ActionButton from "./buttons/ActionButton";
 
 interface MapTabsSectionProps {
   activeTab: "all" | "myProperties" | "eligible";
@@ -12,39 +14,50 @@ const MapTabsSection: React.FC<MapTabsSectionProps> = ({
   activeTab,
   onTabChange,
 }) => {
-  const tabs = [
-    { id: "all", label: "All Activity" },
-    { id: "myProperties", label: "My Properties" },
-    { id: "eligible", label: "Eligible Only" },
+  const filterOptions = [
+    { label: "All Properties", value: "all" as const },
+    { label: "My Properties", value: "myProperties" as const },
+    { label: "Eligible Only", value: "eligible" as const },
   ];
 
   return (
-    <View className="flex flex-col gap-4">
-      <View className="flex flex-row gap-2">
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.id}
-            onPress={() =>
-              onTabChange(tab.id as "all" | "myProperties" | "eligible")
-            }
-            className={`flex-1 py-2 px-3 rounded-xl items-center justify-center ${
-              activeTab === tab.id ? "bg-primary" : "bg-transparent"
-            }`}
-          >
-            <AppText
-              className={`text-sm font-semibold ${
-                activeTab === tab.id ? "text-white" : "text-gray-600"
-              }`}
-            >
-              {tab.label}
-            </AppText>
-          </TouchableOpacity>
-        ))}
+    <View className="flex flex-col gap-4 w-full">
+      {/* Filter Pills */}
+      <View className="flex-row justify-center gap-2 px-1">
+        {filterOptions.map((opt) => {
+          const isActive = activeTab === opt.value;
+          return (
+            <ActionButton 
+              key={opt.value}
+              name={opt.label}
+              action={() => onTabChange(opt.value)}
+              hasBG={isActive}
+              optStyle={{
+                height: 40,
+                flex: 1
+              }}
+              optStyle2={{
+                fontSize: 14,
+                fontFamily: "quickSemiBold"
+              }}
+            />
+          );
+        })}
       </View>
 
-      {/* <View className="flex items-center justify-center rounded-xl h-64 overflow-hidden">
-        <MapScreen isMini={true} />
-      </View> */}
+      <View className="relative rounded-xl h-64 overflow-hidden w-full">
+        <View className="w-full h-full">
+          <MapScreen 
+            isMini={true} 
+            filter={activeTab === "myProperties" ? "mine" : activeTab}
+          />
+        </View>
+        <TouchableOpacity 
+          onPress={() => router.push("/(screens)/map")} 
+          className="absolute inset-0 bg-transparent"
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+      </View>
     </View>
   );
 };

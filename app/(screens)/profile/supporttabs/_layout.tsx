@@ -12,6 +12,11 @@ export default function supportTabsLayout() {
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
+        headerStyle: {
+          backgroundColor: "#F4F6F1",
+        },
+        headerShadowVisible: false,
+        headerTitleAlign: "center"
       }}
     >
       <Stack.Screen

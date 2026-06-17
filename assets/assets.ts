@@ -9,4 +9,5 @@ export const assets = {
   onboarding2: require("../assets/images/onboarding2.png"),
   onboarding3: require("../assets/images/onboarding3.png"),
   microphone: require("../assets/images/microphone.png"),
+  mapBg: require("../assets/images/mapbg.png"),
 };

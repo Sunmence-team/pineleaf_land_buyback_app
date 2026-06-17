@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const ContactScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.secondContainer}>
         <View style={styles.card}>
           <AppText style={styles.heading}>Need help?</AppText>
@@ -16,13 +16,11 @@ const ContactScreen = () => {
             submission, our support team is here to help.
           </AppText>
 
-          <View style={styles.supportCard}>
+          <View style={styles.innerCard}>
             <View style={styles.item}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="call-outline" size={26} color="#111" />
-              </View>
+              <Ionicons name="call-outline" size={20} className="mt-2" />
 
-              <View style={styles.textContainer}>
+              <View style={{ flex: 1 }}>
                 <AppText style={styles.title}>Call Support</AppText>
 
                 <AppText style={styles.subText}>09083383883</AppText>
@@ -30,11 +28,9 @@ const ContactScreen = () => {
             </View>
 
             <View style={styles.item}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="mail-outline" size={26} color="#111" />
-              </View>
+              <Ionicons name="mail-outline" size={20} className="mt-2" />
 
-              <View style={styles.textContainer}>
+              <View style={{ flex: 1 }}>
                 <AppText style={styles.title}>Email Support</AppText>
 
                 <AppText style={styles.subText}>
@@ -48,15 +44,13 @@ const ContactScreen = () => {
             </View>
 
             <View style={styles.item}>
-              <View style={styles.iconContainer}>
-                <Ionicons
-                  name="chatbubble-ellipses-outline"
-                  size={26}
-                  color="#111"
-                />
-              </View>
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={20}
+                className="mt-2"
+              />
 
-              <View style={styles.textContainer}>
+              <View style={{ flex: 1 }}>
                 <AppText style={styles.title}>Live Chat</AppText>
 
                 <AppText style={styles.subText}>
@@ -67,7 +61,7 @@ const ContactScreen = () => {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -76,14 +70,21 @@ export default ContactScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
+    paddingBottom: 20,
+    backgroundColor: "#F4F6F1",
   },
-
   secondContainer: {
     backgroundColor: "white",
-    marginHorizontal: 16,
-    borderRadius: 30,
-    padding: 16,
+    marginHorizontal: 20,
+    borderRadius: 35,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: "#EEEEEE",
+  },
+  thirdContainer: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
@@ -97,14 +98,14 @@ const styles = StyleSheet.create({
   },
 
   heading: {
-    fontSize: 28,
+    fontSize: 18,
+    marginBottom: 8,
     color: "#111",
-    marginBottom: 16,
     fontFamily: "quickSemiBold",
   },
-
+  
   description: {
-    marginBottom: 30,
+    fontFamily: "quickMedium",
     fontSize: Platform.select({
       ios: 20,
       android: 16,
@@ -116,32 +117,24 @@ const styles = StyleSheet.create({
     }),
   },
 
-  supportCard: {
+  innerCard: {
     borderWidth: 1,
-    borderColor: "#E4E4E4",
-    borderRadius: 20,
-    padding: 18,
+    borderColor: "#E5E5E5",
+    borderRadius: 15,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    marginTop: 25,
   },
-
   item: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 28,
+    gap: 8,
+    marginBottom: 16,
   },
-
-  iconContainer: {
-    marginRight: 14,
-    marginTop: 4,
-  },
-
-  textContainer: {
-    flex: 1,
-  },
-
   title: {
     fontSize: 20,
     color: "#111",
-    marginBottom: 8,
+    marginBottom: 4,
     fontFamily: "quickSemiBold",
   },
 
@@ -159,7 +152,7 @@ const styles = StyleSheet.create({
 
   email: {
     color: "#111",
-    marginTop: 10,
+    marginTop: 4,
     fontSize: Platform.select({
       ios: 16,
       android: 12,

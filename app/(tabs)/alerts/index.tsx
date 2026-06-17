@@ -12,7 +12,7 @@ import NotificationCard from "@/components/cards/NotificationCard";
 const EmptyComponent = () => {
   return (
     <View style={styles.emptyWrapper}>
-      <Image source={assets.alertGif} style={{ width: 150, height: 80 }} resizeMode="cover" />
+      <Image source={assets.alert} style={{ width: 150, height: 80 }} resizeMode="cover" />
 
       <AppText style={styles.titleNote}>Your notifications live here</AppText>
 

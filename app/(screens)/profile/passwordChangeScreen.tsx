@@ -1,3 +1,11 @@
+import { AppText } from "@/components/AppText";
+import ActionButton from "@/components/buttons/ActionButton";
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { passwordChangeService } from "@/services/authServices";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -5,36 +13,33 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-
+  KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AppText } from "@/components/AppText";
-import { useMutation } from "@tanstack/react-query";
-import { passwordChangeService } from "@/services/authServices";
-import { showSuccessToast, showErrorToast } from "@/helpers/toast";
-import { router } from "expo-router";
+import * as Yup from "yup";
+
+const PasswordChangeSchema = Yup.object().shape({
+  old_password: Yup.string()
+    .required("Old password is required"),
+  new_password: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .required("New password is required"),
+  retype_password: Yup.string()
+    .oneOf([Yup.ref("new_password")], "Passwords must match")
+    .required("Please retype your new password"),
+});
 
 const ChangePasswordScreen = () => {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const changePasswordMutation = useMutation({
-    mutationFn: (payload: {
-      old_password: string;
-      new_password: string;
-      retype_password: string;
-    }) => passwordChangeService(payload),
-
+    mutationFn: (payload: any) => passwordChangeService(payload),
     onSuccess: (response: any) => {
       showSuccessToast(response?.message || "Password changed successfully");
       router.back();
     },
-
     onError: (error: any) => {
       showErrorToast(
         error?.response?.data?.message ||
@@ -44,107 +49,124 @@ const ChangePasswordScreen = () => {
     },
   });
 
-  const handleChangePassword = () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      showErrorToast("All fields are required");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      showErrorToast("New passwords do not match");
-      return;
-    }
-
-    changePasswordMutation.mutate({
-      old_password: oldPassword,
-      new_password: newPassword,
-      retype_password: confirmPassword,
-    });
-  };
+  const formik = useFormik({
+    initialValues: {
+      old_password: "",
+      new_password: "",
+      retype_password: "",
+    },
+    validationSchema: PasswordChangeSchema,
+    onSubmit: (values) => {
+      changePasswordMutation.mutate({
+        old_password: values.old_password,
+        new_password: values.new_password,
+        retype_password: values.retype_password,
+      });
+    },
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.secondContainer}>
-        <View style={styles.thirdContainer}>
-          <AppText style={styles.label}>Old password</AppText>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 50}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.secondContainer}>
+            {/* Old password */}
+            <View style={styles.inputContainer}>
+              <AppText style={styles.label}>Old password</AppText>
+              <View style={[styles.fieldContainer, formik.touched.old_password && formik.errors.old_password ? styles.inputError : null]}>
+                <TextInput
+                  placeholder="Enter old password"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showOldPassword}
+                  value={formik.values.old_password}
+                  onChangeText={formik.handleChange("old_password")}
+                  onBlur={formik.handleBlur("old_password")}
+                  style={styles.input}
+                />
+                <TouchableOpacity onPress={() => setShowOldPassword(!showOldPassword)} style={styles.eyeIcon}>
+                  <Ionicons
+                    name={showOldPassword ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    color="#154A22"
+                  />
+                </TouchableOpacity>
+              </View>
+              {formik.touched.old_password && formik.errors.old_password && (
+                <AppText style={styles.errorText}>{formik.errors.old_password}</AppText>
+              )}
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Enter old password"
-              placeholderTextColor="black"
-              secureTextEntry={!showOldPassword}
-              value={oldPassword}
-              onChangeText={setOldPassword}
-              style={styles.input}
-            />
+            {/* New password */}
+            <View style={styles.inputContainer}>
+              <AppText style={styles.label}>New password</AppText>
+              <View style={[styles.fieldContainer, formik.touched.new_password && formik.errors.new_password ? styles.inputError : null]}>
+                <TextInput
+                  placeholder="Enter new password"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showNewPassword}
+                  value={formik.values.new_password}
+                  onChangeText={formik.handleChange("new_password")}
+                  onBlur={formik.handleBlur("new_password")}
+                  style={styles.input}
+                />
+                <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={styles.eyeIcon}>
+                  <Ionicons
+                    name={showNewPassword ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    color="#154A22"
+                  />
+                </TouchableOpacity>
+              </View>
+              {formik.touched.new_password && formik.errors.new_password && (
+                <AppText style={styles.errorText}>{formik.errors.new_password}</AppText>
+              )}
+            </View>
 
-            <TouchableOpacity
-              onPress={() => setShowOldPassword(!showOldPassword)}
-            >
-              <Ionicons
-                name={showOldPassword ? "eye-outline" : "eye-off-outline"}
-                size={24}
-                color="#000"
+            {/* Re-type password */}
+            <View style={styles.inputContainer}>
+              <AppText style={styles.label}>Re-type password</AppText>
+              <View style={[styles.fieldContainer, formik.touched.retype_password && formik.errors.retype_password ? styles.inputError : null]}>
+                <TextInput
+                  placeholder="Re-type password"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showConfirmPassword}
+                  value={formik.values.retype_password}
+                  onChangeText={formik.handleChange("retype_password")}
+                  onBlur={formik.handleBlur("retype_password")}
+                  style={styles.input}
+                />
+                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.eyeIcon}>
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    color="#154A22"
+                  />
+                </TouchableOpacity>
+              </View>
+              {formik.touched.retype_password && formik.errors.retype_password && (
+                <AppText style={styles.errorText}>{formik.errors.retype_password}</AppText>
+              )}
+            </View>
+
+            <View style={{ marginTop: 10 }}>
+              <ActionButton
+                name="Save changes"
+                action={formik.handleSubmit}
+                loading={changePasswordMutation.isPending}
+                disabled={changePasswordMutation.isPending}
               />
-            </TouchableOpacity>
+            </View>
           </View>
-
-          <AppText style={styles.label}>New password</AppText>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Enter new password"
-              placeholderTextColor="black"
-              secureTextEntry={!showNewPassword}
-              value={newPassword}
-              onChangeText={setNewPassword}
-              style={styles.input}
-            />
-
-            <TouchableOpacity
-              onPress={() => setShowNewPassword(!showNewPassword)}
-            >
-              <Ionicons
-                name={showNewPassword ? "eye-outline" : "eye-off-outline"}
-                size={24}
-                color="#000"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <AppText style={styles.label}>Re-type password</AppText>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Re-type password"
-              placeholderTextColor="black"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              style={styles.input}
-            />
-
-            <TouchableOpacity
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Ionicons
-                name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
-                size={24}
-                color="#000"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            onPress={handleChangePassword}
-            disabled={changePasswordMutation.isPending}
-            style={styles.button}>
-            <AppText style={styles.buttonText}>
-              {changePasswordMutation.isPending ? "Updating..." : "Save changes"}
-            </AppText>
-          </TouchableOpacity>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -154,72 +176,60 @@ export default ChangePasswordScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
-    marginTop: 30
+    backgroundColor: "#F4F6F1",
   },
-
+  scrollContent: {
+    paddingVertical: 20,
+  },
   secondContainer: {
-    height: Platform.select({
-      ios: "68%",
-      android: "75%",
-    }),
     backgroundColor: "white",
-    marginHorizontal: 20,
     borderRadius: 35,
+    marginHorizontal: 20,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 30,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-
-  thirdContainer: {
-    marginTop: 25,
+  inputContainer: {
+    marginBottom: 20,
   },
-
   label: {
     fontSize: 20,
     marginBottom: 12,
     color: "black",
     fontFamily: "quickSemiBold",
   },
-
-  inputContainer: {
+  fieldContainer: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 16,
-    paddingHorizontal: 15,
-    height: 60,
-    fontSize: 16,
+    borderRadius: 12,
+    paddingHorizontal: 5,
+    height: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20,
+    backgroundColor: "white",
   },
-
   input: {
     flex: 1,
-    fontSize: 18,
-    borderColor: "#ccc",
-    color: "#000",
+    fontSize: 16,
+    color: "black",
+    height: "100%",
   },
-
-  button: {
-    backgroundColor: "#144520",
-    height: Platform.select({
-      ios: 60,
-      android: 53,
-    }),
-    borderRadius: 16,
+  eyeIcon: {
+    paddingLeft: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10
+    height: "100%",
   },
-
-  buttonText: {
-    color: "white",
-    fontSize: 20,
-    height: 50,
-    display: 'flex',
-    alignItems: "center",
+  inputError: {
+    borderColor: "#d60700d5",
+  },
+  errorText: {
+    color: "#d60700d5",
+    fontSize: 14,
+    marginTop: 6,
+    marginLeft: 5,
+    fontFamily: "quickRegular",
   },
 });

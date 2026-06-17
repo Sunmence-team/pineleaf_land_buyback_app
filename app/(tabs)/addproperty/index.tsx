@@ -3,19 +3,24 @@ import Screen2 from "@/components/addpropertiesscreens/screen2";
 import Screen3 from "@/components/addpropertiesscreens/screen3";
 import Screen4 from "@/components/addpropertiesscreens/screen4";
 import { AppText } from "@/components/AppText";
+import ActionButton from "@/components/buttons/ActionButton";
 import StepProgress from "@/components/StepProgress";
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { DocumentItem } from "@/lib/interfaces";
+import { addPropertyService } from "@/services/propertiesServices";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
-import { DocumentItem } from "@/lib/interfaces";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addPropertyService } from "@/services/propertiesServices";
-import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import ActionButton from "@/components/buttons/ActionButton"
 
 /**
  * Add Property Screen
@@ -101,12 +106,8 @@ const documentSchema = Yup.object({
 });
 
 const validationSchema = Yup.object({
-  property_id: Yup.string()
-    .trim()
-    .required("Property selection is required"),
-  property_name: Yup.string()
-    .trim()
-    .required("Property name is required"),
+  property_id: Yup.string().trim().required("Property selection is required"),
+  property_name: Yup.string().trim().required("Property name is required"),
   purchase_date: Yup.string().trim().required("Purchasing date is required"),
   purchase_type: Yup.string().trim().required("Purchasing type is required"),
   number_of_plots: Yup.number()
@@ -166,7 +167,7 @@ const AddProperty = () => {
       formData.append("number_of_plots", values.number_of_plots);
       formData.append("plot_numbers", values.plot_numbers);
       formData.append("price_per_plots", values.price_per_plots);
-      
+
       const price = Number(values.price_per_plots.replace(/[^0-9]/g, ""));
       const plots = Number(values.number_of_plots.replace(/[^0-9]/g, ""));
       const total = String(price * plots);
@@ -195,7 +196,10 @@ const AddProperty = () => {
     onError: (err: any) => {
       let errMessage = err.response?.data?.message || err.message;
       showErrorToast(errMessage || "Failed to register property");
-      console.log("FULL ERROR DETAILS:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+      console.log(
+        "FULL ERROR DETAILS:",
+        JSON.stringify(err, Object.getOwnPropertyNames(err), 2),
+      );
     },
   });
 
@@ -356,8 +360,8 @@ const AddProperty = () => {
     <SafeAreaView className="flex-col justify-between flex-1 bg-secondary">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 100}
-        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+        style={{ flex: 1 }}
       >
         <View className="flex-row items-center justify-between border-b border-gray-200 px-5 py-4">
           {currentStep <= 1 || hasSubmit ? (
@@ -379,7 +383,9 @@ const AddProperty = () => {
               />
             </TouchableOpacity>
           )}
-          <AppText className="text-xl" style={{ fontFamily: "quickSemiBold" }}>Add Property</AppText>
+          <AppText className="text-xl" style={{ fontFamily: "quickSemiBold" }}>
+            Add Property
+          </AppText>
           <View className="w-6" />
         </View>
 
@@ -387,22 +393,18 @@ const AddProperty = () => {
           <StepProgress steps={steps} />
         </View>
 
-        <ScrollView
-          className="flex-1 px-5 mt-3"
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
-          showsVerticalScrollIndicator={false}
-        >
+        <View style={{ paddingHorizontal: 20 }}>
           {renderStepContent()}
-        </ScrollView>
+        </View>
 
         {!hasSubmit && (
           <View className="bg-secondary px-5 py-4 border-t border-gray-100">
-            <ActionButton 
+            <ActionButton
               name={currentStep === 4 ? "Submit" : "Next"}
               action={handleNext}
               disabled={!isCurrentStepValid}
               optStyle={{
-                backgroundColor: !isCurrentStepValid ? "#BDBDBD" : "#154A22"
+                backgroundColor: !isCurrentStepValid ? "#BDBDBD" : "#154A22",
               }}
             />
           </View>

@@ -61,13 +61,13 @@ export default function RequestTracker({ property }: TrackCardProps) {
   const eligibility = property.eligibility || "not_eligible";
   const offerStatus = property.offer_status;
 
-  const isEligible = eligibility === "Eligible" || status !== "not_eligible";
-  const isRequested = status !== "not_eligible" && status !== "eligible";
-  const isOfferSent = !!property.offer_date || status === "offer_sent" || offerStatus === "pending" || status === "verified" || status === "completed";
-  const isOfferAccepted = offerStatus === "accepted" || status === "verified" || status === "completed";
-  const isDocsSubmitted = !!property.documents_submitted_at || status === "verified" || status === "completed";
-  const isDocsVerified = !!property.verified_at || status === "completed";
-  const isPaid = !!property.paid_at || status === "completed";
+  const isPaid = !!property.paid_at || status === "completed" || status === "paid";
+  const isDocsVerified = isPaid || !!property.verified_at || status === "verified";
+  const isDocsSubmitted = isDocsVerified || !!property.documents_submitted_at || !!property.deed_of_assignment || !!property.company_receipt;
+  const isOfferAccepted = isDocsSubmitted || offerStatus === "accepted" || offerStatus === "approved";
+  const isOfferSent = isOfferAccepted || !!property.offer_date || status === "offer_sent";
+  const isRequested = isOfferSent || (status !== "not_eligible" && status !== "eligible");
+  const isEligible = isRequested || eligibility === "Eligible" || status !== "not_eligible";
 
   const timelineData: TimelineItemProps[] = [
     {
@@ -132,61 +132,59 @@ export default function RequestTracker({ property }: TrackCardProps) {
   ];
 
   return (
-    <ScrollView className="flex-1 py-5">
-      <View className="bg-secondary border border-gray-300 rounded-lg p-5">
-        {timelineData.map((item, index) => {
-          const isLast = index === timelineData.length - 1;
+    <View className="bg-secondary border border-gray-300 rounded-lg p-5">
+      {timelineData.map((item, index) => {
+        const isLast = index === timelineData.length - 1;
 
-          return (
-            <View
-              key={index}
-              className="flex-row"
-            >
-              {/* LEFT SIDE */}
-              <View className="items-center mr-4">
-                {/* CIRCLE */}
+        return (
+          <View
+            key={index}
+            className="flex-row"
+          >
+            {/* LEFT SIDE */}
+            <View className="items-center mr-4">
+              {/* CIRCLE */}
+              <View
+                className={`
+                  w-7 h-7 rounded-full border-4
+                  ${statusStyles[item.status].circle}
+                `}
+              />
+
+              {/* LINE */}
+              {!isLast && (
                 <View
                   className={`
-                    w-7 h-7 rounded-full border-4
-                    ${statusStyles[item.status].circle}
+                    w-[1px] flex-1 border-l border-dashed
+                    ${statusStyles[item.status].line}
                   `}
                 />
-
-                {/* LINE */}
-                {!isLast && (
-                  <View
-                    className={`
-                      w-[1px] flex-1 border-l border-dashed
-                      ${statusStyles[item.status].line}
-                    `}
-                  />
-                )}
-              </View>
-
-              {/* RIGHT SIDE */}
-              <View className="pb-8 flex-1">
-                <Text
-                  className={`
-                    text-lg
-                    ${statusStyles[item.status].title}
-                  `}
-                >
-                  {item.title}
-                </Text>
-
-                <Text
-                  className={`
-                    text-base mt-1
-                    ${statusStyles[item.status].subtitle}
-                  `}
-                >
-                  {item.subtitle}
-                </Text>
-              </View>
+              )}
             </View>
-          );
-        })}
-      </View>
-    </ScrollView>
+
+            {/* RIGHT SIDE */}
+            <View className={`${isLast ? "" : "pb-8"} flex-1`}>
+              <Text
+                className={`
+                  text-lg
+                  ${statusStyles[item.status].title}
+                `}
+              >
+                {item.title}
+              </Text>
+
+              <Text
+                className={`
+                  text-base mt-1
+                  ${statusStyles[item.status].subtitle}
+                `}
+              >
+                {item.subtitle}
+              </Text>
+            </View>
+          </View>
+        );
+      })}
+    </View>
   );
 }

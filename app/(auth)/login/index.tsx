@@ -2,13 +2,14 @@ import { AppText } from "@/components/AppText";
 import ActionButton from "@/components/buttons/ActionButton";
 import { useAuth } from "@/context/AuthContext";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import { loginService } from "@/services/authServices";
+import { loginService, sendEmailVerificationCodeService } from "@/services/authServices";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { Link, router } from "expo-router";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -17,6 +18,7 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
+import Modal from "@/components/modal/Modal";
 // import { globals } from "@/lib/constants";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -32,6 +34,20 @@ const LoginFormSchema = Yup.object().shape({
 const Index = () => {
   const [visibilityOne, setVisibilityOne] = useState(false);
   const { signIn, completeOnboarding } = useAuth();
+
+  const sendCodeMutation = useMutation({
+    mutationFn: sendEmailVerificationCodeService,
+    onSuccess: (data, variables) => {
+      showSuccessToast(data?.message || "Verification code sent successfully.");
+      router.push({
+        pathname: "/(auth)/verify_email/code",
+        params: { email: variables.email }
+      });
+    },
+    onError: (error: any) => {
+      showErrorToast(error.response?.data?.message || "Failed to send verification code.");
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: loginService,
@@ -49,7 +65,11 @@ const Index = () => {
     onError: (err: any) => {
       console.error("error logging in", err);
       let errMessage = err.response?.data?.message || err.message;
+      console.error("errMessage", errMessage);
       showErrorToast(errMessage || "Error occurred while logging in.");
+      if (errMessage && errMessage.toLowerCase().includes("verify")) {
+        sendCodeMutation.mutate({ email: formik.values.email });
+      }
     },
     onSettled: () => {
       completeOnboarding();
@@ -163,25 +183,41 @@ const Index = () => {
               name={mutation.isPending ? "Logging in..." : "Login"}
               action={() => formik.handleSubmit()}
               disabled={mutation.isPending}
-            />
+              />
 
             <AppText className="text-center text-black/70">
               Don&apos;t have an account?{" "}
               <Link
                 href={"/(auth)/register"}
                 className="text-primary font-semibold"
-              >
+                >
                 Sign up
               </Link>
             </AppText>
 
             {/* <ActionButton
               name={"Clear Async Storage"}
+              // action={router.dismissAll}
               action={() => removeSpecificKey(globals.ONBOARDING_STATUS_KEY)}
             /> */}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Modal
+        visible={sendCodeMutation.isPending}
+        onClose={() => {}}
+        customMode={true}
+        showClose={false}
+      >
+        <View className="flex-1 bg-black/50 justify-center items-center">
+          <View className="items-center gap-4 min-w-[250px]">
+            <ActivityIndicator size="large" color="#FFF" />
+            <AppText className="text-base text-white font-quickSemiBold text-center">
+              Sending verification code...
+            </AppText>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

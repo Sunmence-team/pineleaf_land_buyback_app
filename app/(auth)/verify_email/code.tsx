@@ -49,6 +49,8 @@ const VerifyEmailCode = () => {
     },
   });
 
+  const codeArray = formik.values.code.split("");
+
   return (
     <View className="flex-1 bg-white px-6">
       <KeyboardAvoidingView
@@ -72,38 +74,46 @@ const VerifyEmailCode = () => {
                   Code
                 </AppText>
                 
-                {/* Visual PIN boxes */}
-                <Pressable 
-                  onPress={() => inputRef.current?.focus()}
-                  className="flex-row justify-between gap-4 w-full mt-2"
-                >
-                  {[0, 1, 2, 3, 4, 5].map((index) => (
-                    <View 
-                      key={index}
-                      className={`w-[52px] h-[52px] border rounded-xl items-center justify-center bg-[#F9FAF7] ${
-                        formik.values.code.length === index 
-                          ? "border-primary border-2" 
-                          : "border-primary/30"
-                      }`}
-                    >
-                      <AppText className="text-xl font-quickBold text-black">
-                        {codeArray[index] || ""}
-                      </AppText>
-                    </View>
-                  ))}
-                </Pressable>
+                <View className="relative w-full mt-2">
+                  {/* Visual PIN boxes */}
+                  <View className="flex-row justify-between gap-2 w-full">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <View 
+                        key={index}
+                        className={`flex-1 aspect-square border rounded-xl items-center justify-center bg-[#F9FAF7] ${
+                          formik.values.code.length === index 
+                            ? "border-primary border-2" 
+                            : "border-primary/30"
+                        }`}
+                      >
+                        <AppText className="text-xl font-quickBold text-black">
+                          {codeArray[index] || ""}
+                        </AppText>
+                      </View>
+                    ))}
+                  </View>
 
-                {/* Hidden TextInput */}
-                <TextInput
-                  ref={inputRef}
-                  style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
-                  value={formik.values.code}
-                  onChangeText={formik.handleChange("code")}
-                  onBlur={formik.handleBlur("code")}
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  autoFocus={true}
-                />
+                  {/* Hidden TextInput overlay */}
+                  <TextInput
+                    ref={inputRef}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      opacity: 0.01,
+                      color: 'transparent',
+                      backgroundColor: 'transparent',
+                    }}
+                    value={formik.values.code}
+                    onChangeText={formik.handleChange("code")}
+                    onBlur={formik.handleBlur("code")}
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    autoFocus={true}
+                  />
+                </View>
 
                 {formik.touched.code && formik.errors.code && (
                   <AppText className="text-xs text-red-600 mt-1">

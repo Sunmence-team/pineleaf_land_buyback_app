@@ -28,8 +28,7 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
 const styles = StyleSheet.create({
   profileCard: {
     alignItems: "center",
-    paddingVertical: 20,
-    marginBottom: 5,
+    marginBottom: 20,
   },
   avatarCont: {
     width: 80,
