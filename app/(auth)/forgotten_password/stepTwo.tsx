@@ -1,24 +1,26 @@
 import { AppText } from "@/components/AppText";
 import ActionButton from "@/components/buttons/ActionButton";
+import Modal from "@/components/modal/Modal";
 import { useForgot } from "@/context/ForgotContext";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import { forgotPasswordVerifyService, forgotPasswordRequestService } from "@/services/authServices";
+import {
+  forgotPasswordRequestService,
+  forgotPasswordVerifyService,
+} from "@/services/authServices";
+import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useFormik } from "formik";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
   TextInput,
   View,
-  ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
-import { useMutation } from "@tanstack/react-query";
-import Modal from "@/components/modal/Modal";
 
 const VerifyCodeSchema = Yup.object().shape({
   code: Yup.string()
@@ -43,8 +45,14 @@ const StepTwo = () => {
     mutationFn: forgotPasswordVerifyService,
     onSuccess: (response: any, variables: { email: string; code: string }) => {
       showSuccessToast(response.message || "Code verified successfully");
-      const token = response.reset_token || response.data?.reset_token || response.data?.token || response.token || response.data?.data?.reset_token || response.data?.data?.token;
-      
+      const token =
+        response.reset_token ||
+        response.data?.reset_token ||
+        response.data?.token ||
+        response.token ||
+        response.data?.data?.reset_token ||
+        response.data?.data?.token;
+
       updateForgotData({
         code: variables.code,
         reset_token: token || "",
@@ -60,7 +68,9 @@ const StepTwo = () => {
   const resendMutation = useMutation({
     mutationFn: forgotPasswordRequestService,
     onSuccess: (response: any) => {
-      showSuccessToast(response.message || "Verification code resent successfully");
+      showSuccessToast(
+        response.message || "Verification code resent successfully",
+      );
       setCountdown(30);
     },
     onError: (err: any) => {
@@ -113,16 +123,16 @@ const StepTwo = () => {
               </View>
 
               <View className="flex flex-col gap-2">
-                <Pressable 
+                <Pressable
                   onPress={() => inputRef.current?.focus()}
                   className="flex-row justify-between gap-2 w-full mt-2"
                 >
                   {[0, 1, 2, 3, 4, 5].map((index) => (
-                    <View 
+                    <View
                       key={index}
                       className={`w-[14%] aspect-square border rounded-xl items-center justify-center bg-[#F9FAF7] ${
-                        formik.values.code.length === index 
-                          ? "border-primary border-2" 
+                        formik.values.code.length === index
+                          ? "border-primary border-2"
                           : "border-primary/30"
                       }`}
                     >
@@ -136,7 +146,12 @@ const StepTwo = () => {
                 {/* Hidden TextInput */}
                 <TextInput
                   ref={inputRef}
-                  style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+                  style={{
+                    position: "absolute",
+                    opacity: 0,
+                    width: 0,
+                    height: 0,
+                  }}
                   value={formik.values.code}
                   onChangeText={formik.handleChange("code")}
                   onBlur={formik.handleBlur("code")}
@@ -180,10 +195,24 @@ const StepTwo = () => {
       </KeyboardAvoidingView>
 
       {/* Loading Overlay Modal */}
-      <Modal visible={resendMutation.isPending} onClose={() => {}} showClose={false} customMode={true}>
-        <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+      <Modal
+        visible={resendMutation.isPending}
+        onClose={() => {}}
+        showClose={false}
+        customMode={true}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <ActivityIndicator size="large" color="#154A22" />
-          <AppText className="text-white mt-4 font-semibold text-lg font-quickMedium">Resending code...</AppText>
+          <AppText className="text-white mt-4 font-semibold text-lg font-quickMedium">
+            Resending code...
+          </AppText>
         </View>
       </Modal>
     </View>

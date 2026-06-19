@@ -46,7 +46,7 @@ interface StepProgressProps {
 
 const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
   return (
-    <View className="w-full flex flex-row items-center justify-between px-1 py-4">
+    <View className="w-full flex flex-row items-center justify-between px-1 pt-4 pb-2">
       {steps.map((step, index) => (
         <View key={step.label} className={`${index !== steps.length - 1 ? "flex-1" : ""}`}>
           <View className="flex-row items-center w-full">
@@ -74,7 +74,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
           </View>
 
           <AppText
-            className={`mt-3 text-xs font-medium  ${
+            className={`mt-1 text-xs font-medium  ${
               step.status === "current" ? "text-gray-900" : "text-gray-500"
             }`}
           >

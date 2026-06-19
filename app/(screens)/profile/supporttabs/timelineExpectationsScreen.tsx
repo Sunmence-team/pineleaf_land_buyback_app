@@ -2,7 +2,6 @@ import { AppText } from "@/components/AppText";
 import Entypo from "@expo/vector-icons/Entypo";
 import React from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const TimelineExpectationsScreen = () => {
   const documents = [

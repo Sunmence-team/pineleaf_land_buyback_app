@@ -2,7 +2,7 @@ import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import PropertyCard from "@/components/cards/PropertyCard";
 import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, FlatList, ScrollView, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 const EligibleProperties = ({
   properties,
@@ -42,11 +42,18 @@ const EligibleProperties = ({
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={
           <EmptyStateCard
-            icon="checkmark-circle-outline"
             title="No eligible properties"
             description="You don't have any properties currently eligible for buyback. We will notify you when one becomes eligible."
           />
         }
+        contentContainerStyle={[
+          { paddingBottom: 10 },
+          properties.length === 0 && {
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1
+          },
+        ]}
       />
     </View>
   );

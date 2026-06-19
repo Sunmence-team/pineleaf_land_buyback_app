@@ -1,16 +1,14 @@
-import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import ActionButton from "@/components/buttons/ActionButton";
 import { getButtonText } from "@/components/cards/PropertyCard";
 import StatusCard from "@/components/cards/StatusCard";
 import TrackCard from "@/components/cards/TrackCard";
 import Modal from "@/components/modal/Modal";
+import { useAuth } from "@/context/AuthContext";
 import { getErrorMessage } from "@/helpers/axios";
-import {
-  formatISODateToYYYYMMDD,
-  formatterUtility,
-} from "@/helpers/formatterUtility";
+import { formatPrettyDate, formatterUtility } from "@/helpers/formatterUtility";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { globals } from "@/lib/constants";
 import { DocumentItem, StatusType } from "@/lib/interfaces";
 import {
   getPropertyDetailsService,
@@ -18,17 +16,17 @@ import {
   uploadPropertyDocumentService,
 } from "@/services/propertiesServices";
 import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as DocumentPicker from "expo-document-picker";
-import { router } from "expo-router";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { RefreshControl } from "react-native";
-import { StyleSheet } from "react-native";
 import {
-  Image,
+  ActivityIndicator,
   Pressable,
+  RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -38,13 +36,20 @@ const PropertyDetails = () => {
   const { propertyId } = useLocalSearchParams();
   const id = Number(propertyId);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const [uploading, setUploading] = useState(false);
-  const [uploaded, setUploaded] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const [showDocModal, setShowDocModal] = useState(false);
   const [selectedDocType, setSelectedDocType] = useState<string | null>(null);
+
+  const validKeysCount = globals.bankKeys.filter(
+    (key) =>
+      user?.[key] !== undefined &&
+      user[key] !== null &&
+      String(user[key]).trim() !== "",
+  ).length;
 
   // PICK IMAGE
   const handlePickDocument = async (doc_key: string) => {
@@ -64,7 +69,6 @@ const PropertyDetails = () => {
     mutationFn: (formData: FormData) =>
       uploadPropertyDocumentService(id, formData),
     onSuccess: (data: any) => {
-      setUploaded(true);
       showSuccessToast(data?.message || "Upload successful");
       queryClient.invalidateQueries({ queryKey: ["propertyDetails", id] });
       console.log("Upload success", data);
@@ -73,7 +77,10 @@ const PropertyDetails = () => {
       showErrorToast(getErrorMessage(err) || "Failed to upload document");
       console.log("Upload error", err);
     },
-    onSettled: () => setUploading(false),
+    onSettled: () => {
+      setUploading(false);
+      setSelectedDocType(null);
+    },
   });
 
   const handleUploadImage = (doc_key: string, file: any) => {
@@ -82,7 +89,7 @@ const PropertyDetails = () => {
     formData.append(doc_key, {
       uri: file.uri,
       name: file.name,
-      type: file.mimeType || "application/octet-stream"
+      type: file.mimeType || "application/octet-stream",
     } as any);
 
     formData.append("document_type", selectedDocType || "");
@@ -99,8 +106,8 @@ const PropertyDetails = () => {
   });
 
   const property = data || {};
-  console.log(JSON.stringify(property, null, 2))
-  const status: StatusType = property?.status as StatusType || "pending";
+  console.log(JSON.stringify(property, null, 2));
+  const status: StatusType = (property?.status as StatusType) || "pending";
 
   const requestMutation = useMutation({
     mutationFn: ({ id }: { id: number; name: string }) =>
@@ -119,20 +126,26 @@ const PropertyDetails = () => {
       );
     },
     onError: (error) => {
-      showErrorToast(
-        getErrorMessage(error) || `Failed to request buyback`,
-      );
+      showErrorToast(getErrorMessage(error) || `Failed to request buyback`);
       console.error("Failed to request buyback: ", error);
     },
   });
 
   const handleRequest = () => {
+    console.log("validKeysCount", validKeysCount);
+    console.log("globals.bankKeys.length", globals.bankKeys.length);
+    if (validKeysCount !== globals.bankKeys.length) {
+      showErrorToast(
+        "Please set your bank details in your profile before requesting for buyback",
+      );
+      return;
+    }
     requestMutation.mutate({ id, name: property?.name || "Property" });
   };
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="flex-1 justify-center items-center bg-secondary">
         <Text>Loading Properties details...</Text>
       </View>
     );
@@ -140,15 +153,14 @@ const PropertyDetails = () => {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="flex-1 justify-center items-center bg-secondary">
         <Text>Failed to fetch properties</Text>
       </View>
     );
   }
 
-  console.log("Current status:", property?.status);
   const propertyName = property?.property?.name || property?.name || "Property";
-  const formattedDate = formatISODateToYYYYMMDD(property?.purchase_date || "");
+  const formattedDate = formatPrettyDate(property?.purchase_date || "");
 
   const plotDetails = [
     {
@@ -216,7 +228,7 @@ const PropertyDetails = () => {
 
   const handleDynamicClickLogic = (status: StatusType) => {
     if (status === "eligible") {
-      setOpenModal(true)
+      setOpenModal(true);
     } else if (status === "offer_sent") {
       router.push(`/offer/${id}`);
     }
@@ -228,9 +240,12 @@ const PropertyDetails = () => {
   };
 
   return (
-    <View className="flex-1 bg-secondary pt-6" style={{ paddingHorizontal: 20 }}>
+    <View
+      className="flex-1 bg-secondary pt-6"
+      style={{ paddingHorizontal: 20 }}
+    >
       <ScrollView
-        style={{ flex: 1, borderRadius: 20 }} 
+        style={{ flex: 1, borderRadius: 20 }}
         className="bg-white border border-gray-200 rounded-lg p-5 mb-4 w-full"
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
@@ -246,8 +261,8 @@ const PropertyDetails = () => {
           <View className="mb-4">
             <Text className="text-xl font-medium mb-2">{propertyName}</Text>
             <Text>
-              {property.number_of_plots || 0} • {property.purchase_type} •{" "}
-              {formattedDate}
+              {property.number_of_plots || 0} Plot(s) • {property.purchase_type}{" "}
+              • {formattedDate}
             </Text>
           </View>
 
@@ -260,15 +275,17 @@ const PropertyDetails = () => {
               key={index}
               className="bg-fadedGreen flex items-center justify-center rounded-lg flex-1 max-h-24 p-3 text-center"
             >
-              <Text 
-                numberOfLines={1} 
-                adjustsFontSizeToFit 
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
                 minimumFontScale={0.55}
                 className="w-full text-center text-lg mb-2"
-              >{detail.label}</Text>
-              <Text 
-                numberOfLines={1} 
-                adjustsFontSizeToFit 
+              >
+                {detail.label}
+              </Text>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
                 minimumFontScale={0.65}
                 className="w-full text-center text-xl font-medium text-primary"
               >
@@ -277,18 +294,16 @@ const PropertyDetails = () => {
             </View>
           ))}
         </View>
-        
-        {
-          (status === "eligible" || status === "offer_sent") && (
-            <ActionButton 
-              action={() => handleDynamicClickLogic(property?.status)}
-              name={getButtonText(property?.status)}
-              optStyle={{
-                height: 40
-              }}
-            />
-          )
-        }
+
+        {(status === "eligible" || status === "offer_sent") && (
+          <ActionButton
+            action={() => handleDynamicClickLogic(property?.status)}
+            name={getButtonText(property?.status)}
+            optStyle={{
+              height: 40,
+            }}
+          />
+        )}
 
         <View className="mt-5 border border-gray-300 rounded-lg p-4">
           {purchaseProperty.map((detail: any, index: number) => {
@@ -320,26 +335,45 @@ const PropertyDetails = () => {
                 className="bg-secondary/40 rounded-lg flex-row justify-between items-center p-4 mt-3"
               >
                 <View className="rounded-full p-2 bg-secondary">
-                  <Ionicons name="document-text-outline" size={24} color="#4B5563" />
+                  <Ionicons
+                    name="document-text-outline"
+                    size={24}
+                    color="#4B5563"
+                  />
                 </View>
                 <View className="flex-1 ml-3 mr-2">
-                  <AppText className="text-base font-quickMedium text-gray-900">{doc.label}</AppText>
+                  <AppText className="text-base font-quickMedium text-gray-900">
+                    {doc.label}
+                  </AppText>
                   {isUploaded && (
-                    <AppText className="text-xs text-gray-500 font-quickRegular" numberOfLines={1} ellipsizeMode="tail">
+                    <AppText
+                      className="text-xs text-gray-500 font-quickRegular"
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {fileName}
                     </AppText>
                   )}
                 </View>
-                <View className="flex-row items-center gap-2">
-                  <Ionicons 
-                    name={isUploaded ? "checkmark-circle" : "cloud-upload-outline"} 
-                    size={24} 
-                    color={isUploaded ? "#154A22" : "#9CA3AF"} 
-                  />
-                  <AppText className="font-quickMedium text-sm" style={{ color: isUploaded ? "#154A22" : "#9CA3AF" }}>
-                    {isUploaded ? "Uploaded" : "Upload"}
-                  </AppText>
-                </View>
+                {uploadMutation.isPending && selectedDocType === doc.key ? (
+                  <ActivityIndicator size={"small"} color={"#154A22"} />
+                ) : (
+                  <View className="flex-row items-center gap-2">
+                    <Ionicons
+                      name={
+                        isUploaded ? "checkmark-circle" : "cloud-upload-outline"
+                      }
+                      size={24}
+                      color={isUploaded ? "#154A22" : "#9CA3AF"}
+                    />
+                    <AppText
+                      className="font-quickMedium text-sm"
+                      style={{ color: isUploaded ? "#154A22" : "#9CA3AF" }}
+                    >
+                      {isUploaded ? "Uploaded" : "Upload"}
+                    </AppText>
+                  </View>
+                )}
               </Pressable>
             );
           })}
@@ -365,10 +399,11 @@ const PropertyDetails = () => {
             className="flex-1 items-center pt-15"
             style={{ paddingHorizontal: 24 }}
           >
-            <Image
-              source={assets.microphone}
-              style={{ width: 140, height: 140 }}
-              resizeMode="contain"
+            <AntDesign
+              name="question-circle"
+              size={70}
+              className="mt-8 mb-2"
+              color={"#154A22"}
             />
             <Text className="font-medium w-2/3 mb-10 text-center">
               Are you sure you want to request for buyback.
@@ -400,8 +435,8 @@ const PropertyDetails = () => {
                   </Text>
 
                   <Text className="text-gray-600 text-sm">
-                    An approved review result in a non-negotiable fixed prce offer
-                    based on current market metrics.
+                    An approved review result in a non-negotiable fixed prce
+                    offer based on current market metrics.
                   </Text>
                 </View>
               </View>
@@ -474,7 +509,9 @@ const PropertyDetails = () => {
                   onPress={() => handleSelectDocType(doc.key)}
                   className="rounded-xl bg-secondary px-4 py-4 mb-3"
                 >
-                  <AppText className="text-base text-gray-900">{doc.label}</AppText>
+                  <AppText className="text-base text-gray-900">
+                    {doc.label}
+                  </AppText>
                 </Pressable>
               ))}
 
@@ -482,7 +519,9 @@ const PropertyDetails = () => {
                 onPress={() => setShowDocModal(false)}
                 className="mt-2 rounded-xl bg-gray-100 px-4 py-4"
               >
-                <AppText className="text-center text-base text-gray-700">Cancel</AppText>
+                <AppText className="text-center text-base text-gray-700">
+                  Cancel
+                </AppText>
               </Pressable>
             </View>
           </View>

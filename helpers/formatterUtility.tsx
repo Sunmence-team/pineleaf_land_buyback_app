@@ -245,3 +245,8 @@ export function maskNumber(
 
   return `${startSegment}${maskSegment}${endSegment}`;
 }
+
+export const formatNaira = (value: string) => {
+  const digits = value.replace(/[^0-9]/g, "");
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+};

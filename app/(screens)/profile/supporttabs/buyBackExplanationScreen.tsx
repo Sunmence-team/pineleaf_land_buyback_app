@@ -64,7 +64,7 @@ const buyBackExplanationScreen = () => {
           </AppText>
           <View className="flex-col gap-8 mt-4">
             {explanations.map((explanation, index) => (
-              <ListItem {...explanation} digit={index+1} />
+              <ListItem key={index} {...explanation} digit={index+1} />
             ))}
           </View>
         </ScrollView>

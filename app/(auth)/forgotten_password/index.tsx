@@ -3,7 +3,7 @@ import ActionButton from "@/components/buttons/ActionButton";
 import { useForgot } from "@/context/ForgotContext";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 import { forgotPasswordRequestService } from "@/services/authServices";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useFormik } from "formik";
 import React from "react";
 import {

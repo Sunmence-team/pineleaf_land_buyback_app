@@ -8,7 +8,7 @@ export default function MapLayout () {
     <Stack
       screenOptions={{
         headerLeft: () => (
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()} className='ps-1'>
             <Ionicons name="chevron-back" size={24} color="#000" />
           </Pressable>
         ),
@@ -16,7 +16,6 @@ export default function MapLayout () {
           backgroundColor: "#F4F6F1",
         },
         headerShadowVisible: false,
-        headerTitleAlign: "center",
       }}
     >
       <Stack.Screen name='index'></Stack.Screen>

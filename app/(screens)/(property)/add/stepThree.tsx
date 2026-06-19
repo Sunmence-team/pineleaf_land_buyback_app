@@ -2,23 +2,35 @@ import { AppText } from "@/components/AppText";
 import { Feather } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as DocumentPicker from "expo-document-picker";
-import React from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from "react-native";
-import { DocumentItem } from "@/lib/interfaces";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback } from "react";
+import { Pressable, ScrollView, View } from "react-native";
+import { useAddProperty } from "@/context/AddPropertyContext";
 
-interface Screen3Props {
-  documents: DocumentItem[];
-  onUpload: (key: string, file: any) => void;
-  error?: string;
-  touched?: boolean;
-}
+export default function StepThreeScreen() {
+  const { formik, setCurrentStep } = useAddProperty();
 
-const Screen3: React.FC<Screen3Props> = ({
-  documents,
-  onUpload,
-  error,
-  touched,
-}) => {
+  useFocusEffect(
+    useCallback(() => {
+      setCurrentStep(3);
+    }, [setCurrentStep])
+  );
+
+  const handleDocumentUpload = (key: string, file: any) => {
+    const nextDocuments = formik.values.documents.map((doc) =>
+      doc.key === key
+        ? {
+            ...doc,
+            status: "uploaded",
+            fileName: file.name,
+            file: file,
+          }
+        : doc
+    );
+    formik.setFieldTouched("documents", true);
+    formik.setFieldValue("documents", nextDocuments);
+  };
+
   const handleSelectFile = async (key: string) => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "*/*",
@@ -26,7 +38,7 @@ const Screen3: React.FC<Screen3Props> = ({
     });
 
     if (!result.canceled && result.assets.length > 0) {
-      onUpload(key, {
+      handleDocumentUpload(key, {
         uri: result.assets[0].uri,
         name: result.assets[0].name,
         type: result.assets[0].mimeType || "application/octet-stream",
@@ -34,11 +46,20 @@ const Screen3: React.FC<Screen3Props> = ({
     }
   };
 
+  const { documents } = formik.values;
+  const error = !formik.errors.documents
+    ? undefined
+    : typeof formik.errors.documents === "string"
+      ? formik.errors.documents
+      : "Upload all required documents before continuing";
+  const touched = Boolean(formik.touched.documents);
+
   return (
-    <ScrollView 
-      className="flex-1"
-      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+    <ScrollView
+      className="bg-secondary"
+      contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
     >
       <View className="flex flex-col gap-4">
         <View className="flex flex-col gap-2">
@@ -48,7 +69,7 @@ const Screen3: React.FC<Screen3Props> = ({
           </AppText>
         </View>
 
-        <View className="flex flex-col gap-4 bg-white rounded-xl p-4">
+        <View className="flex flex-col gap-4 bg-white rounded-xl p-4" style={{ marginBottom: 20 }}>
           {documents.map((doc) => (
             <Pressable
               key={doc.key}
@@ -97,6 +118,4 @@ const Screen3: React.FC<Screen3Props> = ({
       </View>
     </ScrollView>
   );
-};
-
-export default Screen3;
+}

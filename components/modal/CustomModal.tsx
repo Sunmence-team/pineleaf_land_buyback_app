@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    Image,
     Text,
     TouchableOpacity,
     View,
@@ -17,13 +16,10 @@ interface OfferModalProps {
 
     title: string;
     description: string;
-    image: any;
+    icon: any;
 
     buttonText: string;
     buttonColor?: string;
-
-    iconName?: keyof typeof Ionicons.glyphMap;
-    iconColor?: string;
 
     showGuide?: boolean;
     footerText?: string;
@@ -38,11 +34,9 @@ const OfferModal = ({
     description,
     buttonText,
     buttonColor = "#14532D",
-    iconName,
-    iconColor = "#14532D",
     showGuide = false,
     footerText,
-    image
+    icon
 }: OfferModalProps) => {
 
     return (
@@ -54,15 +48,9 @@ const OfferModal = ({
             <View className="flex-1 px-5 pt-20">
 
                 {/* Icon */}
-                    <View
-                        className="w-90 h-90 rounded-full items-center justify-center"
-                    >
-                        <Image
-                            source={image}
-                            style={{ width: 140, height: 140 }}
-                            resizeMode="contain"
-                        />
-                    </View>
+                <View className="w-90 h-90 mb-6 rounded-full items-center justify-center">
+                    {icon}
+                </View>
 
                 {/* Title */}
                 <Text className="text-2xl font-semibold text-center mb-2">

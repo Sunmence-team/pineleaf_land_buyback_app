@@ -4,6 +4,7 @@ import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { AppText } from "../AppText";
 import { Link } from "expo-router";
+import { globals } from "@/lib/constants";
 
 type BankDetailsAlertCardProps = {
   user?: UserProps;
@@ -14,18 +15,11 @@ const BankDetailsAlertCard = ({ user }: BankDetailsAlertCardProps) => {
     return null;
   }
 
-  const bankKeys = [
-    "bank_account_name",
-    "bank_account_number",
-    "bank_name",
-    "bank_code",
-  ] as const;
-
-  const validKeysCount = bankKeys.filter(
+  const validKeysCount = globals.bankKeys.filter(
     (key) => user[key] !== undefined && user[key] !== null && String(user[key]).trim() !== ""
   ).length;
 
-  const percentage = Math.round((validKeysCount / bankKeys.length) * 100);
+  const percentage = Math.round((validKeysCount / globals.bankKeys.length) * 100);
 
   if (percentage === 100) {
     return null;

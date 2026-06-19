@@ -2,7 +2,7 @@ import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import PropertyCard from "@/components/cards/PropertyCard";
 import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, FlatList, ScrollView, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 const PendingPropertyOffers = ({
   properties,
@@ -42,11 +42,18 @@ const PendingPropertyOffers = ({
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={
           <EmptyStateCard
-            icon="time-outline"
             title="No pending offers"
             description="You don't have any pending buyback offers at the moment."
           />
         }
+        contentContainerStyle={[
+          { paddingBottom: 10 },
+          properties.length === 0 && {
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1
+          },
+        ]}
       />
     </View>
   );

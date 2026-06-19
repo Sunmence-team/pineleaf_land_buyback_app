@@ -4,11 +4,11 @@ import { searchPropertiesService } from "@/services/propertiesServices";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useQuery } from "@tanstack/react-query";
-import React, { useMemo, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -17,26 +17,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Modal from "../modal/Modal";
+import Modal from "@/components/modal/Modal";
 import ActionButton from "@/components/buttons/ActionButton";
-
-
-export interface Screen1Values {
-  property_id: string;
-  property_name: string;
-  purchase_date: string;
-  purchase_type: string;
-  number_of_plots: string;
-  plot_numbers: string;
-}
-
-interface Screen1Props {
-  values: Screen1Values;
-  onChange: (field: keyof Screen1Values, value: string) => void;
-  onBlur: (field: keyof Screen1Values) => void;
-  errors?: Partial<Record<keyof Screen1Values, string>>;
-  touched?: Partial<Record<keyof Screen1Values, boolean>>;
-}
+import { useAddProperty } from "@/context/AddPropertyContext";
+import { formatNaira } from "@/helpers/formatterUtility";
 
 const purchaseTypes = ["Regular", "Discount", "Promo"];
 
@@ -53,26 +37,18 @@ const parseDate = (value: string) => {
   return Number.isNaN(maybeDate.getTime()) ? new Date() : maybeDate;
 };
 
-/**
- * Screen1 - Property details entry for Add Property.
- *
- * HOW TO USE:
- * 1. Import Screen1 into the Add Property parent screen.
- * 2. Pass current form values and a change handler:
- *    <Screen1 values={formValues} onChange={handleFieldChange} />
- * 3. The parent Formik instance owns validation and passes inline errors down.
- */
-const Screen1: React.FC<Screen1Props> = ({
-  values,
-  onChange,
-  onBlur,
-  errors,
-  touched,
-}) => {
+export default function StepOneScreen() {
+  const { formik, setCurrentStep } = useAddProperty();
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      setCurrentStep(1);
+    }, [setCurrentStep])
+  );
 
   const {
     data: searchData,
@@ -88,32 +64,48 @@ const Screen1: React.FC<Screen1Props> = ({
     ? searchData.data.data
     : [];
 
-  const updateField = (field: keyof Screen1Values, value: string) => {
-    onChange(field, value);
+  const updateField = (field: string, value: string) => {
+    formik.setFieldValue(field, value);
   };
 
-  const handleChange = (field: keyof Screen1Values) => (value: string) => {
-    onChange(field, value);
+  const handleFieldBlur = (field: string) => {
+    formik.setFieldTouched(field, true);
   };
 
   const currentDate = useMemo(
-    () => (values.purchase_date ? parseDate(values.purchase_date) : new Date()),
-    [values.purchase_date],
+    () => (formik.values.purchase_date ? parseDate(formik.values.purchase_date) : new Date()),
+    [formik.values.purchase_date],
   );
 
   const handleDateChange = (_event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === "ios");
     if (!selectedDate) return;
     const formatted = formatDate(selectedDate);
-    updateField("purchase_date", formatted);
-    setTimeout(() => onBlur("purchase_date"), 0);
+    
+    // Atomically set form values and touched state, and force validation check
+    formik.setFormikState((prev) => ({
+      ...prev,
+      values: {
+        ...prev.values,
+        purchase_date: formatted,
+      },
+      touched: {
+        ...prev.touched,
+        purchase_date: true,
+      },
+    }));
+    setTimeout(() => {
+      formik.validateForm();
+    }, 50);
   };
+
+  const { values, errors, touched } = formik;
 
   return (
     <ScrollView 
-      contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
-  showsVerticalScrollIndicator={false}
-  keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
     >
       <View className="flex-col gap-4 bg-white rounded-xl p-4">
         <View className="flex flex-col gap-2">
@@ -132,7 +124,7 @@ const Screen1: React.FC<Screen1Props> = ({
               {values.property_name || "Select property"}
             </AppText>
           </TouchableOpacity>
-          {touched?.property_id && errors?.property_id ? (
+          {touched.property_id && errors.property_id ? (
             <AppText className="text-xs text-red-600">
               {errors.property_id}
             </AppText>
@@ -158,7 +150,7 @@ const Screen1: React.FC<Screen1Props> = ({
               <Ionicons name="calendar-outline" size={20} color="#111827" />
             </View>
           </TouchableOpacity>
-          {touched?.purchase_date && errors?.purchase_date ? (
+          {touched.purchase_date && errors.purchase_date ? (
             <AppText className="text-xs text-red-600">
               {errors.purchase_date}
             </AppText>
@@ -182,7 +174,7 @@ const Screen1: React.FC<Screen1Props> = ({
             </AppText>
             <Ionicons name="chevron-down-outline" size={20} color="#111827" />
           </TouchableOpacity>
-          {touched?.purchase_type && errors?.purchase_type ? (
+          {touched.purchase_type && errors.purchase_type ? (
             <AppText className="text-xs text-red-600">
               {errors.purchase_type}
             </AppText>
@@ -194,15 +186,16 @@ const Screen1: React.FC<Screen1Props> = ({
             Number of plots
           </AppText>
           <TextInput
-            value={values.number_of_plots}
+            // value={values.number_of_plots}
+            value={formatNaira(values.number_of_plots)}
             onChangeText={(text) =>
-              handleChange("number_of_plots")(text.replace(/[^0-9]/g, ""))
+              updateField("number_of_plots", text.replace(/[^0-9]/g, ""))
             }
-            onBlur={() => onBlur("number_of_plots")}
+            onBlur={() => handleFieldBlur("number_of_plots")}
             keyboardType="numeric"
             className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
           />
-          {touched?.number_of_plots && errors?.number_of_plots ? (
+          {touched.number_of_plots && errors.number_of_plots ? (
             <AppText className="text-xs text-red-600">
               {errors.number_of_plots}
             </AppText>
@@ -215,13 +208,13 @@ const Screen1: React.FC<Screen1Props> = ({
           </AppText>
           <TextInput
             value={values.plot_numbers}
-            onChangeText={handleChange("plot_numbers")}
-            onBlur={() => onBlur("plot_numbers")}
+            onChangeText={(text) => updateField("plot_numbers", text)}
+            onBlur={() => handleFieldBlur("plot_numbers")}
             placeholder="e.g. A2, 102"
             placeholderTextColor="#9CA3AF"
             className="rounded-xl border font-quickRegular border-gray-200 bg-white px-4 py-4 text-base text-black"
           />
-          {touched?.plot_numbers && errors?.plot_numbers ? (
+          {touched.plot_numbers && errors.plot_numbers ? (
             <AppText className="text-xs text-red-600">
               {errors.plot_numbers}
             </AppText>
@@ -244,6 +237,7 @@ const Screen1: React.FC<Screen1Props> = ({
                 onChangeText={setSearchQuery}
                 placeholder="Search properties..."
                 placeholderTextColor="#9CA3AF"
+                autoFocus
                 className="rounded-lg border font-quickRegular border-gray-200 bg-white px-3 h-12 text-base text-black mb-4"
               />
 
@@ -258,12 +252,28 @@ const Screen1: React.FC<Screen1Props> = ({
                   renderItem={({ item }) => (
                     <Pressable
                       onPress={() => {
-                        updateField("property_id", item.id?.toString() || "");
-                        updateField("property_name", item.name || "");
+                        const id = item.id?.toString() || "";
+                        const name = item.name || "";
+                        
+                        // Atomically update property values and touched state, then run validation
+                        formik.setFormikState((prev) => ({
+                          ...prev,
+                          values: {
+                            ...prev.values,
+                            property_id: id,
+                            property_name: name,
+                          },
+                          touched: {
+                            ...prev.touched,
+                            property_id: true,
+                            property_name: true,
+                          },
+                        }));
+                        
                         setTimeout(() => {
-                          onBlur("property_id");
-                          onBlur("property_name");
-                        }, 0);
+                          formik.validateForm();
+                        }, 50);
+                        
                         setShowPropertyModal(false);
                       }}
                       className="rounded-xl bg-secondary px-4 py-4 mb-3"
@@ -286,7 +296,14 @@ const Screen1: React.FC<Screen1Props> = ({
                       />
                     )
                   }
-                  contentContainerStyle={{ paddingBottom: 10 }}
+                  contentContainerStyle={[
+                    { paddingBottom: 10 },
+                    propertiesList.length === 0 && {
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flex: 1
+                    },
+                  ]}
                   showsVerticalScrollIndicator={false}
                 />
               )}
@@ -322,6 +339,7 @@ const Screen1: React.FC<Screen1Props> = ({
                       display={"spinner"}
                       onChange={handleDateChange}
                       maximumDate={new Date()}
+                      textColor="black"
                     />
                   </View>
                   <ActionButton
@@ -363,8 +381,23 @@ const Screen1: React.FC<Screen1Props> = ({
                 <Pressable
                   key={option}
                   onPress={() => {
-                    updateField("purchase_type", option);
-                    setTimeout(() => onBlur("purchase_type"), 0);
+                    // Atomically update purchase type and touched state, then run validation
+                    formik.setFormikState((prev) => ({
+                      ...prev,
+                      values: {
+                        ...prev.values,
+                        purchase_type: option,
+                      },
+                      touched: {
+                        ...prev.touched,
+                        purchase_type: true,
+                      },
+                    }));
+
+                    setTimeout(() => {
+                      formik.validateForm();
+                    }, 50);
+                    
                     setShowTypeModal(false);
                   }}
                   className="rounded-xl bg-secondary px-4 py-4 mb-3"
@@ -386,7 +419,7 @@ const Screen1: React.FC<Screen1Props> = ({
       </View>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -398,5 +431,3 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-export default Screen1;

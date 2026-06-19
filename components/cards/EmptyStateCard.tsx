@@ -1,24 +1,39 @@
 // components/EmptyStateCard.tsx
 import React from "react";
-import { View, Text , Image } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-
-import { assets } from "@/assets/assets";
+import { View, Text, Image } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface EmptyStateCardProps {
-  icon?: keyof typeof Ionicons.glyphMap;
+  image?: string | number | React.ReactNode;
   title: string;
   description?: string;
 }
 
 export default function EmptyStateCard({
-  icon = "bag-handle-outline",
+  image = (
+    <AntDesign
+      name="shopping"
+      size={40}
+      style={{ opacity: 0.25 }}
+      color="black"
+    />
+  ),
   title,
   description,
 }: EmptyStateCardProps) {
+  const isImageSource = typeof image === "string" || typeof image === "number";
+
   return (
     <View className="items-center justify-center px-5">
-      <Image source={assets.empty} style={{ width: 150, height: 80 }} resizeMode="cover" />
+      {isImageSource ? (
+        <Image
+          source={typeof image === "string" ? { uri: image } : image}
+          style={{ width: 150, height: 80 }}
+          resizeMode="cover"
+        />
+      ) : (
+        image
+      )}
 
       <Text className="text-lg text-center font-semibold mt-3">
         {title}

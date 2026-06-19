@@ -1,4 +1,3 @@
-import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import ActionButton from "@/components/buttons/ActionButton";
 import Modal from "@/components/modal/Modal";
@@ -11,7 +10,6 @@ import { router } from "expo-router";
 import { useFormik } from "formik";
 import React, { useMemo, useState } from "react";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -20,6 +18,7 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const StepThreeSchema = Yup.object().shape({
   password: Yup.string()
@@ -211,18 +210,15 @@ const StepThree = () => {
 
       {/* Success Modal */}
       <Modal
-        visible={!showSuccessModal}
+        visible={showSuccessModal}
         onClose={() => {}}
         showClose={false}
         customMode={true}
       >
         <View className="flex-1 w-full h-full bg-white justify-center items-center gap-16 px-6">
           <View className="flex-col items-center">
-            <Image
-              source={assets.success}
-              style={{ width: 140, height: 140, marginBottom: 14 }}
-              resizeMode="cover"
-            />
+            <AntDesign name="check-circle" size={70} className="mb-6" color={"#154A22"} />
+
             <AppText className="text-3xl font-quickBold font-900 text-primary text-center">
               Your new password has been set successfully
             </AppText>

@@ -1,6 +1,6 @@
 import { assets } from "@/assets/assets";
-import { StyleSheet } from "react-native";
-import { View, Image } from "react-native";
+import { StyleSheet , View, Image } from "react-native";
+
 import { AppText } from "../AppText";
 import { UserProps } from "@/lib/interfaces";
 

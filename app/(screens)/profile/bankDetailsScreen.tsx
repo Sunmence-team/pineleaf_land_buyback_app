@@ -1,61 +1,60 @@
 import { AppText } from "@/components/AppText";
-import React, { useState, useEffect } from "react";
+import ActionButton from "@/components/buttons/ActionButton";
+import EmptyStateCard from "@/components/cards/EmptyStateCard";
+import Modal from "@/components/modal/Modal";
+import { useAuth } from "@/context/AuthContext";
+import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 import {
-  StyleSheet,
+  getBanksService,
+  resolveBankAccountService,
+  updateBankAccountService,
+} from "@/services/profileServices";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
   Platform,
+  Pressable,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
-  Pressable,
-  FlatList,
 } from "react-native";
-import { useAuth } from "@/context/AuthContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBanksService, resolveBankAccountService, updateBankAccountService } from "@/services/profileServices";
-import Modal from "@/components/modal/Modal";
-import EmptyStateCard from "@/components/cards/EmptyStateCard";
-import { router } from "expo-router";
-import { showErrorToast, showSuccessToast } from "@/helpers/toast";
-import ActionButton from "@/components/buttons/ActionButton";
 
 const getErrorMessage = (error: any) => {
-  return error?.response?.data?.message || error?.message || "Something went wrong";
+  return (
+    error?.response?.data?.message || error?.message || "Something went wrong"
+  );
 };
 
 const EditScreen = () => {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
-
-  const [bankName, setBankName] = useState(user?.bank_name || "");
-  const [bankCode, setBankCode] = useState(user?.bank_code || "");
-  const [accountNumber, setAccountNumber] = useState(user?.bank_account_number || "");
-  const [accountName, setAccountName] = useState(user?.bank_account_name || "");
 
   const [showBankModal, setShowBankModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    if (user) {
-      setBankName(user.bank_name || "");
-      setBankCode(user.bank_code || "");
-      setAccountNumber(user.bank_account_number || "");
-      setAccountName(user.bank_account_name || "");
-    }
-  }, [user]);
+  const { user } = useAuth();
+  const [bankName, setBankName] = useState(user?.bank_name || "");
+  const [bankCode, setBankCode] = useState(user?.bank_code || "");
+  const [accountNumber, setAccountNumber] = useState(
+    user?.bank_account_number || "",
+  );
+  const [accountName, setAccountName] = useState(user?.bank_account_name || "");
 
   const {
     data: banksResponse,
     isLoading: isLoadingBanks,
     refetch: refetchBanks,
-    error: banksError,
   } = useQuery({
     queryKey: ["banksSearch", searchQuery],
     queryFn: () => getBanksService(searchQuery),
     enabled: showBankModal,
   });
 
-  const banksList = Array.isArray(banksResponse?.data) ? banksResponse.data : [];
+  const banksList = Array.isArray(banksResponse?.data)
+    ? banksResponse.data
+    : [];
 
   const resolveMutation = useMutation({
     mutationFn: (payload: { account_number: string; bank_code: string }) =>
@@ -68,8 +67,10 @@ const EditScreen = () => {
     },
     onError: (error) => {
       setAccountName("");
-      showErrorToast(getErrorMessage(error || "Invalid account number or bank selection"))
-      console.error(error|| "Invalid account number or bank selection.");
+      showErrorToast(
+        getErrorMessage(error || "Invalid account number or bank selection"),
+      );
+      console.error(error || "Invalid account number or bank selection.");
     },
   });
 
@@ -80,7 +81,7 @@ const EditScreen = () => {
         bank_code: bankCode,
       });
     }
-  }, [bankCode, accountNumber]);
+  }, [bankCode, accountNumber, resolveMutation]);
 
   const updateMutation = useMutation({
     mutationFn: (payload: {
@@ -95,7 +96,11 @@ const EditScreen = () => {
       router.back();
     },
     onError: (err: any) => {
-      showErrorToast(err.response?.data?.message || err.message || "Failed to update bank details");
+      showErrorToast(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to update bank details",
+      );
     },
   });
 
@@ -123,7 +128,7 @@ const EditScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.secondContainer}>
+      <View key={user?.id} style={styles.secondContainer}>
         {/* Bank name */}
         <View style={styles.inputContainer}>
           <AppText style={styles.label}>Bank name</AppText>
@@ -132,7 +137,9 @@ const EditScreen = () => {
             onPress={() => setShowBankModal(true)}
             style={[styles.input, { justifyContent: "center" }]}
           >
-            <AppText style={{ color: bankName ? "black" : "#9CA3AF", fontSize: 16 }}>
+            <AppText
+              style={{ color: bankName ? "black" : "#9CA3AF", fontSize: 16 }}
+            >
               {bankName || "Select bank"}
             </AppText>
           </TouchableOpacity>
@@ -145,7 +152,9 @@ const EditScreen = () => {
             placeholder="Account number"
             placeholderTextColor="#9CA3AF"
             value={accountNumber}
-            onChangeText={(text) => setAccountNumber(text.replace(/[^0-9]/g, ""))}
+            onChangeText={(text) =>
+              setAccountNumber(text.replace(/[^0-9]/g, ""))
+            }
             keyboardType="numeric"
             maxLength={10}
             style={styles.input}
@@ -160,19 +169,35 @@ const EditScreen = () => {
             placeholderTextColor="#9CA3AF"
             value={accountName}
             editable={false}
-            style={[styles.input, { backgroundColor: "#F5F5F5", color: "#666" }]}
+            style={[
+              styles.input,
+              { backgroundColor: "#F5F5F5", color: "#666" },
+            ]}
           />
           {resolveMutation.isPending && (
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+                marginTop: 6,
+              }}
+            >
               <ActivityIndicator size="small" color="#154A22" />
-              <AppText style={{ fontSize: 13, color: "#666", fontFamily: "quickRegular" }}>
+              <AppText
+                style={{
+                  fontSize: 13,
+                  color: "#666",
+                  fontFamily: "quickRegular",
+                }}
+              >
                 Resolving account name...
               </AppText>
             </View>
           )}
         </View>
-        
-        <ActionButton 
+
+        <ActionButton
           name={"Submit"}
           loading={updateMutation.isPending}
           disabled={updateMutation.isPending}
@@ -186,8 +211,14 @@ const EditScreen = () => {
         onClose={() => setShowBankModal(false)}
       >
         <View className="flex-1 bg-black/50 justify-end w-full">
-          <View style={[styles.modalContainer, { paddingBottom: 10 }]} className="h-[75%]">
-            <AppText className="mb-4 text-xl text-gray-900" style={{ fontFamily: "quickBold" }}>
+          <View
+            style={[styles.modalContainer, { paddingBottom: 10 }]}
+            className="h-[75%]"
+          >
+            <AppText
+              className="mb-4 text-xl text-gray-900"
+              style={{ fontFamily: "quickBold" }}
+            >
               Select Bank
             </AppText>
 
@@ -225,16 +256,23 @@ const EditScreen = () => {
                 refreshing={isLoadingBanks}
                 ListEmptyComponent={
                   isLoadingBanks ? null : (
-                    <EmptyStateCard 
+                    <EmptyStateCard
                       title={
-                        searchQuery.trim() !== "" 
-                          ? `No banks match search query - '${searchQuery}'` 
+                        searchQuery.trim() !== ""
+                          ? `No banks match search query - '${searchQuery}'`
                           : "No banks found"
-                      } 
+                      }
                     />
                   )
                 }
-                contentContainerStyle={{ paddingBottom: 10 }}
+                contentContainerStyle={[
+                  { paddingBottom: 10 },
+                  banksList.length === 0 && {
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flex: 1,
+                  },
+                ]}
                 showsVerticalScrollIndicator={false}
               />
             )}
@@ -312,7 +350,6 @@ const styles = StyleSheet.create({
     height: 50,
     display: "flex",
     alignItems: "center",
-
   },
 
   modalContainer: {

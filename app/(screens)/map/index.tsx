@@ -22,13 +22,11 @@ const MapScreen = ({
   filter?: "all" | "mine" | "eligible";
 }) => {
   const [selectedCoordId, setSelectedCoordId] = useState<number | null>(null);
-  const [activeFilterState, setActiveFilterState] = useState<
+  const [activeFilterState] = useState<
     "all" | "mine" | "eligible"
   >("all");
 
   const activeFilter = filter !== undefined ? filter : activeFilterState;
-  const setActiveFilter =
-    filter !== undefined ? () => {} : setActiveFilterState;
 
   // const headerDropdownStyle = {
   //   inputIOS: {
@@ -98,7 +96,7 @@ const MapScreen = ({
   }, [mapCoordinates]);
 
   // const handleFilterChange = (filter: "all" | "mine" | "eligible") => {
-  //   setActiveFilter(filter);
+  //   setActiveFilterState(filter);
   //   setSelectedCoordId(null);
   // };
 
@@ -141,7 +139,7 @@ const MapScreen = ({
       ) : error ? (
         <View className="flex-1 items-center justify-center bg-[#F4F6F1] p-6">
           <AppText className="text-base text-gray-600 text-center font-quickMedium">
-            Can't display your properties on the map right now...
+            Can&apos;t display your properties on the map right now...
           </AppText>
         </View>
       ) : (

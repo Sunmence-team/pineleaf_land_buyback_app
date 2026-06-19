@@ -22,7 +22,7 @@ export default function AuthLayout() {
         },
       }}
     >
-      <Stack.Screen name="login/index" options={{ headerShown: false, contentStyle: { paddingTop: 30, backgroundColor: "white" } }} />
+      <Stack.Screen name="login/index" options={{ headerShown: false, contentStyle: { paddingTop: 40, backgroundColor: "white" } }} />
       <Stack.Screen name="register" />
       <Stack.Screen name="forgotten_password" />
       <Stack.Screen name="verify_email/index" />

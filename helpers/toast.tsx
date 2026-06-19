@@ -37,7 +37,7 @@ export const toastConfig: ToastConfig = {
         backgroundColor: "#111",
         paddingHorizontal: 12,
         paddingVertical: 10,
-        borderRadius: 10,
+        borderRadius: 8,
         maxWidth: "90%",
         justifyContent: "center",
         gap: 6,
@@ -55,7 +55,7 @@ export const toastConfig: ToastConfig = {
           height: 25,
           backgroundColor: "white",
           padding: 2,
-          borderRadius: 6,
+          borderRadius: 4,
         }}
         resizeMode="contain"
       />
@@ -63,6 +63,7 @@ export const toastConfig: ToastConfig = {
         style={{
           color: "#fff",
           fontWeight: "600",
+          fontSize: 12,
           flexShrink: 1,
         }}
         numberOfLines={2}
@@ -79,7 +80,7 @@ export const toastConfig: ToastConfig = {
         backgroundColor: "#d60700d5",
         paddingHorizontal: 12,
         paddingVertical: 10,
-        borderRadius: 10,
+        borderRadius: 8,
         maxWidth: "90%",
         justifyContent: "center",
         gap: 6,
@@ -97,7 +98,7 @@ export const toastConfig: ToastConfig = {
           height: 25,
           backgroundColor: "white",
           padding: 2,
-          borderRadius: 6,
+          borderRadius: 4,
         }}
         resizeMode="contain"
       />
@@ -105,6 +106,7 @@ export const toastConfig: ToastConfig = {
         style={{
           color: "#fff",
           fontWeight: "600",
+          fontSize: 12,
           flexShrink: 1,
         }}
         numberOfLines={2}
@@ -121,7 +123,7 @@ export const toastConfig: ToastConfig = {
         backgroundColor: "#111",
         paddingHorizontal: 12,
         paddingVertical: 10,
-        borderRadius: 10,
+        borderRadius: 8,
         maxWidth: "90%",
         gap: 6,
         flexDirection: "row",
@@ -139,7 +141,7 @@ export const toastConfig: ToastConfig = {
           height: 25,
           backgroundColor: "white",
           padding: 2,
-          borderRadius: 6,
+          borderRadius: 4,
         }}
         resizeMode="contain"
       /> */}
@@ -147,6 +149,7 @@ export const toastConfig: ToastConfig = {
         style={{
           color: "#fff",
           fontWeight: "600",
+          fontSize: 12,
           flexShrink: 1,
         }}
         numberOfLines={2}

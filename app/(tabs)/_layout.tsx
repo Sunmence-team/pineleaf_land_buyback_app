@@ -1,4 +1,4 @@
-import { useBreakpoints } from "@/hooks/useBreakpoints";
+// import { useBreakpoints } from "@/hooks/useBreakpoints";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -7,7 +7,7 @@ import React from "react";
 import { Platform, Text, View } from "react-native";
 
 export default function TabLayout() {
-  const { isSmaller } = useBreakpoints();
+  // const { isSmaller } = useBreakpoints();
   const pathname = usePathname();
 
   // Define logic for when to hide specific tabs

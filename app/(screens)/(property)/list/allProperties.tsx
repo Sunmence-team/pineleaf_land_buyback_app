@@ -2,7 +2,7 @@ import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import PropertyCard from "@/components/cards/PropertyCard";
 import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, FlatList, ScrollView, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 const AllProperties = ({
   properties,
@@ -40,11 +40,18 @@ const AllProperties = ({
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={
           <EmptyStateCard
-            icon="bag-handle-outline"
             title="No properties yet"
             description="Start by adding a property to track its details and manage buyback when eligible"
           />
         }
+        contentContainerStyle={[
+          { gap: 16 },
+          properties.length === 0 && {
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1
+          },
+        ]}
       />
     </View>
   );

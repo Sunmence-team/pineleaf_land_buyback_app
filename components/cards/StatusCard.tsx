@@ -6,9 +6,11 @@ import { Text, View } from "react-native";
 const StatusCard = ({
   currentStatus,
   displayText,
+  enlargeText=false
 }: {
   currentStatus: StatusType;
   displayText?: string;
+  enlargeText?: boolean;
 }) => {
   const theme = getStatusTheme(currentStatus);
   
@@ -28,9 +30,11 @@ const StatusCard = ({
       }}
     >
       <Text 
-        className="text-xs font-medium"
+        className="font-medium"
         style={{
           color: theme.hex,
+          fontSize: enlargeText ? 16 : 12,
+          lineHeight: enlargeText ? 24 : 16
         }}
       >
         {formatUnderScores(finalDisplayText, true)}

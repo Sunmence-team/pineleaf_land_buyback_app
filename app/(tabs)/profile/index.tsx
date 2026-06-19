@@ -1,4 +1,3 @@
-import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import { router } from "expo-router";
 import {

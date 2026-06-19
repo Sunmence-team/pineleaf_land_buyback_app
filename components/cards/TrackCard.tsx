@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { MyPropertyProps } from "@/lib/interfaces";
+import { formatPrettyDate } from "@/helpers/formatterUtility";
 
 type TimelineStatus = "completed" | "active" | "upcoming";
 
@@ -37,60 +38,45 @@ const statusStyles = {
   },
 };
 
-const formatDate = (dateString: string | null) => {
-  if (!dateString) return "";
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-    return date.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  } catch (e) {
-    return dateString;
-  }
-};
-
 export default function RequestTracker({ property }: TrackCardProps) {
   if (!property) {
     return null;
   }
 
-  const status = property.status || "not_eligible";
+  const status = (property.status || "not_eligible") as string;
   const eligibility = property.eligibility || "not_eligible";
   const offerStatus = property.offer_status;
 
   const isPaid = !!property.paid_at || status === "completed" || status === "paid";
   const isDocsVerified = isPaid || !!property.verified_at || status === "verified";
-  const isDocsSubmitted = isDocsVerified || !!property.documents_submitted_at || !!property.deed_of_assignment || !!property.company_receipt;
-  const isOfferAccepted = isDocsSubmitted || offerStatus === "accepted" || offerStatus === "approved";
-  const isOfferSent = isOfferAccepted || !!property.offer_date || status === "offer_sent";
-  const isRequested = isOfferSent || (status !== "not_eligible" && status !== "eligible");
+  const isOfferAccepted = offerStatus === "accepted" || offerStatus === "approved" || status === "verified" || status === "completed" || status === "paid";
+  const isDocsSubmitted = isDocsVerified || (isOfferAccepted && (!!property.documents_submitted_at || !!property.deed_of_assignment || !!property.company_receipt));
+  const isOfferSent = isOfferAccepted || status === "offer_sent" || status === "verified" || status === "completed" || status === "paid";
+  const isRequested = status !== "not_eligible" && status !== "eligible";
   const isEligible = isRequested || eligibility === "Eligible" || status !== "not_eligible";
 
   const timelineData: TimelineItemProps[] = [
     {
       title: "Property Added",
-      subtitle: formatDate(property.purchase_date),
+      subtitle: formatPrettyDate(property?.purchase_date ?? ""),
       status: "completed",
     },
     {
       title: "Eligibility Reached",
-      subtitle: isEligible ? formatDate(property.eligibility_date) : "Awaiting eligibility date",
+      subtitle: isEligible ? formatPrettyDate(property?.eligibility_date ?? "") : "Awaiting eligibility date",
       status: isEligible ? "completed" : "active",
     },
     {
       title: "Buyback Requested",
       subtitle: isRequested 
-        ? formatDate(property.created_at || property.updated_at) 
-        : (status === "eligible" ? "Tap 'Request Buyback' to begin" : "Upcoming"),
+        ? formatPrettyDate(property?.created_at || property.updated_at) 
+        : (status === "eligible" ? "Tap 'Request Buyback' above to begin" : "Upcoming"),
       status: isRequested ? "completed" : (status === "eligible" ? "active" : "upcoming"),
     },
     {
       title: "Offer Sent",
       subtitle: isOfferSent 
-        ? (formatDate(property.offer_date) || "Offer received") 
+        ? (formatPrettyDate(property?.offer_date ?? "") || "Offer received") 
         : (status === "pending" ? "Under review by acquisition team" : "Upcoming"),
       status: isOfferSent ? "completed" : (status === "pending" ? "active" : "upcoming"),
     },
@@ -104,14 +90,14 @@ export default function RequestTracker({ property }: TrackCardProps) {
     {
       title: "Documents Submitted",
       subtitle: isDocsSubmitted 
-        ? (formatDate(property.documents_submitted_at) || "Documents submitted") 
+        ? (formatPrettyDate(property?.documents_submitted_at ?? "") || "Documents submitted") 
         : (offerStatus === "accepted" ? "Please upload required documents below" : "Upcoming"),
       status: isDocsSubmitted ? "completed" : (offerStatus === "accepted" ? "active" : "upcoming"),
     },
     {
       title: "Documents Verified",
       subtitle: isDocsVerified 
-        ? (formatDate(property.verified_at) || "Documents verified") 
+        ? (formatPrettyDate(property?.verified_at ?? "") || "Documents verified") 
         : (isDocsSubmitted ? "Verification in progress" : "Upcoming"),
       status: isDocsVerified ? "completed" : (isDocsSubmitted ? "active" : "upcoming"),
     },
@@ -125,7 +111,7 @@ export default function RequestTracker({ property }: TrackCardProps) {
     {
       title: "Paid",
       subtitle: isPaid 
-        ? (formatDate(property.paid_at) || "Paid") 
+        ? (formatPrettyDate(property?.paid_at ?? "") || "Paid") 
         : (isDocsVerified ? "Awaiting payment confirmation" : "Upcoming"),
       status: isPaid ? "completed" : (isDocsVerified ? "active" : "upcoming"),
     },

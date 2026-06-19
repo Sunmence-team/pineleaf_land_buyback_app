@@ -2,7 +2,6 @@ import { AppText } from "@/components/AppText";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const ContactScreen = () => {
   return (
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
     color: "#111",
     fontFamily: "quickSemiBold",
   },
-  
+
   description: {
     fontFamily: "quickMedium",
     fontSize: Platform.select({

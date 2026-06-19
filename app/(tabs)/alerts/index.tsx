@@ -1,27 +1,13 @@
 import { AppText } from "@/components/AppText";
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { ActivityIndicator, FlatList, StyleSheet, View, Image } from "react-native";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getUserNotificationsService } from "@/services/notificationServices";
-import { assets } from "@/assets/assets";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ActionButton from "@/components/buttons/ActionButton";
+import EmptyStateCard from "@/components/cards/EmptyStateCard";
 import NotificationCard from "@/components/cards/NotificationCard";
-
-const EmptyComponent = () => {
-  return (
-    <View style={styles.emptyWrapper}>
-      <Image source={assets.alert} style={{ width: 150, height: 80 }} resizeMode="cover" />
-
-      <AppText style={styles.titleNote}>Your notifications live here</AppText>
-
-      <AppText style={styles.textNote}>
-        You will see updates about your properties and buyback progress here.
-      </AppText>
-    </View>
-  );
-};
+import { getUserNotificationsService } from "@/services/notificationServices";
+import { AntDesign } from "@expo/vector-icons";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import React from "react";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Alerts = () => {
   const {
@@ -34,7 +20,8 @@ const Alerts = () => {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["userNotifications"],
-    queryFn: ({ pageParam = 1 }) => getUserNotificationsService({ page: pageParam }),
+    queryFn: ({ pageParam = 1 }) =>
+      getUserNotificationsService({ page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage?.data?.current_page;
@@ -45,7 +32,12 @@ const Alerts = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color="#154A22" />
       </View>
     );
@@ -53,15 +45,20 @@ const Alerts = () => {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 gap-4 justify-center items-center bg-[#F4F6F1]" style={{ padding: 20 }}>
-        <AppText className="text-gray-600 text-xl font-[quickMedium]">Failed to fetch alerts</AppText>
+      <SafeAreaView
+        className="flex-1 gap-4 justify-center items-center bg-[#F4F6F1]"
+        style={{ padding: 20 }}
+      >
+        <AppText className="text-gray-600 text-xl font-[quickMedium]">
+          Failed to fetch alerts
+        </AppText>
         <View className="w-full">
           <ActionButton
             name={"Retry"}
             action={refetch}
             disabled={isFetching || isLoading}
             optStyle={{
-              height: 40
+              height: 40,
             }}
           />
         </View>
@@ -69,23 +66,43 @@ const Alerts = () => {
     );
   }
 
-  const notificationsList = data?.pages?.flatMap((page) => page?.data?.data || []) || [];
+  const notificationsList =
+    data?.pages?.flatMap((page) => page?.data?.data || []) || [];
 
   return (
     <View style={styles.container}>
-      <View style={styles.bigContainer}>
+      <View style={[styles.bigContainer]}>
         <FlatList
           data={notificationsList}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => <NotificationCard item={item} />}
-          ListEmptyComponent={<EmptyComponent />}
+          ListEmptyComponent={
+            <EmptyStateCard
+              image={
+                <AntDesign
+                  name="bell"
+                  size={40}
+                  style={{ opacity: 0.25 }}
+                  color="black"
+                />
+              }
+              title="Your notifications live here"
+              description="You will see updates about your properties and buyback progress here."
+            />
+          }
           refreshing={isFetching && !isFetchingNextPage}
           onRefresh={refetch}
           onEndReached={() => fetchNextPage()}
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <View style={{ paddingVertical: 12, justifyContent: "center", alignItems: "center" }}>
+              <View
+                style={{
+                  paddingVertical: 12,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <ActivityIndicator size="small" color="#154A22" />
               </View>
             ) : null
@@ -94,6 +111,8 @@ const Alerts = () => {
             styles.contentContainer,
             notificationsList.length === 0 && {
               justifyContent: "center",
+              alignItems: "center",
+              flex: 1,
             },
           ]}
           showsVerticalScrollIndicator={false}

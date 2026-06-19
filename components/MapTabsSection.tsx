@@ -1,8 +1,7 @@
-import React from "react";
-import { Pressable, TouchableOpacity, View } from "react-native";
-import { AppText } from "./AppText";
 import MapScreen from "@/app/(screens)/map";
-import { router, Link } from "expo-router";
+import { router } from "expo-router";
+import React from "react";
+import { TouchableOpacity, View } from "react-native";
 import ActionButton from "./buttons/ActionButton";
 
 interface MapTabsSectionProps {
@@ -27,18 +26,18 @@ const MapTabsSection: React.FC<MapTabsSectionProps> = ({
         {filterOptions.map((opt) => {
           const isActive = activeTab === opt.value;
           return (
-            <ActionButton 
+            <ActionButton
               key={opt.value}
               name={opt.label}
               action={() => onTabChange(opt.value)}
               hasBG={isActive}
               optStyle={{
                 height: 40,
-                flex: 1
+                flex: 1,
               }}
               optStyle2={{
                 fontSize: 14,
-                fontFamily: "quickSemiBold"
+                fontFamily: "quickSemiBold",
               }}
             />
           );
@@ -47,13 +46,13 @@ const MapTabsSection: React.FC<MapTabsSectionProps> = ({
 
       <View className="relative rounded-xl h-64 overflow-hidden w-full">
         <View className="w-full h-full">
-          <MapScreen 
-            isMini={true} 
+          <MapScreen
+            isMini={true}
             filter={activeTab === "myProperties" ? "mine" : activeTab}
           />
         </View>
-        <TouchableOpacity 
-          onPress={() => router.push("/(screens)/map")} 
+        <TouchableOpacity
+          onPress={() => router.push("/(screens)/map")}
           className="absolute inset-0 bg-transparent"
           style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
         />
