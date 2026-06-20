@@ -19,9 +19,10 @@ import {
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import Toast from "react-native-toast-message";
-import { showErrorToast, toastConfig } from "@/helpers/toast";
+import { showErrorToast, showInfoToast, toastConfig } from "@/helpers/toast";
 import * as Sentry from '@sentry/react-native';
 import { getPendingVerification } from "@/helpers/pendingVerification";
+import * as Updates from "expo-updates";
 
 Sentry.init({
   dsn: 'https://a265f8577f4b5e8f790abf7a01d3115d@o4511461391532032.ingest.de.sentry.io/4511461394874448',
@@ -57,6 +58,11 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
 
     const setInitialRoute = async () => {
       try {
+        console.log("Update ID:", Updates.updateId);
+        console.log("Channel:", Updates.channel);
+        console.log("Runtime:", Updates.runtimeVersion);
+        showInfoToast(`UID: ${Updates.updateId} | CH: ${Updates.channel} | RT: ${Updates.runtimeVersion}`)
+
         console.log("Onboarding Status:", onboardingStatus);
         console.log("Token exists:", !!token);
         console.log("Segments:", segments);
