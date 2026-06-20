@@ -1,6 +1,7 @@
 import { AppText } from "@/components/AppText";
 import { sendEmailVerificationCodeService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { savePendingVerification } from "@/helpers/pendingVerification";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -18,8 +19,9 @@ const VerifyEmailIndex = () => {
 
   const mutation = useMutation({
     mutationFn: sendEmailVerificationCodeService,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       showSuccessToast(data.message || "Verification code sent successfully.");
+      await savePendingVerification(email);
       router.push({
         pathname: "/(auth)/verify_email/code",
         params: { email }

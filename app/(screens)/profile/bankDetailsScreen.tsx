@@ -74,14 +74,27 @@ const EditScreen = () => {
     },
   });
 
+  const lastResolvedRef = React.useRef({
+    accountNumber: user?.bank_account_number || "",
+    bankCode: user?.bank_code || "",
+  });
+
+  const { mutate: resolveBankAccount } = resolveMutation;
+
   useEffect(() => {
-    if (bankCode && accountNumber.length === 10) {
-      resolveMutation.mutate({
+    if (
+      bankCode &&
+      accountNumber.length === 10 &&
+      (bankCode !== lastResolvedRef.current.bankCode ||
+        accountNumber !== lastResolvedRef.current.accountNumber)
+    ) {
+      lastResolvedRef.current = { accountNumber, bankCode };
+      resolveBankAccount({
         account_number: accountNumber,
         bank_code: bankCode,
       });
     }
-  }, [bankCode, accountNumber, resolveMutation]);
+  }, [bankCode, accountNumber, resolveBankAccount]);
 
   const updateMutation = useMutation({
     mutationFn: (payload: {

@@ -18,6 +18,7 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
+import { savePendingVerification } from "@/helpers/pendingVerification";
 
 const StepTwoSchema = Yup.object().shape({
   password: Yup.string()
@@ -38,11 +39,12 @@ const RegisterStepTwo = () => {
 
   const mutation = useMutation({
     mutationFn: registerService,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("data reistering", data);
       showSuccessToast(
         data.message || "Registration successful. Please verify your email.",
       );
+      await savePendingVerification(registerData.email);
       router.push({
         pathname: "/(auth)/verify_email/code",
         params: { email: registerData.email },

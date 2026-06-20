@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import * as Yup from "yup";
 import Modal from "@/components/modal/Modal";
+import { savePendingVerification } from "@/helpers/pendingVerification";
 // import { globals } from "@/lib/constants";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -37,8 +38,9 @@ const Index = () => {
 
   const sendCodeMutation = useMutation({
     mutationFn: sendEmailVerificationCodeService,
-    onSuccess: (data, variables) => {
+    onSuccess: async (data, variables) => {
       showSuccessToast(data?.message || "Verification code sent successfully.");
+      await savePendingVerification(variables.email);
       router.push({
         pathname: "/(auth)/verify_email/code",
         params: { email: variables.email }

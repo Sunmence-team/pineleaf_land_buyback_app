@@ -1,12 +1,16 @@
 import { AppText } from "@/components/AppText";
 import { verificationEmailService } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { clearPendingVerification } from "@/helpers/pendingVerification";
 import { router, useLocalSearchParams } from "expo-router";
 import { useFormik } from "formik";
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  AppState,
+  AppStateStatus,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   TextInput,
   View,
@@ -14,6 +18,15 @@ import {
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import ActionButton from "@/components/buttons/ActionButton";
+import { Ionicons } from "@expo/vector-icons";
+
+// Resilient fallback for dev builds where the native module is not yet compiled
+let Clipboard: any = null;
+try {
+  Clipboard = require("expo-clipboard");
+} catch (e) {
+  console.warn("ExpoClipboard native module not found. Rebuild your development client to enable clipboard auto-paste.");
+}
 
 const CodeSchema = Yup.object().shape({
   code: Yup.string()
@@ -24,10 +37,12 @@ const CodeSchema = Yup.object().shape({
 const VerifyEmailCode = () => {
   const { email } = useLocalSearchParams<{ email: string }>();
   const inputRef = useRef<TextInput>(null);
+  const [clipboardCode, setClipboardCode] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: verificationEmailService,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await clearPendingVerification();
       showSuccessToast(data.message || "Email verified successfully. Please login.");
       router.replace("/(auth)/login");
     },
@@ -47,6 +62,49 @@ const VerifyEmailCode = () => {
       }
     },
   });
+
+  // Strategy 4: Clipboard auto-paste detection
+  const checkClipboard = useCallback(async () => {
+    if (!Clipboard) return;
+    try {
+      const content = await Clipboard.getStringAsync();
+      const match = content?.trim().match(/^\d{6}$/);
+      if (match && match[0] !== formik.values.code) {
+        setClipboardCode(match[0]);
+      } else {
+        setClipboardCode(null);
+      }
+    } catch {
+      // Clipboard access denied or unavailable
+    }
+  }, [formik.values.code]);
+
+  // Strategy 5: AppState foreground detection
+  useEffect(() => {
+    // Check clipboard on initial mount
+    checkClipboard();
+
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextState: AppStateStatus) => {
+        if (nextState === "active") {
+          checkClipboard();
+        }
+      },
+    );
+
+    return () => subscription.remove();
+  }, [checkClipboard]);
+
+  const handleBack = async () => {
+    await clearPendingVerification();
+    router.back();
+  };
+
+  const handlePasteCode = (code: string) => {
+    formik.setFieldValue("code", code);
+    setClipboardCode(null);
+  };
 
   const codeArray = formik.values.code.split("");
 
@@ -72,6 +130,22 @@ const VerifyEmailCode = () => {
                 <AppText className="text-sm font-semibold text-black">
                   Code
                 </AppText>
+
+                {/* Clipboard paste suggestion banner */}
+                {clipboardCode && (
+                  <Pressable
+                    onPress={() => handlePasteCode(clipboardCode)}
+                    className="flex-row items-center justify-between bg-primary/10 border border-primary/30 rounded-xl px-4 py-3 mb-2"
+                  >
+                    <View className="flex-row items-center gap-2">
+                      <Ionicons name="clipboard-outline" size={18} color="#154A22" />
+                      <AppText className="text-sm text-primary font-quickSemiBold">
+                        Paste code: {clipboardCode}
+                      </AppText>
+                    </View>
+                    <Ionicons name="arrow-forward-outline" size={16} color="#154A22" />
+                  </Pressable>
+                )}
                 
                 <View className="relative w-full mt-2">
                   {/* Visual PIN boxes */}
@@ -133,7 +207,7 @@ const VerifyEmailCode = () => {
             <ActionButton 
               name="Back"
               hasBG={false}
-              action={() => router.back()}
+              action={handleBack}
               disabled={mutation.isPending}
             />
           </View>

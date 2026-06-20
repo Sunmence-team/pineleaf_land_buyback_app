@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "pineleaf_land_buyback",
+    "name": "Pineleaf Buyback",
     "slug": "pineleaf_land_buyback",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/logo2.png",
     "scheme": "pineleaflandbuyback",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1A5C2A",
-        "foregroundImage": "./assets/images/logo.png"
+        "foregroundImage": "./assets/images/logo2.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -28,14 +28,14 @@
     "web": {
       "output": "static",
       "bundler": "metro",
-      "favicon": "./assets/images/logo.png"
+      "favicon": "./assets/images/logo2.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo.png",
+          "image": "./assets/images/logo2.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#1A5C2A",

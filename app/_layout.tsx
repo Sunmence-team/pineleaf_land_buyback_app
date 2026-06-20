@@ -21,6 +21,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { showErrorToast, toastConfig } from "@/helpers/toast";
 import * as Sentry from '@sentry/react-native';
+import { getPendingVerification } from "@/helpers/pendingVerification";
 
 Sentry.init({
   dsn: 'https://a265f8577f4b5e8f790abf7a01d3115d@o4511461391532032.ingest.de.sentry.io/4511461394874448',
@@ -59,6 +60,18 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
         console.log("Onboarding Status:", onboardingStatus);
         console.log("Token exists:", !!token);
         console.log("Segments:", segments);
+
+        if (!token && onboardingStatus === "complete") {
+          const pending = await getPendingVerification();
+          if (!pending) {
+            await SplashScreen.hideAsync();
+            router.replace({
+              pathname: "/(auth)/verify_email/code",
+              params: { email: "ade@gmail.com" },
+            });
+            return;
+          }
+        }
 
         const inTabsGroup = segments[0] === "(tabs)" || segments[0] === "(screens)";
         const inAuthGroup = segments[0] === "(auth)";
