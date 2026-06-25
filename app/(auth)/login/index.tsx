@@ -105,7 +105,7 @@ const Index = () => {
             <View className="flex flex-col gap-8 pt-6">
               <View className="flex flex-col gap-3">
                 <AppText className="text-2xl font-quickBold text-black">
-                  Welcome back //ota
+                  Welcome back
                 </AppText>
                 <AppText className="text-base text-black/70 font-quickMedium leading-6">
                   Log in to access your properties, monitor buyback offers, and

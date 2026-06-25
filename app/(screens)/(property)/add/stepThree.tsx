@@ -57,7 +57,7 @@ export default function StepThreeScreen() {
   return (
     <ScrollView
       className="bg-secondary"
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: "#F4F6F1" }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >

@@ -103,7 +103,7 @@ export default function StepOneScreen() {
 
   return (
     <ScrollView 
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: "#F4F6F1" }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >

@@ -69,11 +69,11 @@ function RootLayoutNav({ fontsReady }: { fontsReady: boolean }) {
 
         if (!token && onboardingStatus === "complete") {
           const pending = await getPendingVerification();
-          if (!pending) {
+          if (pending) {
             await SplashScreen.hideAsync();
             router.replace({
               pathname: "/(auth)/verify_email/code",
-              params: { email: "ade@gmail.com" },
+              params: { email: pending.email },
             });
             return;
           }
