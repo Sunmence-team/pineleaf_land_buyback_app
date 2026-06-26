@@ -44,7 +44,7 @@ export default function StepTwoScreen() {
       <View className="flex flex-col gap-4 bg-white rounded-xl p-4">
         <View className="flex flex-col gap-2">
           <View className="flex-row items-center justify-between">
-            <AppText className="text-sm font-medium text-gray-900">
+            <AppText className="text-base font-medium text-gray-900">
               Price per plot
             </AppText>
           </View>
@@ -68,7 +68,7 @@ export default function StepTwoScreen() {
         </View>
 
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Number of plots
           </AppText>
           <TextInput
@@ -90,7 +90,7 @@ export default function StepTwoScreen() {
         </View>
 
         <View className="rounded-xl bg-primary/10 p-5">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Total Property value
           </AppText>
           <View className="mt-3 flex-row items-center gap-2">

@@ -112,4 +112,5 @@ export interface MaskOptions {
   visibleStart?: number; // Number of digits to show at the start
   visibleEnd?: number;   // Number of digits to show at the end
   maskChar?: string;     // The character used for masking
+  stripNonNumeric?: boolean; // Whether to strip non-numeric characters
 }

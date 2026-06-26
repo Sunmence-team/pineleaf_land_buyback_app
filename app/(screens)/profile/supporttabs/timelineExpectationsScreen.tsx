@@ -30,34 +30,32 @@ const TimelineExpectationsScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.secondContainer}>
-        <View style={styles.thirdContainer}>
-          <View>
-            <AppText style={styles.headerText}>
-              The buyback process takes a few steps and may take some time to
-              complete. Here’s a general timeline:
-            </AppText>
+        <View>
+          <AppText style={styles.headerText}>
+            The buyback process takes a few steps and may take some time to
+            complete. Here’s a general timeline:
+          </AppText>
 
-            <View style={styles.innerCard}>
-              <AppText style={styles.requiredText}>Timeline Breakdown</AppText>
+          <View style={styles.innerCard}>
+            <AppText style={styles.requiredText}>Timeline Breakdown</AppText>
 
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {documents.map((item, index) => (
-                  <View key={index} style={styles.documentItem}>
-                    <View style={styles.row}>
-                      <Entypo name="dot-single" size={20} color="black" />
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {documents.map((item, index) => (
+                <View key={index} style={styles.documentItem}>
+                  <View style={styles.row}>
+                    <Entypo name="dot-single" size={20} color="black" />
 
-                      <View style={{ flex: 1 }}>
-                        <AppText style={styles.title}>{item.title}</AppText>
+                    <View style={{ flex: 1 }}>
+                      <AppText style={styles.title}>{item.title}</AppText>
 
-                        <AppText style={styles.description}>
-                          {item.description}
-                        </AppText>
-                      </View>
+                      <AppText style={styles.description}>
+                        {item.description}
+                      </AppText>
                     </View>
                   </View>
-                ))}
-              </ScrollView>
-            </View>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </View>
@@ -70,25 +68,18 @@ export default TimelineExpectationsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 20,
+    paddingVertical: 20,
     backgroundColor: "#F4F6F1",
   },
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    borderRadius: 35,
+    borderRadius: 20,
     padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },
-  thirdContainer: {
-    backgroundColor: "white",
-    borderRadius: 15,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
-  },
-
+  
   headerText: {
     fontSize: Platform.select({
       ios: 20,
@@ -105,8 +96,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E5E5",
     borderRadius: 15,
-    paddingVertical: 18,
-    paddingHorizontal: 16,
+    padding: 16,
     marginTop: 25,
   },
 

@@ -82,7 +82,7 @@ export default function StepThreeScreen() {
                     <Ionicons name="document-text-outline" size={20} />
                   </View>
                   <View className="flex-1">
-                    <AppText className="text-base font-semibold">
+                    <AppText className="text-lg font-semibold">
                       {doc.label}
                     </AppText>
                   </View>

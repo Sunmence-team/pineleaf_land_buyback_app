@@ -223,16 +223,19 @@ export function maskNumber(
   value: string | number, 
   options: MaskOptions = {}
 ): string {
-  // 1. Convert to string and strip non-numeric characters
-  const str = String(value).replace(/\D/g, '');
+  // 1. Extract configuration or use default values
+  const { visibleStart = 2, visibleEnd = 2, maskChar = '•', stripNonNumeric = false } = options;
   
-  // 2. Extract configuration or use default values
-  const { visibleStart = 2, visibleEnd = 2, maskChar = '•' } = options;
+  // 2. Convert to string and optionally strip non-numeric characters
+  let str = String(value);
+  if (stripNonNumeric) {
+    str = str.replace(/\D/g, '');
+  }
   
   const totalLength = str.length;
   const visibleCount = visibleStart + visibleEnd;
 
-  // 3. Return original numbers if they are too short to mask safely
+  // 3. Return original string if it is too short to mask safely
   if (totalLength <= visibleCount || totalLength <= 2) {
     return str;
   }

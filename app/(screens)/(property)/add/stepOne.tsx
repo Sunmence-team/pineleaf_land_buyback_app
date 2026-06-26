@@ -82,21 +82,8 @@ export default function StepOneScreen() {
     if (!selectedDate) return;
     const formatted = formatDate(selectedDate);
     
-    // Atomically set form values and touched state, and force validation check
-    formik.setFormikState((prev) => ({
-      ...prev,
-      values: {
-        ...prev.values,
-        purchase_date: formatted,
-      },
-      touched: {
-        ...prev.touched,
-        purchase_date: true,
-      },
-    }));
-    setTimeout(() => {
-      formik.validateForm();
-    }, 50);
+    formik.setFieldValue("purchase_date", formatted, true);
+    formik.setFieldTouched("purchase_date", true, true);
   };
 
   const { values, errors, touched } = formik;
@@ -109,7 +96,7 @@ export default function StepOneScreen() {
     >
       <View className="flex-col gap-4 bg-white rounded-xl p-4">
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Property name
           </AppText>
           <TouchableOpacity
@@ -132,7 +119,7 @@ export default function StepOneScreen() {
         </View>
 
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Purchased date
           </AppText>
           <TouchableOpacity
@@ -158,7 +145,7 @@ export default function StepOneScreen() {
         </View>
 
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Purchase type
           </AppText>
           <TouchableOpacity
@@ -182,7 +169,7 @@ export default function StepOneScreen() {
         </View>
 
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Number of plots
           </AppText>
           <TextInput
@@ -203,7 +190,7 @@ export default function StepOneScreen() {
         </View>
 
         <View className="flex flex-col gap-2">
-          <AppText className="text-sm font-medium text-gray-900">
+          <AppText className="text-base font-medium text-gray-900">
             Plot number(s) *separate each with a comma
           </AppText>
           <TextInput
@@ -255,24 +242,10 @@ export default function StepOneScreen() {
                         const id = item.id?.toString() || "";
                         const name = item.name || "";
                         
-                        // Atomically update property values and touched state, then run validation
-                        formik.setFormikState((prev) => ({
-                          ...prev,
-                          values: {
-                            ...prev.values,
-                            property_id: id,
-                            property_name: name,
-                          },
-                          touched: {
-                            ...prev.touched,
-                            property_id: true,
-                            property_name: true,
-                          },
-                        }));
-                        
-                        setTimeout(() => {
-                          formik.validateForm();
-                        }, 50);
+                        formik.setFieldValue("property_id", id, false);
+                        formik.setFieldValue("property_name", name, true);
+                        formik.setFieldTouched("property_id", true, false);
+                        formik.setFieldTouched("property_name", true, true);
                         
                         setShowPropertyModal(false);
                       }}
@@ -381,22 +354,8 @@ export default function StepOneScreen() {
                 <Pressable
                   key={option}
                   onPress={() => {
-                    // Atomically update purchase type and touched state, then run validation
-                    formik.setFormikState((prev) => ({
-                      ...prev,
-                      values: {
-                        ...prev.values,
-                        purchase_type: option,
-                      },
-                      touched: {
-                        ...prev.touched,
-                        purchase_type: true,
-                      },
-                    }));
-
-                    setTimeout(() => {
-                      formik.validateForm();
-                    }, 50);
+                    formik.setFieldValue("purchase_type", option, true);
+                    formik.setFieldTouched("purchase_type", true, true);
                     
                     setShowTypeModal(false);
                   }}

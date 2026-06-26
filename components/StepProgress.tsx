@@ -74,7 +74,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ steps }) => {
           </View>
 
           <AppText
-            className={`mt-1 text-xs font-medium  ${
+            className={`mt-1 text-sm font-medium  ${
               step.status === "current" ? "text-gray-900" : "text-gray-500"
             }`}
           >

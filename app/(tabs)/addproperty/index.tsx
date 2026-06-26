@@ -7,8 +7,8 @@ export default function AddPropertyTab() {
 
   useFocusEffect(
     useCallback(() => {
-      // Redirect to the first step of the standalone registration stack
-      router.push("/(screens)/(property)/add/stepOne");
+      // Fallback redirect if they land here directly
+      router.replace("/(screens)/(property)/add/stepOne");
     }, [router])
   );
 

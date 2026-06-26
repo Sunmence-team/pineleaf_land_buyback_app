@@ -11,89 +11,91 @@ import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const SupportScreen = () => {
   return (
-    <View style={styles.secondContainer}>
-      <View style={styles.menuContainer}>
-        <View>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push("/profile/supporttabs/faqScreen")}
-          >
-            <View style={styles.menuLeft}>
-              <Feather name="message-circle" size={24} color="black" />
+    <View style={styles.container}>
+      <View style={styles.secondContainer}>
+        <View style={styles.menuContainer}>
+          <View>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/supporttabs/faqScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <Feather name="message-circle" size={24} color="black" />
 
-              <AppText style={styles.menuText}>FAQ</AppText>
-            </View>
-
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
-
-          <View style={styles.horizontalLine} />
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() =>
-              router.push("/profile/supporttabs/buyBackExplanationScreen")
-            }
-          >
-            <View style={styles.menuLeft}>
-              <Foundation name="clipboard-notes" size={22} color="#111" />
-
-              <View>
-                <AppText style={styles.menuText}>Buyback</AppText>
+                <AppText style={styles.menuText}>FAQ</AppText>
               </View>
-            </View>
 
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-          <View style={styles.horizontalLine} />
+            <View style={styles.horizontalLine} />
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() =>
-              router.push("/profile/supporttabs/documentsPreparationScreen")
-            }
-          >
-            <View style={styles.menuLeft}>
-              <Ionicons name="document-outline" size={22} color="#111" />
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/buyBackExplanationScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Foundation name="clipboard-notes" size={22} color="#111" />
 
-              <AppText style={styles.menuText}>Document</AppText>
-            </View>
+                <View>
+                  <AppText style={styles.menuText}>Buyback</AppText>
+                </View>
+              </View>
 
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-          <View style={styles.horizontalLine} />
+            <View style={styles.horizontalLine} />
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() =>
-              router.push("/profile/supporttabs/timelineExpectationsScreen")
-            }
-          >
-            <View style={styles.menuLeft}>
-              <Ionicons name="time-outline" size={22} color="#111" />
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/documentsPreparationScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Ionicons name="document-outline" size={22} color="#111" />
 
-              <AppText style={styles.menuText}>Timeline expectation</AppText>
-            </View>
+                <AppText style={styles.menuText}>Document</AppText>
+              </View>
 
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
 
-          <View style={styles.horizontalLine} />
+            <View style={styles.horizontalLine} />
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => router.push("/profile/supporttabs/contactScreen")}
-          >
-            <View style={styles.menuLeft}>
-              <MaterialIcons name="contact-page" size={22} color="#111" />
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() =>
+                router.push("/profile/supporttabs/timelineExpectationsScreen")
+              }
+            >
+              <View style={styles.menuLeft}>
+                <Ionicons name="time-outline" size={22} color="#111" />
 
-              <AppText style={styles.menuText}>Contact</AppText>
-            </View>
+                <AppText style={styles.menuText}>Timeline expectation</AppText>
+              </View>
 
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </TouchableOpacity>
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+
+            <View style={styles.horizontalLine} />
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => router.push("/profile/supporttabs/contactScreen")}
+            >
+              <View style={styles.menuLeft}>
+                <MaterialIcons name="contact-page" size={22} color="#111" />
+
+                <AppText style={styles.menuText}>Contact</AppText>
+              </View>
+
+              <Ionicons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -103,10 +105,15 @@ const SupportScreen = () => {
 export default SupportScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F4F6F1",
+    paddingVertical: 20,
+  },
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    borderRadius: 35,
+    borderRadius: 20,
     paddingHorizontal: 16,
     padding: 20,
     borderWidth: 1,

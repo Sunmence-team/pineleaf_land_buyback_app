@@ -101,47 +101,47 @@ export default function StepFourScreen() {
       <View key="review" className="flex flex-col gap-4">
         <View className="rounded-xl bg-white p-5 flex flex-col gap-3">
           <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
-            <AppText className="text-sm text-gray-500">Name</AppText>
-            <AppText className="text-sm text-gray-900">
+            <AppText className="text-base text-gray-500">Name</AppText>
+            <AppText className="text-base text-gray-900">
               {values.property_name || "-"}
             </AppText>
           </View>
           <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
-            <AppText className="text-sm text-gray-500">Purchase date</AppText>
-            <AppText className="text-sm text-gray-900">
+            <AppText className="text-base text-gray-500">Purchase date</AppText>
+            <AppText className="text-base text-gray-900">
               {values.purchase_date || "-"}
             </AppText>
           </View>
           <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
-            <AppText className="text-sm text-gray-500">Purchase type</AppText>
-            <AppText className="text-sm text-gray-900">
+            <AppText className="text-base text-gray-500">Purchase type</AppText>
+            <AppText className="text-base text-gray-900">
               {values.purchase_type || "-"}
             </AppText>
           </View>
           <View className="flex-row justify-between">
-            <AppText className="text-sm text-gray-500">Plot numbers</AppText>
-            <AppText className="text-sm text-gray-900">
+            <AppText className="text-base text-gray-500">Plot numbers</AppText>
+            <AppText className="text-base text-gray-900">
               {values.plot_numbers || "-"}
             </AppText>
           </View>
         </View>
 
         <View className="rounded-xl bg-white p-5 flex flex-col gap-4">
-          <AppText className="text-sm font-semibold text-gray-900">
+          <AppText className="text-lg font-semibold text-gray-900">
             Purchase value
           </AppText>
           <View className="flex flex-col gap-3">
             <View className="flex-row justify-between border-b border-b-primary/5 pb-3">
-              <AppText className="text-sm text-gray-500">
+              <AppText className="text-base text-gray-500">
                 Price per plot
               </AppText>
-              <AppText className="text-sm font-semibold text-gray-900">
+              <AppText className="text-base font-semibold text-gray-900">
                 ₦{formatNaira(values.price_per_plots)}
               </AppText>
             </View>
             <View className="flex-row justify-between">
-              <AppText className="text-sm text-gray-500">Total value</AppText>
-              <AppText className="text-sm font-semibold text-gray-900">
+              <AppText className="text-base text-gray-500">Total value</AppText>
+              <AppText className="text-base font-semibold text-gray-900">
                 ₦{totalValue}
               </AppText>
             </View>
@@ -150,7 +150,7 @@ export default function StepFourScreen() {
 
         <View className="rounded-xl bg-white p-5 flex flex-col gap-4">
           <View className="flex-row items-center justify-between">
-            <AppText className="text-sm font-semibold text-gray-900">
+            <AppText className="text-lg font-semibold text-gray-900">
               Documents
             </AppText>
           </View>
@@ -161,10 +161,12 @@ export default function StepFourScreen() {
                 className="flex-row items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4"
               >
                 <View style={{ maxWidth: "75%" }}>
-                  <AppText className="text-sm font-medium text-gray-900">
+                  <AppText className="text-base font-medium text-gray-900">
                     {doc.label}
                   </AppText>
-                  <AppText className="text-xs text-gray-500">
+                  <AppText 
+                    className="text-sm text-gray-500"
+                  >
                     {doc.status === "uploaded"
                       ? doc.fileName || "Uploaded"
                       : doc.optional

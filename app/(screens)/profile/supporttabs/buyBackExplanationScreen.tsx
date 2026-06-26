@@ -48,27 +48,25 @@ const buyBackExplanationScreen = () => {
   ];
   return (
     <View style={styles.container}>
-      <View style={styles.secondContainer}>
-        <ScrollView className="flex-1" contentContainerStyle={styles.thirdContainer}>
-          <AppText className="text-[17px]" style={{ fontFamily: "quickMedium" }}>
-            Buyback is a feature that allows a user to sell their property back to the company through a structured process.
-          </AppText>
-          <AppText className="text-[17px]" style={{ fontFamily: "quickMedium" }}>
-            Instead of finding a buyer themselves, the company reviews the property and makes a fixed offer. If the user accepts, they complete a few required steps, and the company handles the payout.
-          </AppText>
-          <AppText
-            style={{ fontFamily: "quickSemiBold" }}
-            className="text-lg mt-6"
-          >
-            How It Works
-          </AppText>
-          <View className="flex-col gap-8 mt-4">
-            {explanations.map((explanation, index) => (
-              <ListItem key={index} {...explanation} digit={index+1} />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
+      <ScrollView style={styles.secondContainer} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+        <AppText className="text-[17px]" style={{ fontFamily: "quickMedium" }}>
+          Buyback is a feature that allows a user to sell their property back to the company through a structured process.
+        </AppText>
+        <AppText className="text-[17px]" style={{ fontFamily: "quickMedium" }}>
+          Instead of finding a buyer themselves, the company reviews the property and makes a fixed offer. If the user accepts, they complete a few required steps, and the company handles the payout.
+        </AppText>
+        <AppText
+          style={{ fontFamily: "quickSemiBold" }}
+          className="text-lg mt-6"
+        >
+          How It Works
+        </AppText>
+        <View className="flex-col gap-8 mt-4">
+          {explanations.map((explanation, index) => (
+            <ListItem key={index} {...explanation} digit={index+1} />
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -78,24 +76,15 @@ export default buyBackExplanationScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 20,
+    paddingVertical: 20,
     backgroundColor: "#F4F6F1",
-  },
-
+  },  
   secondContainer: {
     flex: 1,
     backgroundColor: "white",
     marginHorizontal: 20,
-    borderRadius: 35,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
-  },
-
-  thirdContainer: {
-    backgroundColor: "white",
-    borderRadius: 15,
-    padding: 18,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
     borderColor: "#EEEEEE",
   },

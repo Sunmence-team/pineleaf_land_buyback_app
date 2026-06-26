@@ -35,7 +35,7 @@ const ProfileScreen = () => {
       label: "Bank details",
       onPress: () => router.push("/profile/bankDetailsScreen"),
       icon: (color: string) => <Feather name="credit-card" size={22} color={color} />,
-      subText: user?.bank_account_number ? maskNumber(user.bank_account_number) : null,
+      subText: user?.bank_account_number ? maskNumber(user.bank_account_number, { stripNonNumeric: true }) : null,
     },
     {
       key: "security",

@@ -5,4 +5,8 @@ export const globals = {
     PENDING_VERIFICATION_KEY: "@pending_verification",
     branches: ['HQ - Onitsha', 'Mgbuka', 'Awka', 'Asaba', 'Owerri', 'Port Harcourt', 'Lagos Ajah', 'Lagos Apapa', 'Enugwu-Ukwu', 'Abuja', 'Abia', 'Nnewi', 'Enugu', 'Amuwo odofin Lagos', 'Ebonyi', 'Nkpor'],
     bankKeys: ["bank_account_name", "bank_account_number", "bank_name", "bank_code"] as const,
+    contactInfos: {
+        email: "info@pineleafestates.com",
+        phone: "09083383883"
+    }
 }   

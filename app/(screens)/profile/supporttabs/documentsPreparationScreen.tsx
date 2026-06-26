@@ -30,32 +30,30 @@ const DocumentsPreparationScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.secondContainer}>
-        <View style={styles.thirdContainer}>
-          <AppText className="text-lg" style={{ fontFamily: "quickSemiBold" }}>
-            Please provide the following documents at your selected office to
-            complete your buyback process.
-          </AppText>
-          <View style={styles.innerCard}>
-            <AppText style={styles.requiredText}>Required documents</AppText>
+        <AppText className="text-lg" style={{ fontFamily: "quickSemiBold" }}>
+          Upon accepting the proposed buyback offer to you, please provide the following documents at your selected branch office to
+          complete your buyback process.
+        </AppText>
+        <View style={styles.innerCard}>
+          <AppText style={styles.requiredText}>Required documents</AppText>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {documents.map((item, index) => (
-                <View key={index} style={styles.documentItem}>
-                  <View style={styles.row}>
-                    <Entypo name="dot-single" size={20} color="black" />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {documents.map((item, index) => (
+              <View key={index} style={styles.documentItem}>
+                <View style={styles.row}>
+                  <Entypo name="dot-single" size={20} color="black" />
 
-                    <View style={{ flex: 1 }}>
-                      <AppText style={styles.title}>{item.title}</AppText>
+                  <View style={{ flex: 1 }}>
+                    <AppText style={styles.title}>{item.title}</AppText>
 
-                      <AppText style={styles.description}>
-                        {item.description}
-                      </AppText>
-                    </View>
+                    <AppText style={styles.description}>
+                      {item.description}
+                    </AppText>
                   </View>
                 </View>
-              ))}
-            </ScrollView>
-          </View>
+              </View>
+            ))}
+          </ScrollView>
         </View>
       </View>
     </View>
@@ -67,20 +65,13 @@ export default DocumentsPreparationScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 20,
+    paddingVertical: 20,
     backgroundColor: "#F4F6F1",
   },
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    borderRadius: 35,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
-  },
-  thirdContainer: {
-    backgroundColor: "white",
-    borderRadius: 15,
+    borderRadius: 20,
     padding: 18,
     borderWidth: 1,
     borderColor: "#EEEEEE",

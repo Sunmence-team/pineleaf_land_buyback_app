@@ -101,7 +101,7 @@ function AddPropertyLayoutContent() {
 
         {/* Shared Footer Actions */}
         {!hasSubmit && (
-          <View className="bg-secondary px-5 py-4 border-t border-gray-100">
+          <View className="bg-secondary px-5 pt-4 border-t border-gray-100">
             <ActionButton
               name={currentStep === 4 ? "Submit" : "Next"}
               action={handleNext}

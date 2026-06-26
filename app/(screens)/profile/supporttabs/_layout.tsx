@@ -42,6 +42,11 @@ export default function supportTabsLayout() {
         name="timelineExpectationsScreen"
         options={{ title: "Timeline explanation" }}
       ></Stack.Screen>
+
+      <Stack.Screen
+        name="contacttabs/liveChatScreen"
+        options={{ title: "Live Chat" }}
+      ></Stack.Screen>
     </Stack>
   );
 }

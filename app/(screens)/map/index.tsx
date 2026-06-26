@@ -1,12 +1,13 @@
 import { assets } from "@/assets/assets";
 import { AppText } from "@/components/AppText";
 import StatusCard from "@/components/cards/StatusCard";
+import { maskNumber } from "@/helpers/formatterUtility";
 import { getStatusTheme } from "@/helpers/statusTheme";
 import { getUserPropertiesMapCoordinatesService } from "@/services/propertiesServices";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useQuery } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import React, { useMemo, useState, useRef, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -23,9 +24,7 @@ const MapScreen = ({
   filter?: "all" | "mine" | "eligible";
 }) => {
   const [selectedCoordId, setSelectedCoordId] = useState<number | null>(null);
-  const [activeFilterState] = useState<
-    "all" | "mine" | "eligible"
-  >("all");
+  const [activeFilterState] = useState<"all" | "mine" | "eligible">("all");
 
   const activeFilter = filter !== undefined ? filter : activeFilterState;
 
@@ -75,6 +74,7 @@ const MapScreen = ({
       getUserPropertiesMapCoordinatesService({ filter: activeFilter }),
   });
 
+  console.log(JSON.stringify(mapCoordinates, null, 2));
   // Generate deterministic coordinate placements so markers stay in position across renders
   const positionedCoordinates = useMemo(() => {
     if (!mapCoordinates || !Array.isArray(mapCoordinates)) return [];
@@ -104,8 +104,6 @@ const MapScreen = ({
   const translateXAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(0)).current;
 
-
-
   // Zoom logic based on manual buttons or selected marker
   useEffect(() => {
     const toScale = ZOOM_STEPS[zoomIndex];
@@ -113,18 +111,20 @@ const MapScreen = ({
     let toY = 0;
 
     if (selectedCoordId !== null) {
-      const coord = positionedCoordinates.find((c: any) => c.id === selectedCoordId);
+      const coord = positionedCoordinates.find(
+        (c: any) => c.id === selectedCoordId,
+      );
       if (coord && dimensions.width > 0 && dimensions.height > 0) {
         const markerX = (coord.leftPercent / 100) * dimensions.width;
         const markerY = (coord.topPercent / 100) * dimensions.height;
-        
+
         // Center the marker initially
         const rawX = (dimensions.width / 2 - markerX) * toScale;
         const rawY = (dimensions.height / 2 - markerY) * toScale;
 
         // Apply boundary clamp (Strategy 1 pan limits) to prevent showing gray space
-        const maxTx = ((dimensions.width * toScale) - dimensions.width) / 2;
-        const maxTy = ((dimensions.height * toScale) - dimensions.height) / 2;
+        const maxTx = (dimensions.width * toScale - dimensions.width) / 2;
+        const maxTy = (dimensions.height * toScale - dimensions.height) / 2;
 
         toX = Math.max(-maxTx, Math.min(maxTx, rawX));
         toY = Math.max(-maxTy, Math.min(maxTy, rawY));
@@ -233,7 +233,7 @@ const MapScreen = ({
 
                   // Calculate dynamic positioning style for the tooltip and triangle pointer to prevent screen clipping
                   const tooltipBgColor = "#ffffff"; // Change this variable to customize the background color of the tooltip and triangle pointer
-                  
+
                   const tooltipStyle: any = {
                     backgroundColor: tooltipBgColor,
                   };
@@ -318,7 +318,7 @@ const MapScreen = ({
 
                       {/* Tooltip detail overlay */}
                       {isSelected && (
-                        <View 
+                        <View
                           style={tooltipStyle}
                           className="absolute p-3 rounded-xl w-[180px] border border-white/20 shadow-lg items-center"
                         >
@@ -326,11 +326,20 @@ const MapScreen = ({
                             <AppText
                               className="text-[12px] text-black"
                               style={{
-                                fontFamily: "quickMedium"
+                                fontFamily: "quickMedium",
                               }}
                               numberOfLines={1}
                             >
-                              {coord.user_name}
+                              User: {maskNumber(coord.user_name, { visibleStart: 2, visibleEnd: 2, maskChar: "*" })}
+                            </AppText>
+                            <AppText
+                              className="text-[12px] text-black"
+                              style={{
+                                fontFamily: "quickMedium",
+                              }}
+                              numberOfLines={1}
+                            >
+                              Property: {coord.property_name}
                             </AppText>
                             <View className="flex-row justify-between items-center border-b border-white/10 pb-1.5">
                               <AppText className="text-[10px]  uppercase font-semibold">
@@ -353,44 +362,53 @@ const MapScreen = ({
                   );
                 })}
               </ImageBackground>
-          </Pressable>
-        </Animated.View>
+            </Pressable>
+          </Animated.View>
 
-        {/* Floating Zoom Controls (Strategy 1) */}
-        {!isMini && (
-          <View className="absolute bottom-8 right-6 flex-col z-50 bg-white border border-primary/10 rounded-xl overflow-hidden shadow-lg">
-            <Pressable
-              onPress={() => setZoomIndex((prev) => Math.min(prev + 1, ZOOM_STEPS.length - 1))}
-              disabled={zoomIndex === ZOOM_STEPS.length - 1}
-              className={`w-10 h-10 items-center justify-center`}
-              style={({ pressed }) => ({
-                opacity: zoomIndex === ZOOM_STEPS.length - 1 ? 0.5 : pressed ? 0.95 : 1,
-              })}
-            >
-              <FontAwesome6 name="plus" size={16} />
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setZoomIndex((prev) => {
-                  const nextIndex = Math.max(prev - 1, 0);
-                  if (nextIndex === 0) {
-                    setSelectedCoordId(null);
-                  }
-                  return nextIndex;
-                });
-              }}
-              disabled={zoomIndex === 0}
-              className={`w-10 h-10 items-center justify-center border-t border-gray-100`}
-              style={({ pressed }) => ({
-                opacity: zoomIndex === 0 ? 0.5 : pressed ? 0.95 : 1,
-              })}
-            >
-              <FontAwesome6 name="minus" size={16} />
-            </Pressable>
-          </View>
-        )}
-      </View>
-    )}
+          {/* Floating Zoom Controls (Strategy 1) */}
+          {!isMini && (
+            <View className="absolute bottom-8 right-6 flex-col z-50 bg-white border border-primary/10 rounded-xl overflow-hidden shadow-lg">
+              <Pressable
+                onPress={() =>
+                  setZoomIndex((prev) =>
+                    Math.min(prev + 1, ZOOM_STEPS.length - 1),
+                  )
+                }
+                disabled={zoomIndex === ZOOM_STEPS.length - 1}
+                className={`w-10 h-10 items-center justify-center`}
+                style={({ pressed }) => ({
+                  opacity:
+                    zoomIndex === ZOOM_STEPS.length - 1
+                      ? 0.5
+                      : pressed
+                        ? 0.95
+                        : 1,
+                })}
+              >
+                <FontAwesome6 name="plus" size={16} />
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setZoomIndex((prev) => {
+                    const nextIndex = Math.max(prev - 1, 0);
+                    if (nextIndex === 0) {
+                      setSelectedCoordId(null);
+                    }
+                    return nextIndex;
+                  });
+                }}
+                disabled={zoomIndex === 0}
+                className={`w-10 h-10 items-center justify-center border-t border-gray-100`}
+                style={({ pressed }) => ({
+                  opacity: zoomIndex === 0 ? 0.5 : pressed ? 0.95 : 1,
+                })}
+              >
+                <FontAwesome6 name="minus" size={16} />
+              </Pressable>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 };

@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   secondContainer: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    borderRadius: 25,
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
     borderColor: "#EEEEEE",

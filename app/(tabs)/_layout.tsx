@@ -2,7 +2,7 @@
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname, router } from "expo-router";
 import React from "react";
 import { Platform, Text, View } from "react-native";
 
@@ -92,6 +92,12 @@ export default function TabLayout() {
       {/* Add Property */}
       <Tabs.Screen
         name="addproperty/index"
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/(screens)/(property)/add/stepOne");
+          },
+        }}
         options={{
           headerTitle: () => null,
           tabBarShowLabel: false,

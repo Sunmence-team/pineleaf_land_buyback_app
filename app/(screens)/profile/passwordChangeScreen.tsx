@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   secondContainer: {
     backgroundColor: "white",
-    borderRadius: 35,
+    borderRadius: 20,
     marginHorizontal: 20,
     paddingHorizontal: 20,
     paddingVertical: 30,
